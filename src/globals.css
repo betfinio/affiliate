@@ -69,3 +69,7 @@ html, body {
 		user-select: none;
 	}
 }
+
+* [data-radix-popper-content-wrapper] {
+	z-index: 777 !important;
+}

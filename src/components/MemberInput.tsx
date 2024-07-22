@@ -12,13 +12,14 @@ import {truncateEthAddress, ZeroAddress} from "@betfinio/abi";
 import {ArrowLeft, ArrowRight} from "lucide-react";
 import {Address} from "viem";
 
-const MemberInput: FC<{ value?: Address }> = ({value = null}) => {
+const MemberInput: FC<{ value?: Address, onChange?: (value: Address) => void }> = ({value = null, onChange}) => {
 	const [address, setAddress] = useState<Address | null>(value)
 	const [open, setOpen] = useState(false)
 	const isDesktop = useMediaQuery("(min-width: 768px)")
 	
 	const handleChangeAddress = (val: Address) => {
 		setAddress(val)
+		onChange && onChange(val)
 	}
 	
 	if (isDesktop) {
@@ -58,7 +59,7 @@ const MemberInfo: FC<{ member: Address | null }> = ({member}) => {
 	const {address} = useAccount();
 	const {data: side} = useMemberSide(address, member || undefined)
 	return <>
-		{member ? member : 'Select parent'}
+		{member ? truncateEthAddress(member) : 'Select parent'}
 		{side === 'right' && <Badge variant={'destructive'} className={'flex gap-1'}>Right <ArrowRight className={'w-3 h-3'}/></Badge>}
 		{side === 'left' && <Badge variant={'destructive'} className={'flex gap-1'}>Left <ArrowLeft className={'w-3 h-3'}/></Badge>}
 		{address?.toLowerCase() === member?.toLowerCase() && <Badge>You</Badge>}

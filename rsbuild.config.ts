@@ -36,8 +36,6 @@ export default defineConfig({
 	},
 	dev: {
 		assetPrefix: 'http://localhost:8888',
-		hmr: true,
-		liveReload: true
 	},
 	html: {
 		title: 'BetFin Affiliate',

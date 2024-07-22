@@ -23,22 +23,24 @@ export default defineConfig({
 	},
 	dev: {
 		assetPrefix: 'http://localhost:8888',
+		hmr: true,
+		liveReload: true
 	},
 	html: {
-		title: 'BetFin Template',
+		title: 'BetFin affiliate',
 		favicon: './src/assets/favicon.svg',
 	},
 	output: {
-		assetPrefix: process.env.PUBLIC_ENVIRONMENT === 'production' ? 'https://betfin-template.web.app' : 'https://betfin-template-dev.web.app'
+		assetPrefix: process.env.PUBLIC_ENVIRONMENT === 'production' ? 'https://betfin-affiliate.web.app' : 'https://betfin-affiliate-dev.web.app'
 	},
 	plugins: [pluginReact()],
 	tools: {
 		rspack: (config, {appendPlugins}) => {
-			config.output!.uniqueName = 'betfinio_template';
+			config.output!.uniqueName = 'betfinio_affiliate';
 			appendPlugins([
 				TanStackRouterRspack(),
 				new ModuleFederationPlugin({
-					name: 'betfinio_template',
+					name: 'betfinio_affiliate',
 					remotes: {
 						betfinio_app: getApp()
 					},

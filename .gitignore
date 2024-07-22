@@ -12,6 +12,8 @@ dist/
 !.vscode/extensions.json
 .idea
 
+.npmrc
+
 @mf-types/
 
 bun.lockb

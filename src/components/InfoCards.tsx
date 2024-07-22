@@ -11,26 +11,27 @@ import {truncateEthAddress, valueToNumber, ZeroAddress} from "@betfinio/abi";
 import {BetValue} from "betfinio_app/BetValue";
 import {useEarningBalances, useMember} from "@/src/lib/query";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "betfinio_app/tooltip";
+import {Skeleton} from "betfinio_app/skeleton";
 
 const InfoCards: FC = () => {
 	const {t} = useTranslation('', {keyPrefix: "affiliate.cards"})
 	const {address} = useAccount()
 	const {data: member, isLoading: isMemberLoading} = useMember(address);
 	const {data: balance, isLoading: isBalanceLoading} = useEarningBalances(address)
-	
 	console.log(member, balance)
 	
 	const children = {direct: member?.invitees || 0, total: (member?.count.left || 0) + (member?.count.right || 0)}
 	const volume = member?.volume.left || 0n + (member?.volume.right || 0n)
 	const income = balance?.staking.total || 0n + (balance?.bets.total || 0n) + (balance?.matching.total || 0n)
 	return (
-		<div className={cx('grid grid-cols-2 md:grid-cols-4 gap-4')}>
+		<div className={cx('grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 lg:gap-4 ')}>
 			<TooltipProvider delayDuration={0}>
 				<Tooltip>
-					<motion.div
-						className={cx('relative py-3 border border-gray-800  flex flex-col gap-2 items-center bg-primaryLighter rounded-lg')}>
-						<Referer className={'w-10 h-10 text-[#FFC800]'}/>
-						<h1 className={cx('text-base lg:text-xl font-semibold', {'blur-sm animate-pulse': isMemberLoading})}>{truncateEthAddress(member?.inviter || ZeroAddress)}</h1>
+					<motion.div className={cx('relative py-3 border border-gray-800 h-[125px] flex flex-col justify-between gap-2 items-center bg-primaryLighter rounded-lg')}>
+						<Referer className={'w-10 h-10 text-yellow-400'}/>
+						<div className={cx('text-base lg:text-lg font-semibold')}>
+							{member ? truncateEthAddress(member.inviter) : <Skeleton className={'w-32 h-6'}/>}
+						</div>
 						<h2 className={'text-xs text-gray-500'}>{t('referer')}</h2>
 						<span
 							className={'absolute right-4 top-2 border-2 text-gray-500 border-gray-500 font-semibold text-xs w-[18px] h-[18px] flex items-center justify-center rounded-full'}>
@@ -39,9 +40,9 @@ const InfoCards: FC = () => {
 						</TooltipTrigger>
 						</span>
 					</motion.div>
-					<TooltipContent className={cx('border-2 rounded-md border-[#FFC800] bg-primary text-white max-w-screen')}>
+					<TooltipContent className={cx('border-2 rounded-md border-yellow-400 bg-primary text-white max-w-screen')}>
 						<div className={'px-8 py-5 text-xs max-w-[90vw] leading-5'}>
-							<p><b className={'font-semibold text-[#FFC800]'}>Referer</b> Is a wallet address of a user that directly
+							<p><b className={'font-semibold text-yellow-400'}>Referer</b> Is a wallet address of a user that directly
 								invited you to the BetFin</p>
 							<p>You are a part of this user's binary tree therefore referrer's other affiliates may fall also to your
 								binary tree!</p>
@@ -51,22 +52,19 @@ const InfoCards: FC = () => {
 				
 				<Tooltip>
 					<motion.div
-						className='relative border border-gray-800 py-3 flex flex-col gap-2 items-center bg-primaryLighter rounded-lg'>
-						<Network className={'w-10 h-10 text-[#FFC800]'}/>
-						<div
-							className={cx(' text-base lg:text-xl font-semibold text-center flex flex-wrap items-center justify-center gap-1', {'blur-sm animate-pulse': isMemberLoading})}>
-					<span>
-					{t('children_total', isMemberLoading ? {
-						direct: 12,
-						total: 1234
-					} : children)}
-					</span>
-							<span className={'font-medium text-yellow-400'}>({t('children_direct', isMemberLoading ? {
-								direct: 12,
-								total: 1234
-							} : children)})
-					</span>
-						
+						className='relative border border-gray-800 py-3 flex flex-col justify-between gap-2 h-[125px] items-center bg-primaryLighter rounded-lg'>
+						<Network className={'w-10 h-10 text-yellow-400'}/>
+						<div className={cx(' text-base lg:text-lg font-semibold text-center flex flex-wrap items-center justify-center gap-1')}>
+							{!member ? <Skeleton className={'w-32 h-6'}/> :
+								<>
+									<span>
+										{t('children_total', children)}
+									</span>
+									<span className={'font-medium text-yellow-400'}>
+										({t('children_direct', children)})
+									</span>
+								</>
+							}
 						</div>
 						<h2 className={'text-xs text-gray-500'}>{t('networkSize')}</h2>
 						<span
@@ -77,14 +75,14 @@ const InfoCards: FC = () => {
 						</span>
 					</motion.div>
 					<TooltipContent
-						className={cx('border-2 rounded-md border-[#FFC800] bg-primary text-white max-w-screen')}>
-						<div className={'px-8 py-5 text-xs max-w-[90vw] leading-5'}>
+						className={cx('border-2 rounded-md border-yellow-400 bg-primary text-white max-w-screen')}>
+						<div className={'px-8 py-5 text-xs max-w-[90vw] leading-5 '}>
 							<p>
 								<b className={'font-semibold'}>White</b> number displays the total number of addresses in your <b
 								className={'font-semibold'}>binary tree</b>.
 							</p>
 							<p>
-								The <b className={'font-semibold text-[#FFC800]'}>yellow</b> number is the number of addresses
+								The <b className={'font-semibold text-yellow-400'}>yellow</b> number is the number of addresses
 								directly invited by you.
 							</p>
 							<p>
@@ -95,10 +93,12 @@ const InfoCards: FC = () => {
 				</Tooltip>
 				<Tooltip>
 					<motion.div
-						className='relative border border-gray-800 py-2  flex flex-col gap-2 items-center bg-primaryLighter rounded-lg'>
-						<CoinStack className={'w-10 h-10 text-[#FFC800]'}/>
-						<h1 className={cx('text-base lg:text-xl font-semibold', {'blur-sm animate-pulse': isMemberLoading})}>
-							<BetValue value={valueToNumber(volume)} withIcon precision={2}/>
+						className='relative border border-gray-800 py-3 h-[125px] flex flex-col justify-between gap-2 items-center bg-primaryLighter rounded-lg'>
+						<CoinStack className={'w-10 h-10 text-yellow-400'}/>
+						<h1 className={cx('text-base lg:text-lg font-semibold')}>
+							{member ? <BetValue value={valueToNumber(volume)} withIcon precision={2}/> : <Skeleton className={'w-16 h-6'}/>}
+						
+						
 						</h1>
 						<h2 className={'text-xs text-gray-500'}>{t('networkVolume')}</h2>
 						<span
@@ -109,7 +109,7 @@ const InfoCards: FC = () => {
 						</span>
 					</motion.div>
 					<TooltipContent
-						className={cx('border-2 rounded-md border-[#FFC800] bg-primary text-white max-w-screen')}>
+						className={cx('border-2 rounded-md border-yellow-400 bg-primary text-white max-w-screen')}>
 						<div className={'px-8 py-5 text-xs max-w-[90vw]'}>
 							<p>Total network volume consists of all the following ever made in unlimited depth of your binary
 								tree:</p>
@@ -124,11 +124,11 @@ const InfoCards: FC = () => {
 				
 				<Tooltip>
 					<motion.div
-						className='relative border border-gray-800 py-2 flex flex-col gap-2 items-center bg-primaryLighter rounded-lg'>
-						<GoldenBars className={'w-10 h-10 text-[#FFC800]'}/>
-						<h1 className={cx('text-base lg:text-xl font-semibold', {'blur-sm animate-pulse': isBalanceLoading})}>
-							<BetValue value={valueToNumber(income)} precision={2} withIcon/>
-						</h1>
+						className='relative border border-gray-800 py-3 h-[125px] flex flex-col justify-between gap-2 items-center bg-primaryLighter rounded-lg'>
+						<GoldenBars className={'w-10 h-10 text-yellow-400'}/>
+						<div className={cx('text-base lg:text-lg font-semibold')}>
+							{member ? <BetValue value={valueToNumber(income)} precision={2} withIcon/> : <Skeleton className={'w-16 h-6'}/>}
+						</div>
 						<h2 className={'text-xs text-gray-500'}>{t('networkIncome')}</h2>
 						<span
 							className={'absolute right-4 top-2 border-2 text-gray-500 border-gray-500 font-semibold text-xs w-[18px] h-[18px] flex items-center justify-center rounded-full'}>
@@ -139,7 +139,7 @@ const InfoCards: FC = () => {
 					
 					</motion.div>
 					<TooltipContent
-						className={cx('border-2 rounded-md border-[#FFC800] bg-primary text-white max-w-screen')}>
+						className={cx('border-2 rounded-md border-yellow-400 bg-primary text-white max-w-screen')}>
 						<div className={'px-8 py-5 text-xs max-w-[90vw]'}>
 							<p>Total network income consists of all the affiliate rewards you claimed in the history of your
 								account.</p>

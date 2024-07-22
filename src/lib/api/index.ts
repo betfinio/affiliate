@@ -2,8 +2,9 @@ import {Address} from "viem";
 import {AffiliateContract, AffiliateFundContract, defaultMulticall, PassContract, ZeroAddress} from "@betfinio/abi";
 import {Member, Options} from "betfinio_app/lib/types";
 import {isMember} from "betfinio_app/lib/api/pass";
-import {multicall} from "viem/actions";
 import {Balance} from "betfinio_app/lib/types";
+import {readContract, multicall} from "@wagmi/core";
+import {MemberWithUsername} from "@/src/lib/types.ts";
 
 const PASS_ADDRESS = import.meta.env.PUBLIC_PASS_ADDRESS;
 const AFFILIATE_ADDRESS = import.meta.env.PUBLIC_AFFILIATE_ADDRESS;
@@ -15,13 +16,15 @@ export const fetchMember = async (address: Address | undefined, options: Options
 	if (!options.config) {
 		throw new Error('Wagmi config is not defined')
 	}
-	if (address === ZeroAddress || !address) return undefined;
+	if (address === ZeroAddress || !address) {
+		throw new Error('Address is not defined')
+	}
 	// check if member
 	if (!await isMember(address, options)) {
-		return undefined;
+		throw new Error('Not a member')
 	}
 	console.log('fetching member', address)
-	const data = await multicall(options.config.getClient(), {
+	const data = await multicall(options.config, {
 		multicallAddress: defaultMulticall,
 		contracts: [
 			{
@@ -116,7 +119,7 @@ export const fetchBalances = async (address: Address | undefined, options: Optio
 		throw new Error('Address is not defined')
 	}
 	console.log('fetching earning balances of', address)
-	const data = await multicall(options.config.getClient(), {
+	const data = await multicall(options.config, {
 		multicallAddress: defaultMulticall,
 		contracts: [
 			{
@@ -199,4 +202,97 @@ export const fetchBalances = async (address: Address | undefined, options: Optio
 			claimableDaily: data[9].result as bigint || 0n
 		}
 	} as Balance;
+}
+
+
+export const fetchPendingMatching = async (address: Address | undefined, options: Options) => {
+	if (!options.config) {
+		throw new Error('Wagmi config is not defined')
+	}
+	if (!options.supabase) {
+		throw new Error('Wagmi config is not defined')
+	}
+	if (!address) {
+		throw new Error('Address is not defined')
+	}
+	const doc = await options.supabase.from("members").select("totalMatching::text").eq("member", address.toLowerCase()).single()
+	if (!doc.data) return 0n;
+	const claimable = await readContract(options.config, {
+		abi: AffiliateContract.abi,
+		address: AFFILIATE_ADDRESS,
+		functionName: 'matchedBonus',
+		args: [address]
+	}) as bigint
+	return BigInt(doc.data.totalMatching) * 8n / 100n - claimable;
+}
+export const fetchDailyLimit = async (address: Address | undefined, options: Options) => {
+	if (!options.config) {
+		throw new Error('Wagmi config is not defined')
+	}
+	if (!address) {
+		throw new Error('Address is not defined')
+	}
+	return await readContract(options.config, {
+		abi: AffiliateContract.abi,
+		address: AFFILIATE_ADDRESS,
+		functionName: 'getClaimableMatchingBonusDaily',
+		args: [address]
+	}) as bigint
+}
+
+
+export const fetchInviteCondition = async (options: Options): Promise<bigint> => {
+	if (!options.config) {
+		throw new Error('Wagmi config is not defined')
+	}
+	
+	return await readContract(options.config, {
+		abi: AffiliateContract.abi,
+		address: AFFILIATE_ADDRESS,
+		functionName: 'inviteStakingCondition'
+	}) as bigint
+}
+
+export const findMembersByUsername = async (username: string, options: Options): Promise<MemberWithUsername[]> => {
+	if (!options.supabase) {
+		throw new Error('Supabase client is not defined')
+	}
+	const {data: data, error} = await options.supabase.from('metadata').select('member, username').ilike('username', `%${username.toLowerCase()}%`)
+	console.log(error)
+	if (!data) return [];
+	return data as MemberWithUsername[];
+}
+
+
+export const findMembersByAddress = async (username: string, options: Options): Promise<MemberWithUsername[]> => {
+	if (!options.supabase) {
+		throw new Error('Supabase client is not defined')
+	}
+	const {data: data, error} = await options.supabase.from('tree').select('member').ilike('member', `%${username.toLowerCase()}%`)
+	console.log(error)
+	if (!data) return [];
+	return data as MemberWithUsername[];
+}
+
+export const validateMemberAutocomplete = async (address: Address, options: Options): Promise<Member> => {
+	if (!options.supabase) {
+		throw new Error('Supabase client is not defined')
+	}
+	const {data} = await options.supabase.from('tree').select('member').eq('member', address.toLowerCase()).single();
+	return data as Member;
+}
+
+
+export const fetchMemberSide = async (parent: Address | undefined, member: Address | undefined, options: Options): Promise<"left" | "right" | null> => {
+	if (!member) return null;
+	if (!parent) return null;
+	if (!options.supabase) {
+		throw new Error('Supabase client is not defined')
+	}
+	const {data: result, count} = await options.supabase.rpc("find_parent", {member: member.toLowerCase(), parent: parent.toLowerCase()}, {count: 'exact'})
+	if (count === 0) return null;
+	if (count === 1) {
+		return result[0].side === 2 ? 'right' : result[0].side === 1 ? 'left' : null
+	}
+	return null;
 }

@@ -1,9 +1,9 @@
 import {Address} from "viem";
-import {AffiliateContract, AffiliateFundContract, defaultMulticall, PassContract, ZeroAddress} from "@betfinio/abi";
+import {AffiliateContract, AffiliateFundContract, defaultMulticall, MultimintContract, PassContract, ZeroAddress} from "@betfinio/abi";
 import {Member, Options} from "betfinio_app/lib/types";
 import {isMember} from "betfinio_app/lib/api/pass";
 import {Balance} from "betfinio_app/lib/types";
-import {readContract, multicall} from "@wagmi/core";
+import {readContract, multicall, writeContract} from "@wagmi/core";
 import {MemberWithUsername} from "@/src/lib/types.ts";
 
 const PASS_ADDRESS = import.meta.env.PUBLIC_PASS_ADDRESS;
@@ -274,14 +274,6 @@ export const findMembersByAddress = async (username: string, options: Options): 
 	return data as MemberWithUsername[];
 }
 
-export const validateMemberAutocomplete = async (address: Address, options: Options): Promise<Member> => {
-	if (!options.supabase) {
-		throw new Error('Supabase client is not defined')
-	}
-	const {data} = await options.supabase.from('tree').select('member').eq('member', address.toLowerCase()).single();
-	return data as Member;
-}
-
 
 export const fetchMemberSide = async (parent: Address | undefined, member: Address | undefined, options: Options): Promise<"left" | "right" | null> => {
 	if (!member) return null;
@@ -296,3 +288,68 @@ export const fetchMemberSide = async (parent: Address | undefined, member: Addre
 	}
 	return null;
 }
+
+
+export async function fetchAffiliateConditions(options: Options): Promise<bigint[]> {
+	if (!options.config) {
+		throw new Error('Wagmi config is not defined')
+	}
+	const data = await multicall(options.config, {
+		contracts: [
+			{
+				abi: AffiliateContract.abi,
+				address: AFFILIATE_ADDRESS,
+				functionName: 'inviteStakingCondition'
+			},
+			{
+				abi: AffiliateContract.abi,
+				address: AFFILIATE_ADDRESS,
+				functionName: 'matchingStakingCondition'
+			},
+			{
+				abi: AffiliateContract.abi,
+				address: AFFILIATE_ADDRESS,
+				functionName: 'matchingInviteeCondition'
+			}
+		]
+	})
+	return data.map(e => e.result as bigint)
+}
+
+export const multimint = async (members: Address[], parents: Address[], options: Options) => {
+	if (!options.config) {
+		throw new Error('Wagmi config is not defined')
+	}
+	return writeContract(options.config, {
+		abi: MultimintContract.abi,
+		address: import.meta.env.PUBLIC_MULTIMINT_ADDRESS as Address,
+		functionName: 'multimint',
+		args: [members, parents, PASS_ADDRESS]
+	})
+}
+
+export const claimDirect = async (options: Options) => {
+	if (!options.config) {
+		throw new Error('Wagmi config is not defined')
+	}
+	return writeContract(options.config, {
+		abi: AffiliateFundContract.abi,
+		address: AFFILIATE_FUND_ADDRESS,
+		functionName: 'claimDirectBonus',
+		args: []
+	})
+}
+
+
+export const claimMatching = async (address: Address, options: Options) => {
+	if (!options.config) {
+		throw new Error('Wagmi config is not defined')
+	}
+	return writeContract(options.config, {
+		abi: AffiliateFundContract.abi,
+		address: AFFILIATE_FUND_ADDRESS,
+		functionName: 'claimMatchingBonus',
+		args: [address]
+	})
+}
+

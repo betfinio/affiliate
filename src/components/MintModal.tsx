@@ -1,22 +1,41 @@
-import {ChangeEvent, FC, useState} from "react";
-import {Dialog, DialogContent, DialogHeader, DialogTitle} from "betfinio_app/dialog";
+import {FC, useEffect, useState} from "react";
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "betfinio_app/dialog";
 import {ScrollArea} from "betfinio_app/scroll-area";
 import {Input} from "betfinio_app/input";
 import {Address, isAddress} from "viem";
 import MemberInput from "@/src/components/MemberInput.tsx";
-import {CircleAlert, CircleCheck, CirclePlus, Trash2} from "lucide-react";
 import {Button} from "betfinio_app/button";
-import {useIsMember} from "betfinio_app/lib/query/pass";
+import {toast} from "betfinio_app/use-toast";
+import {DataTable} from "betfinio_app/DataTable";
+import {createColumnHelper} from "@tanstack/react-table";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "betfinio_app/dropdown-menu";
+import {CircleAlert, Loader, MoreHorizontal} from "lucide-react";
+import cx from "clsx";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "betfinio_app/tooltip";
-import {truncateEthAddress, ZeroAddress} from "@betfinio/abi";
+import {useAccount} from "wagmi";
+import {useMultimint} from "@/src/lib/query";
 
-const MintModal: FC<{ open: boolean, onClose: () => void }> = ({open, onClose}) => {
-	const [members, setMembers] = useState<NewMemberProps[]>([{}])
+interface NewMemberProps {
+	address?: Address,
+	parent?: Address
+}
+
+const columnHelper = createColumnHelper<NewMemberProps>()
+
+const MintModal: FC<{ open: boolean, onClose: () => void, initialMembers?: NewMemberProps[] }> = ({open, onClose, initialMembers = []}) => {
+	const {address: me} = useAccount()
+	const [members, setMembers] = useState<NewMemberProps[]>(initialMembers)
+	const {mutate: multimint, isPending} = useMultimint()
+	
+	const handleMint = async () => {
+		multimint({members: members.map(e => e.address!), parents: members.map(e => e.parent || me || '' as Address)})
+	}
+	
 	const handleRemove = (id: number) => {
 		setMembers(members.filter((_, i) => i !== id))
 	}
 	const handleAdd = () => {
-		setMembers([...members, {}])
+		setMembers([...members, {parent: me}])
 	}
 	const handleAddressChange = (id: number, val: Address) => {
 		const newMembers = [...members]
@@ -30,113 +49,100 @@ const MintModal: FC<{ open: boolean, onClose: () => void }> = ({open, onClose}) 
 		setMembers(newMembers)
 	}
 	
-	const handleMint = () => {
-		console.log('mint')
-	}
+	const columns = [
+		columnHelper.accessor('parent', {
+			header: "Parent",
+			meta: {
+				className: 'w-[150px] md:w-[200px] p-2 py-1'
+			},
+			cell: (props) => <MemberInput
+				value={props.getValue()}
+				onChange={(val) => handleParentChange(props.row.index, val)}/>
+		}), columnHelper.accessor('address', {
+			header: "Address",
+			meta: {
+				className: 'p-2 py-1'
+			},
+			cell: ({getValue, row: {index}}) => {
+				const initialValue = getValue()
+				const [value, setValue] = useState<Address | undefined>(initialValue)
+				const onBlur = () => {
+					handleAddressChange(index, value || '' as Address)
+				}
+				useEffect(() => {
+					setValue(initialValue)
+				}, [initialValue])
+				
+				const isValid = isAddress(value || '')
+				
+				return (<div className={'relative max-h-[40px]'}>
+						<Input
+							className={cx(!isValid && 'border-red-500 pr-10')}
+							value={value || ''}
+							onChange={e => setValue(e.target.value as Address)}
+							onBlur={onBlur}
+						/>
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<CircleAlert className={cx(!isValid ? 'absolute top-2 right-2 w-6 h-6 text-red-500' : 'hidden')}/>
+								</TooltipTrigger>
+								<TooltipContent>
+									Invalid address
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					</div>
+				)
+			},
+		}),
+		columnHelper.display({
+			id: "actions",
+			meta: {
+				className: 'w-[60px]'
+			},
+			cell: ({row}) => {
+				return (
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="ghost" className="h-8 w-8 p-0">
+								<span className="sr-only">Open menu</span>
+								<MoreHorizontal className="h-4 w-4"/>
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuItem onClick={() => handleRemove(row.index)}>
+								Delete
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				)
+			},
+		})]
 	return <Dialog open={open} onOpenChange={() => onClose()}>
-		<DialogContent className={'affiliate text-white p-4 '} aria-describedby={undefined}>
-			<DialogHeader className={''}>
-				<DialogTitle>
-					Invite new users to the platform
-				</DialogTitle>
-				<ScrollArea className={'max-h-[80vh]'}>
-					{members.map((row, id) => <NewMemberRow key={id} {...row}
-					                                        onRemove={() => handleRemove(id)}
-					                                        onAddressChange={(val) => handleAddressChange(id, val)}
-					                                        onParentChange={(val) => handleParentChange(id, val)}
-					/>)}
-				</ScrollArea>
-				<Button onClick={handleAdd} variant='secondary' className={'flex flex-row items-center justify-center bg-transparent p-0 hover:bg-transparent'}>
-					<CirclePlus className={'w-6 h-6'}/>
-				</Button>
-				<div className={'flex flex-row items-center justify-end'}>
-					<Button onClick={handleMint} disabled={members.length === 0}>Mint Pass{members.length > 1 && 'es'}</Button>
+		<DialogContent className={'affiliate text-white p-4 '}>
+			<ScrollArea className={'max-h-[90vh]'}>
+				<DialogHeader>
+					<DialogTitle className={'text-xl'}>
+						Mint new passes
+					</DialogTitle>
+					<DialogDescription className={'text-sm text-gray-400'}>
+						Please enter the address of the new member(s) you would like to mint a pass for.
+					</DialogDescription>
+				</DialogHeader>
+				{/*// @ts-ignore*/}
+				<DataTable columns={columns} data={members}/>
+				<div className={'flex flex-row items-center justify-between mt-2'}>
+					<Button onClick={handleAdd} variant={'outline'}>Add more</Button>
+					<Button onClick={handleMint} disabled={members.length === 0} className={'w-[100px]'}>
+						{isPending ? <Loader className={'animate-spin'}/> : <>
+							Mint Pass{members.length > 1 && 'es'}
+						</>}
+					</Button>
 				</div>
-			</DialogHeader>
+			</ScrollArea>
 		</DialogContent>
 	</Dialog>
 }
 export default MintModal;
 
-interface NewMemberProps {
-	address?: Address;
-	parent?: Address,
-}
-
-const NewMemberRow: FC<NewMemberProps & {
-	onRemove?: () => void,
-	onParentChange?: (val: Address) => void,
-	onAddressChange?: (val: Address) => void
-}> = ({address, parent, onRemove, onParentChange, onAddressChange}) => {
-	const [value, setValue] = useState(address)
-	const {data: isMember} = useIsMember(value)
-	const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setValue(e.target.value as Address)
-		onAddressChange && onAddressChange(e.target.value as Address)
-	}
-	const handleParentChange = (val: Address) => {
-		onParentChange && onParentChange(val)
-	}
-	
-	const renderIcon = () => {
-		if (!parent) {
-			return <Tooltip>
-				<TooltipTrigger>
-					<CircleAlert className={'text-red-500 w-6 h-6'}/>
-				</TooltipTrigger>
-				<TooltipContent>
-					Parent is required
-				</TooltipContent>
-			</Tooltip>
-		}
-		if (!value || value.length !== 42 || !value.startsWith('0x') || !isAddress(value.toLowerCase())) {
-			return <Tooltip>
-				<TooltipTrigger>
-					<CircleAlert className={'text-red-500 w-6 h-6'}/>
-				</TooltipTrigger>
-				<TooltipContent>
-					Address is invalid
-				</TooltipContent>
-			</Tooltip>
-		}
-		if (isMember) {
-			return <Tooltip>
-				<TooltipTrigger>
-					<CircleAlert className={'text-red-500 w-6 h-6'}/>
-				</TooltipTrigger>
-				<TooltipContent>
-					{truncateEthAddress(value || ZeroAddress)} is already a member
-				</TooltipContent>
-			</Tooltip>
-		}
-		return <Tooltip>
-			<TooltipTrigger>
-				<CircleCheck className={'text-green-400 w-6 h-6'}/>
-			</TooltipTrigger>
-			<TooltipContent>
-				Everything is fine
-			</TooltipContent>
-		</Tooltip>
-	}
-	
-	return <div className={'grid grid-cols-6 md:grid-cols-12 items-center justify-center py-1 gap-2'}>
-		<div className={'col-span-4 flex flex-row items-center gap-2 w-full h-full'}>
-			<div className={'flex flex-col items-start justify-between w-full'}>
-				<span className={'text-xs'}>Parent:</span>
-				<MemberInput value={parent} onChange={handleParentChange}/>
-			</div>
-		</div>
-		<div className={'flex flex-col col-span-8 items-baseline  '}>
-			<span className={'text-xs'}>Member:</span>
-			<div className={'flex flex-row items-center gap-2 w-full'}>
-				<Input onChange={handleValueChange} type="text" value={value} className={'w-full'}/>
-				<TooltipProvider>
-					{renderIcon()}
-				</TooltipProvider>
-				<Button variant='secondary' className={'bg-transparent p-0 hover:bg-transparent'} onClick={onRemove}>
-					<Trash2 className={'h-6 w-6  text-red-500'}/>
-				</Button>
-			</div>
-		</div>
-	</div>
-}

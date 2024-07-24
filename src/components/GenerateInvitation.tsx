@@ -10,12 +10,15 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from "betfinio_app/tabs";
 import {Button} from "betfinio_app/button";
 import {Link2Icon} from "lucide-react";
 import MintModal from "@/src/components/MintModal.tsx";
+import {Address} from "viem";
+import {toast} from "betfinio_app/use-toast";
 
 const GenerateInvitation: FC = () => {
 	const {t} = useTranslation('', {keyPrefix: "affiliate.generate"})
 	const {address: account} = useAccount()
-	const {data: member, isFetched: memberIsFetched} = useMember(account)
+	const {data: member} = useMember(account)
 	const [address, setAddress] = useState('')
+	const [parent, setParent] = useState<Address>('' as Address)
 	
 	const [openModal, setOpenModal] = useState(false);
 	
@@ -31,6 +34,11 @@ const GenerateInvitation: FC = () => {
 	
 	const handleFileChange = () => {
 		console.log('uploaded')
+		toast({
+			title: "Not supported",
+			description: "This feature is not yet supported",
+			variant: "soon",
+		})
 	}
 	
 	const handleGenerate = () => {
@@ -60,7 +68,7 @@ const GenerateInvitation: FC = () => {
 							<TabsTrigger value={'manual'}>Manual position</TabsTrigger>
 						</TabsList>
 						<TabsContent value={'manual'}>
-							<MemberInput/>
+							<MemberInput value={parent} onChange={setParent}/>
 						</TabsContent>
 					</Tabs>
 					<div className={' mt-2 md:mt-3 gap-3 font-semibold text-sm grid grid-cols-5 pb-2 relative'}>
@@ -84,7 +92,7 @@ const GenerateInvitation: FC = () => {
 					</Button>
 				</div>
 			</div>
-			<MintModal open={openModal} onClose={handleClose}/>
+			{openModal && <MintModal open={openModal} onClose={handleClose} initialMembers={[{address: address as Address, parent: parent || account}]}/>}
 		</div>
 	
 	);

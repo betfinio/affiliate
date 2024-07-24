@@ -1,11 +1,30 @@
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {Address} from "viem";
 import {Member} from "betfinio_app/lib/types";
-import {fetchBalances, fetchDailyLimit, fetchInviteCondition, fetchMember, fetchMemberSide, fetchPendingMatching, findMembersByAddress, findMembersByUsername} from "@/src/lib/api";
-import {useConfig} from "wagmi";
+import {
+	claimDirect,
+	claimMatching,
+	fetchAffiliateConditions,
+	fetchBalances,
+	fetchDailyLimit,
+	fetchInviteCondition,
+	fetchMember,
+	fetchMemberSide,
+	fetchPendingMatching,
+	findMembersByAddress,
+	findMembersByUsername,
+	multimint
+} from "@/src/lib/api";
+import {useAccount, useConfig} from "wagmi";
+import {waitForTransactionReceipt} from "@wagmi/core"
 import {useSupabase} from "betfinio_app/supabase";
 import {Balance} from "betfinio_app/lib/types";
 import {MemberWithUsername} from "@/src/lib/types.ts";
+import {useTranslation} from "react-i18next";
+import {useToast} from "betfinio_app/use-toast";
+import {getTransactionLink} from "@/src/components/utils.tsx";
+import {type WriteContractReturnType} from '@wagmi/core'
+import {ZeroAddress} from "@betfinio/abi";
 
 
 export const useMember = (address?: Address) => {
@@ -24,6 +43,26 @@ export const useEarningBalances = (address?: Address) => {
 	const config = useConfig()
 	return useQuery<Balance>({
 		queryKey: ['affiliate', 'balances', address],
+		initialData: {
+			staking: {
+				claimable: 0n,
+				claimed: 0n,
+				total: 0n,
+				claimableDaily: 0n,
+			},
+			bets: {
+				claimable: 0n,
+				claimed: 0n,
+				total: 0n,
+				claimableDaily: 0n,
+			},
+			matching: {
+				claimable: 0n,
+				claimed: 0n,
+				total: 0n,
+				claimableDaily: 0n,
+			}
+		},
 		queryFn: async () => fetchBalances(address, {config})
 	})
 }
@@ -74,5 +113,162 @@ export const useMemberSide = (member: Address | undefined, user: Address | undef
 	return useQuery<'left' | 'right' | null>({
 		queryKey: ['affiliate', 'side', member, user],
 		queryFn: async () => fetchMemberSide(member, user, {supabase: client}),
+	})
+}
+
+export const useAffiliateConditions = () => {
+	const config = useConfig();
+	return useQuery<bigint[]>({
+		queryKey: ['affiliate', 'conditions'],
+		queryFn: () => fetchAffiliateConditions({config})
+	})
+}
+
+interface MintParams {
+	members: Address[],
+	parents: Address[]
+}
+
+export const useMultimint = () => {
+	const config = useConfig();
+	const {t} = useTranslation('', {keyPrefix: 'shared.errors'})
+	const {toast} = useToast();
+	return useMutation<any, any, MintParams>({
+		mutationKey: ['affiliate', 'multimint'],
+		mutationFn: ({members, parents}) => multimint(members, parents, {config}),
+		onError: (e) => {
+			console.log('error', e, e.cause, e.cause.reason)
+			if (e && e.cause && e.cause.reason) {
+				toast({
+					title: "Failed to mint passes",
+					description: t(e.cause.reason),
+					variant: 'destructive'
+				})
+			} else {
+				toast({
+					title: t('unknown'),
+					variant: 'destructive'
+				})
+			}
+		},
+		onSuccess: async (data) => {
+			if (data !== undefined) {
+				const {id, update} = toast({
+					title: "Minting passes",
+					description: "Transaction submitted",
+					variant: 'loading',
+					duration: 60 * 1000
+				})
+				await waitForTransactionReceipt(config, {
+					hash: data
+				})
+				update({
+					title: "Passes were minted",
+					description: "Transaction confirmed",
+					variant: 'default',
+					duration: 5 * 1000,
+					id: id,
+					action: getTransactionLink(data)
+				})
+			}
+		}
+	})
+}
+
+
+export const useClaimDirect = () => {
+	const config = useConfig();
+	const queryClient = useQueryClient();
+	const {t} = useTranslation('', {keyPrefix: 'shared.errors'})
+	const {toast} = useToast();
+	return useMutation<WriteContractReturnType, any>({
+		mutationKey: ['affiliate', 'claim', 'direct'],
+		mutationFn: () => claimDirect({config}),
+		onError: (e) => {
+			console.log('error', e, e.cause, e.cause.reason)
+			if (e && e.cause && e.cause.reason) {
+				toast({
+					title: "Failed to claim direct bonus",
+					description: t(e.cause.reason),
+					variant: 'destructive'
+				})
+			} else {
+				toast({
+					title: t('unknown'),
+					variant: 'destructive'
+				})
+			}
+		},
+		onSuccess: async (data) => {
+			if (data !== undefined) {
+				const {id, update} = toast({
+					title: "Claiming direct bonus",
+					description: "Transaction submitted",
+					variant: 'loading',
+					duration: 60 * 1000
+				})
+				await waitForTransactionReceipt(config, {
+					hash: data
+				})
+				update({
+					title: "Direct bonus claimed",
+					description: "Transaction confirmed",
+					variant: 'default',
+					duration: 5 * 1000,
+					id: id,
+					action: getTransactionLink(data)
+				})
+				await queryClient.invalidateQueries({queryKey: ['affiliate']})
+			}
+		}
+	})
+}
+
+export const useClaimMatching = () => {
+	const config = useConfig();
+	const queryClient = useQueryClient();
+	const {address = ZeroAddress} = useAccount()
+	const {t} = useTranslation('', {keyPrefix: 'shared.errors'})
+	const {toast} = useToast();
+	return useMutation<WriteContractReturnType, any>({
+		mutationKey: ['affiliate', 'claim', 'matching'],
+		mutationFn: () => claimMatching(address, {config}),
+		onError: (e) => {
+			console.log('error', e, e.cause, e.cause.reason)
+			if (e && e.cause && e.cause.reason) {
+				toast({
+					title: "Failed to claim matching bonus",
+					description: t(e.cause.reason),
+					variant: 'destructive'
+				})
+			} else {
+				toast({
+					title: t('unknown'),
+					variant: 'destructive'
+				})
+			}
+		},
+		onSuccess: async (data) => {
+			if (data !== undefined) {
+				const {id, update} = toast({
+					title: "Claiming matching bonus",
+					description: "Transaction submitted",
+					variant: 'loading',
+					duration: 60 * 1000
+				})
+				await waitForTransactionReceipt(config, {
+					hash: data
+				})
+				update({
+					title: "Matching bonus claimed",
+					description: "Transaction confirmed",
+					variant: 'default',
+					duration: 5 * 1000,
+					id: id,
+					action: getTransactionLink(data)
+				})
+				await queryClient.invalidateQueries({queryKey: ['affiliate']})
+			}
+		}
 	})
 }

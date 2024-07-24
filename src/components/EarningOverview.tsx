@@ -8,21 +8,23 @@ import {motion} from "framer-motion";
 import millify from "millify";
 import {useTranslation} from "react-i18next";
 import {ZeroAddress} from "@betfinio/abi";
-import {useDailyLimit, useEarningBalances, usePendingMatchingBonus} from "@/src/lib/query";
+import {useClaimDirect, useClaimMatching, useDailyLimit, useEarningBalances, usePendingMatchingBonus} from "@/src/lib/query";
 import {DateTime} from 'luxon';
 import {BetValue} from "betfinio_app/BetValue";
 import {Skeleton} from "betfinio_app/skeleton";
 import {getStakingUrl} from "betfinio_app/lib";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "betfinio_app/tooltip";
+import {Button} from "betfinio_app/button";
+import {Loader} from "lucide-react";
 
 const EarningOverview: FC = () => {
 	const {t} = useTranslation('', {keyPrefix: "affiliate.earnings"})
-	const {t: errors} = useTranslation('', {keyPrefix: "errors"})
 	const {address = ZeroAddress} = useAccount()
 	const {data: limit = 0n} = useDailyLimit(address)
 	const {data: pending = 0n} = usePendingMatchingBonus(address)
-	
 	const {data: balance} = useEarningBalances(address)
+	const {mutate: claimDirect, isPending: isPendingClaimDirect} = useClaimDirect()
+	const {mutate: claimMatching, isPending: isPendingClaimMatching} = useClaimMatching()
 	
 	const time = useMemo(() => {
 		const now = DateTime.now().toUTC()
@@ -38,10 +40,10 @@ const EarningOverview: FC = () => {
 	}, [])
 	
 	const handleClaimDirect = () => {
-		console.log('claim direct')
+		claimDirect()
 	}
 	const handleClaimMatching = () => {
-		console.log('claim matching')
+		claimMatching()
 	}
 	
 	
@@ -113,12 +115,13 @@ const EarningOverview: FC = () => {
 						{t('claimed', {claimed: millify(valueToNumber(!balance ? 0n : balance.bets.claimed + balance.staking.claimed))})}
 					</h3>
 				</div>
-				<motion.button whileHover={{scale: 1.05}}
-				               className={'bg-green-600 p-2 md:px-7 md:py-4  self-end text-lg min-w-[120px] font-semibold rounded-lg disabled:cursor-not-allowed disabled:bg-gray-800 disabled:text-gray-500'}
-				               onClick={handleClaimDirect}
-				               disabled={(!balance ? 0n : balance.bets.claimable + balance.staking.claimable) === 0n}>
-					{t('claim')}
-				</motion.button>
+				<Button
+					size={'lg'}
+					className={'bg-green-600 self-end text-lg text-white min-w-[120px] hover:bg-green-600/50 font-semibold disabled:cursor-not-allowed disabled:bg-gray-800 disabled:text-gray-500'}
+					onClick={handleClaimDirect}
+					disabled={(!balance ? 0n : balance.bets.claimable + balance.staking.claimable) === 0n}>
+					{isPendingClaimDirect ? <Loader className={'w-4 h-4 animate-spin'}/> : t('claim')}
+				</Button>
 			</div>
 			<div style={{backgroundImage: 'radial-gradient(circle, #201C40, rgba(115, 102, 255, 0.5) 0%, #201C40 50%)'}}
 			     className={'rounded-lg p-3 md:px-7 md:py-6 flex flex-row items-center justify-between'}>
@@ -164,13 +167,14 @@ const EarningOverview: FC = () => {
 					</div>
 				</div>
 				
-				<motion.button onClick={handleClaimMatching}
-				               whileHover={{scale: 1.05}}
-				               className={'bg-green-600 p-2 md:px-7 md:py-2 text-lg min-w-[120px] flex flex-col items-center h-fit font-semibold rounded-lg disabled:bg-gray-800 disabled:cursor-not-allowed disabled:text-gray-500'}
-				               disabled={!balance || balance.matching.claimable === 0n || balance.matching.claimableDaily === 0n}>
-					{t('claim')} {!balance ? <Skeleton className='w-16 h-6'/> :
-					<BetValue className={'text-sm font-semibold'} value={valueToNumber(balance.matching.claimableDaily)} withIcon/>}
-				</motion.button>
+				<Button onClick={handleClaimMatching}
+				        size={'lg'}
+				        className={'bg-green-600 text-lg text-white h-[60px] w-[120px] hover:bg-green-600/50 flex flex-col items-center font-semibold  disabled:bg-gray-800 disabled:cursor-not-allowed disabled:text-gray-500'}
+				        disabled={!balance || balance.matching.claimable === 0n || balance.matching.claimableDaily === 0n}>
+					{isPendingClaimMatching ? <Loader className={'w-4 h-4 animate-spin'}/> : <>
+						{t('claim')} {!balance ? <Skeleton className='w-16 h-6'/> :
+						<BetValue className={'text-sm font-semibold'} value={valueToNumber(balance.matching.claimableDaily)} withIcon/>}</>}
+				</Button>
 			</div>
 		</div>
 	);

@@ -3,6 +3,8 @@ import {useTranslation} from "react-i18next";
 import InfoCards from "@/src/components/InfoCards.tsx";
 import EarningOverview from "@/src/components/EarningOverview.tsx";
 import GenerateInvitation from "@/src/components/GenerateInvitation.tsx";
+import PieChartInfo from "@/src/components/PieChartInfo.tsx";
+import Conditions from "@/src/components/Conditions.tsx";
 
 
 const Index = () => {
@@ -15,8 +17,8 @@ const Index = () => {
 				<GenerateInvitation/>
 			</div>
 			<div className={'lg:col-span-4 flex-grow flex flex-col gap-5 mt-10 lg:mt-0'}>
-				{/*<PieChartInfo/>*/}
-				{/*<AffiliateConditions/>*/}
+				<PieChartInfo/>
+				<Conditions/>
 			</div>
 		</div>
 		<div className={'min-h-[500px]'}>hey</div>

@@ -1,5 +1,4 @@
 import {createFileRoute, Link} from '@tanstack/react-router'
-import {useTranslation} from "react-i18next";
 import InfoCards from "@/src/components/InfoCards.tsx";
 import EarningOverview from "@/src/components/EarningOverview.tsx";
 import GenerateInvitation from "@/src/components/GenerateInvitation.tsx";
@@ -7,30 +6,26 @@ import PieChartInfo from "@/src/components/PieChartInfo.tsx";
 import Conditions from "@/src/components/Conditions.tsx";
 import {useAccount} from "wagmi";
 import VolumeInfo from "@/src/components/VolumeInfo.tsx";
+import TablesWrapper from "@/src/components/TablesWrapper.tsx";
 
 
 const Index = () => {
-	const {t} = useTranslation('', {keyPrefix: 'affiliate'})
 	const {address} = useAccount()
 	return <div className={'w-full h-full p-2 md:p-3 lg:p-4 gap-2 md:gap-3 flex flex-col lg:gap-4'}>
 		<InfoCards/>
-		<div className={'lg:grid lg:grid-cols-10 gap-6'}>
+		<div className={'lg:grid lg:grid-cols-10 gap-4'}>
 			<div className={'col-span-6 lg:col-span-6 flex flex-col gap-2 md:gap-3 lg:gap-4'}>
 				<EarningOverview/>
 				<GenerateInvitation/>
 			</div>
-			<div className={'lg:col-span-4 flex-grow flex flex-col gap-5 mt-10 lg:mt-0'}>
+			<div className={'lg:col-span-4 flex-grow flex flex-col gap-2 md:gap-3 lg:gap-4 mt-10 lg:mt-0'}>
 				<PieChartInfo/>
 				<Conditions/>
 			</div>
 		</div>
 		{address && <div className={'mt-6'}>
 			<VolumeInfo/>
-			<div className={'flex my-4 flex-row items-center justify-center gap-2 pt-2'}>
-				<Link to={'/linear'} className={'border border-yellow-400 rounded-lg px-4 py-2 text-yellow-400'}>Linear tree</Link>
-				<Link to={'/binary'} className={'border border-yellow-400 rounded-lg px-4 py-2 text-yellow-400'}>Binary tree</Link>
-			</div>
-			{/*<AffiliateClaimTable/>*/}
+			<TablesWrapper/>
 		</div>}
 	</div>
 }
@@ -38,7 +33,4 @@ const Index = () => {
 
 export const Route = createFileRoute('/')({
 	component: Index,
-	errorComponent: () => {
-		return <div>error</div>
-	}
 })

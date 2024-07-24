@@ -1,130 +1,92 @@
-import {FC, useState} from 'react';
-import {ArcElement, Chart as ChartJS, Legend, Tooltip} from "chart.js";
-import {Doughnut} from "react-chartjs-2";
+import {FC, useMemo} from 'react';
 import {useAccount} from "wagmi";
 import {ZeroAddress} from "@betfinio/hooks";
 import {valueToNumber} from "@betfinio/hooks/dist/utils";
-import {motion} from 'framer-motion';
-import cx from "clsx";
 import {useEarningBalances} from "@/src/lib/query";
 import {BetValue} from "betfinio_app/BetValue";
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import {ResponsivePie} from "@nivo/pie"
+import {PieCustomLayerProps} from "@nivo/pie/dist/types/types";
 
 const PieChartInfo: FC = () => {
 	const {address = ZeroAddress} = useAccount()
-	const {data} = useEarningBalances(address)
-	
-	const [enabled, setEnabled] = useState(['staking', 'betting', 'matching'])
-	const parts = []
-	const colors = []
-	if (enabled.includes('staking')) {
-		parts.push(data.staking.total)
-		colors.push('#AB3152')
-	}
-	if (enabled.includes('betting')) {
-		parts.push(data.bets.total)
-		colors.push('#6A6A9F')
-	}
-	if (enabled.includes('matching')) {
-		parts.push(data.matching.total)
-		colors.push('#facc15')
-	}
-	
-	const toggleStaking = () => {
-		if (enabled.includes('staking')) {
-			setEnabled(enabled.filter(e => e != 'staking'))
-		} else {
-			setEnabled([...enabled, 'staking'])
-		}
-	}
-	const toggleBetting = () => {
-		if (enabled.includes('betting')) {
-			setEnabled(enabled.filter(e => e != 'betting'))
-		} else {
-			setEnabled([...enabled, 'betting'])
-		}
-	}
-	const toggleMatching = () => {
-		if (enabled.includes('matching')) {
-			setEnabled(enabled.filter(e => e != 'matching'))
-		} else {
-			setEnabled([...enabled, 'matching'])
-		}
-	}
-	if (address === ZeroAddress) {
-		return <div className={'h-full w-full'}>
-			<Doughnut data={{
-				labels: ['Direct Staking', 'Direct Betting', 'Matching Bonus'], datasets: [
-					{
-						circular: true,
-						borderAlign: 'center',
-						data: [33, 33, 33],
-						backgroundColor: ['#AB315250', '#201C3F50', '#facc1550'],
-						borderColor: ['#AB315290', '#201C3F90', '#facc1590'],
-					},
-				]
-			}} options={{
-				responsive: true,
-				plugins: {
-					legend: {
-						position: 'top',
-					},
-					title: {
-						display: true,
-						text: 'Earning Overview',
-					}
-				}
-			}}/>
-		</div>
-	}
-	
-	return <div className={'h-full w-full relative'}>
-		<div>
-			<div className={'text-center font-medium text-lg'}>Earnings overview</div>
-			<div className={'flex flex-row my-2 gap-2'}>
-				<motion.div whileHover={{scale: 1.03}} onClick={toggleStaking} whileTap={{scale: 0.97}}
-				            className={cx('flex cursor-pointer flex-row items-center gap-1 text-sm', !enabled.includes('staking') && 'opacity-20')}>
-					<div className={'rounded-full w-5 h-5 bg-red-roulette'}></div>
-					Direct Staking
-				</motion.div>
-				<motion.div whileHover={{scale: 1.03}} onClick={toggleBetting} whileTap={{scale: 0.97}}
-				            className={cx('flex cursor-pointer flex-row items-center gap-1 text-sm', !enabled.includes('betting') && 'opacity-20')}>
-					<div className={'rounded-full w-5 h-5 bg-[#6A6A9F]'}></div>
-					Direct Betting
-				</motion.div>
-				<motion.div whileHover={{scale: 1.03}} onClick={toggleMatching} whileTap={{scale: 0.97}}
-				            className={cx('flex cursor-pointer flex-row items-center gap-1 text-sm', !enabled.includes('matching') && 'opacity-20')}>
-					<div className={'rounded-full w-5 h-5 bg-yellow-400'}></div>
-					Matching Bonus
-				</motion.div>
-			</div>
-		</div>
-		<div className={'absolute left-1/2 top-1/2  -translate-x-1/2 text-xl font-semibold'}>
-			<BetValue value={valueToNumber(parts.reduce((a, b) => a + b, 0n))} withIcon/>
-		</div>
-		<Doughnut className={'m-5 p-4'} data={{
-			labels: ['Direct Staking', 'Direct Betting', 'Matching Bonus'], datasets: [
+	const {data: balance} = useEarningBalances(address)
+	const data = useMemo(() => {
+		return [{
+			color: '#292546',
+			id: 'betting',
+			label: "Betting",
+			value: valueToNumber(balance.bets.total)
+		}, {
+			color: '#facc15',
+			id: 'staking',
+			label: "Staking",
+			value: valueToNumber(balance.staking.total)
+		}, {
+			color: '#dd375f',
+			id: 'matching',
+			label: "Matching",
+			value: valueToNumber(balance.matching.total)
+		}].filter(e => !!e)
+	}, [balance])
+	return <div className={'flex w-full h-[400px] p-4 flex-col items-center justify-center'}>
+		<div>Earnings overview</div>
+		<ResponsivePie
+			data={data}
+			innerRadius={0.6}
+			margin={{top: 60, right: 20, bottom: 10, left: 20}}
+			padAngle={1}
+			cornerRadius={5}
+			tooltip={({datum}) => <div className={'bg-primaryLighter p-2 text-xs flex flex-row items-center gap-1 rounded-md'}>{datum.label}: <BetValue value={datum.value} withIcon/></div>}
+			colors={{datum: 'data.color'}}
+			legends={[
 				{
-					circular: true,
-					borderAlign: 'center',
-					data: parts.map((e) => valueToNumber(e)),
-					backgroundColor: colors,
-					borderColor: colors,
-				},
-			]
-		}} options={{
-			responsive: true,
-			plugins: {
-				legend: {
-					display: false,
-				},
-				title: {
-					display: false,
+					anchor: 'top',
+					direction: 'row',
+					justify: false,
+					translateX: 0,
+					translateY: -40,
+					itemsSpacing: 0,
+					toggleSerie: true,
+					itemWidth: 100,
+					itemHeight: 18,
+					itemTextColor: '#999',
+					itemDirection: 'left-to-right',
+					itemOpacity: 1,
+					symbolSize: 18,
+					symbolShape: 'circle',
+					effects: [
+						{
+							on: 'hover',
+							style: {
+								itemOpacity: 50
+							}
+						}
+					]
 				}
-			}
-		}}/>
+			]}
+			layers={['arcs', 'arcLabels', 'arcLinkLabels', 'legends', CenteredMetric]}
+			enableArcLabels={false}
+			enableArcLinkLabels={false}
+			arcLinkLabelsThickness={3}
+			activeInnerRadiusOffset={2}
+			activeOuterRadiusOffset={5}
+		/>
 	</div>
 };
+
+const CenteredMetric: React.FC<PieCustomLayerProps<any>> = ({dataWithArc, centerX, centerY}) => {
+	let total = 0
+	dataWithArc.forEach(datum => {
+		total += datum.value
+	})
+	
+	return (
+		<foreignObject x={centerX - 50} y={centerY - 25} width={100} height={50}>
+			<div className={'w-full h-full flex items-center justify-center'}>
+				<BetValue value={total} withIcon/>
+			</div>
+		</foreignObject>
+	)
+}
 
 export default PieChartInfo

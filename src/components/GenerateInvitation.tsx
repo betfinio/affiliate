@@ -25,6 +25,11 @@ const GenerateInvitation: FC = () => {
 	const handleLink = async () => {
 		const code = account! + (parent || account!)
 		await navigator.clipboard.writeText(window.origin + "/?code=" + code)
+		toast({
+			title: "Link copied",
+			description: "The invitation link has been copied to your clipboard",
+			variant: "default",
+		})
 	}
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	
@@ -62,7 +67,7 @@ const GenerateInvitation: FC = () => {
 							style={{display: 'none'}}
 						/>
 					</div>
-					<Tabs defaultValue={'manual'}>
+					<Tabs defaultValue={'auto'}>
 						<TabsList>
 							<TabsTrigger value={'auto'}>Auto position</TabsTrigger>
 							<TabsTrigger value={'manual'}>Manual position</TabsTrigger>
@@ -75,12 +80,11 @@ const GenerateInvitation: FC = () => {
 						<input value={address} onChange={(e) => setAddress(e.target.value)}
 						       placeholder={"New member address: 0x..."}
 						       className={'px-2 md:px-4 py-2 border bg-primary h-[40px] rounded-lg border-gray-400 flex justify-center items-center col-span-5 sm:col-span-3'}/>
-						<div className={'col-span-5 sm:col-span-2 grid grid-cols-2 gap-2 '}>
-							<Button onClick={handleGenerate}
-							        className={'grid-cols-1 px-6 py-3 flex justify-center items-center '}>
+						<div className={'col-span-5 sm:col-span-2 flex flex-row items-center gap-2 '}>
+							<Button onClick={handleGenerate} className={'grid-cols-1 px-4 py-3 flex justify-center items-center '}>
 								{t('generate')}
 							</Button>
-							<Button variant={'outline'} onClick={handleLink} className={'grid-cols-1 px-0 gap-2 flex justify-center items-center  whitespace-nowrap'}>
+							<Button variant={'outline'} onClick={handleLink} className={'grid-cols-1 flex-grow px-4 gap-2 flex justify-center items-center  whitespace-nowrap'}>
 								<Link2Icon className={'w-3 h-3'}/>
 								{t('create')}
 							</Button>

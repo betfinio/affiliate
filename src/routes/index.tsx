@@ -18,7 +18,7 @@ const Index = () => {
 				<EarningOverview/>
 				<GenerateInvitation/>
 			</div>
-			<div className={'lg:col-span-4 flex-grow flex flex-col gap-2 md:gap-3 lg:gap-4 mt-10 lg:mt-0'}>
+			<div className={'lg:col-span-4 flex-grow flex flex-col gap-2 md:gap-3 lg:gap-4 lg:mt-0'}>
 				<PieChartInfo/>
 				<Conditions/>
 			</div>

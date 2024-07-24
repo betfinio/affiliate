@@ -5,10 +5,13 @@ import EarningOverview from "@/src/components/EarningOverview.tsx";
 import GenerateInvitation from "@/src/components/GenerateInvitation.tsx";
 import PieChartInfo from "@/src/components/PieChartInfo.tsx";
 import Conditions from "@/src/components/Conditions.tsx";
+import {useAccount} from "wagmi";
+import VolumeInfo from "@/src/components/VolumeInfo.tsx";
 
 
 const Index = () => {
 	const {t} = useTranslation('', {keyPrefix: 'affiliate'})
+	const {address} = useAccount()
 	return <div className={'w-full h-full p-2 md:p-3 lg:p-4 gap-2 md:gap-3 flex flex-col lg:gap-4'}>
 		<InfoCards/>
 		<div className={'lg:grid lg:grid-cols-10 gap-6'}>
@@ -21,15 +24,14 @@ const Index = () => {
 				<Conditions/>
 			</div>
 		</div>
-		<div className={'min-h-[500px]'}>hey</div>
-		{/*{address !== undefined && <div className={'mt-6'}>*/}
-		{/*	<VolumeInfo/>*/}
-		{/*	<div className={'flex my-4 flex-row items-center justify-center gap-2 pt-2'}>*/}
-		{/*		<Link to={'/linear'} className={'border border-yellow-400 rounded-lg px-4 py-2 text-yellow-400'}>Linear tree</Link>*/}
-		{/*		<Link to={'/binary'} className={'border border-yellow-400 rounded-lg px-4 py-2 text-yellow-400'}>Binary tree</Link>*/}
-		{/*	</div>*/}
-		{/*	<AffiliateClaimTable/>*/}
-		{/*</div>}*/}
+		{address && <div className={'mt-6'}>
+			<VolumeInfo/>
+			<div className={'flex my-4 flex-row items-center justify-center gap-2 pt-2'}>
+				<Link to={'/linear'} className={'border border-yellow-400 rounded-lg px-4 py-2 text-yellow-400'}>Linear tree</Link>
+				<Link to={'/binary'} className={'border border-yellow-400 rounded-lg px-4 py-2 text-yellow-400'}>Binary tree</Link>
+			</div>
+			{/*<AffiliateClaimTable/>*/}
+		</div>}
 	</div>
 }
 

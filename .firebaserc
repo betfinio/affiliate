@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "betfin-dev"
+  },
+  "targets": {
+    "betfin-dev": {
+      "hosting": {
+        "affiliate": [
+          "betfin-affiliate"
+        ],
+        "affiliate-dev": [
+          "betfin-affiliate-dev"
+        ]
+      }
+    }
+  }
+}

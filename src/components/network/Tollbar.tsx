@@ -4,7 +4,6 @@ import {DataTableFacetedFilter} from "./FacetedFilter"
 import {activities, categories, sides} from "@/src/components/network/columns.tsx";
 import {Button} from "betfinio_app/button";
 import {X} from "lucide-react";
-import {DataTableViewOptions} from "./ViewOptions";
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>

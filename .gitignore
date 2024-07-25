@@ -12,6 +12,7 @@ dist/
 !.vscode/extensions.json
 .idea
 
+.firebase/
 .npmrc
 
 @mf-types/

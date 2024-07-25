@@ -1,10 +1,10 @@
 import {Address} from "viem";
 import {AffiliateContract, AffiliateFundContract, defaultMulticall, MultimintContract, PassContract, ZeroAddress} from "@betfinio/abi";
-import {Member, Options} from "betfinio_app/lib/types";
+import {Balance, Member, Options} from "betfinio_app/lib/types";
 import {isMember} from "betfinio_app/lib/api/pass";
-import {Balance} from "betfinio_app/lib/types";
-import {readContract, multicall, writeContract} from "@wagmi/core";
-import {MemberWithUsername} from "@/src/lib/types.ts";
+import {multicall, readContract, writeContract} from "@wagmi/core";
+import {MemberWithUsername, TableMember} from "@/src/lib/types.ts";
+import {getLevel, getSide} from "@/src/lib/utils.ts";
 
 const PASS_ADDRESS = import.meta.env.PUBLIC_PASS_ADDRESS;
 const AFFILIATE_ADDRESS = import.meta.env.PUBLIC_AFFILIATE_ADDRESS;
@@ -316,6 +316,45 @@ export async function fetchAffiliateConditions(options: Options): Promise<bigint
 	return data.map(e => e.result as bigint)
 }
 
+
+export const fetchLinearMembers = async (address: Address, options: Options): Promise<TableMember[]> => {
+	if (!options.config) {
+		throw new Error('Wagmi config is not defined')
+	}
+	if (!options.supabase) {
+		throw new Error('Supabase client is not defined')
+	}
+	if (address === ZeroAddress) {
+		return []
+	}
+	const {data: rawData, error} = await options.supabase
+		.from('table_members')
+		.select('member, inviter, staking::text, betting::text, betting_volume::text, direct_count::text, binary_count::text, staking_volume::text, username, id::text, inviter_id::text, activity, category')
+		.eq('inviter', address.toLowerCase())
+	return (rawData || []).map((member) => {
+		const activity = []
+		if (['staking', 'both'].includes(member.activity)) activity.push('staking');
+		if (['betting', 'both'].includes(member.activity)) activity.push('betting');
+		return {
+			betting: BigInt(member.betting),
+			staking: BigInt(member.staking),
+			staking_volume: BigInt(member.staking_volume),
+			betting_volume: BigInt(member.betting_volume),
+			member: member.member,
+			inviter: member.inviter,
+			id: BigInt(member.id),
+			direct_count: BigInt(member.direct_count),
+			binary_count: BigInt(member.binary_count),
+			inviter_id: BigInt(member.inviter_id),
+			activity: activity,
+			category: member.category,
+			level: getLevel(BigInt(member.id), BigInt(member.inviter_id)),
+			side: getSide(BigInt(member.id), BigInt(member.inviter_id)),
+			username: member.username
+		} as TableMember
+	})
+}
+
 export const multimint = async (members: Address[], parents: Address[], options: Options) => {
 	if (!options.config) {
 		throw new Error('Wagmi config is not defined')
@@ -352,4 +391,6 @@ export const claimMatching = async (address: Address, options: Options) => {
 		args: [address]
 	})
 }
+
+
 

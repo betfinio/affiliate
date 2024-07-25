@@ -7,6 +7,7 @@ import {ZeroAddress} from "@betfinio/abi";
 const LinearTable = () => {
 	const {address = ZeroAddress} = useAccount();
 	const {data = []} = useLinearMembers(address);
+	// @ts-ignore
 	return <DataTable columns={columns} data={data}/>
 }
 

@@ -10,7 +10,7 @@ import {
 	fetchInviteCondition, fetchLinearMembers,
 	fetchMember,
 	fetchMemberSide,
-	fetchPendingMatching,
+	fetchPendingMatching, fetchTreeMember,
 	findMembersByAddress,
 	findMembersByUsername,
 	multimint
@@ -25,6 +25,7 @@ import {useToast} from "betfinio_app/use-toast";
 import {getTransactionLink} from "@/src/components/utils.tsx";
 import {type WriteContractReturnType} from '@wagmi/core'
 import {ZeroAddress} from "@betfinio/abi";
+import {TreeMember} from "betfinio_app/compiled-types/lib/types/affiliate";
 
 
 export const useMember = (address?: Address) => {
@@ -133,6 +134,16 @@ export const useLinearMembers = (address: Address) => {
 		queryFn: () => fetchLinearMembers(address, {config, supabase: client}),
 		refetchOnWindowFocus: false,
 		refetchOnMount: false
+	})
+}
+
+export const useTreeMember = (address: Address) => {
+	const {client} = useSupabase();
+	return useQuery<TreeMember>({
+		queryKey: ['affiliate', 'members', 'tree', 'member', address],
+		queryFn: () => fetchTreeMember(address, {supabase: client}),
+		refetchOnMount: false,
+		refetchOnWindowFocus: false
 	})
 }
 

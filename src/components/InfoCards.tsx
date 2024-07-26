@@ -18,7 +18,6 @@ const InfoCards: FC = () => {
 	const {address} = useAccount()
 	const {data: member, isLoading: isMemberLoading} = useMember(address);
 	const {data: balance, isLoading: isBalanceLoading} = useEarningBalances(address)
-	console.log(member, balance)
 	
 	const children = {direct: member?.invitees || 0, total: (member?.count.left || 0) + (member?.count.right || 0)}
 	const volume = member?.volume.left || 0n + (member?.volume.right || 0n)

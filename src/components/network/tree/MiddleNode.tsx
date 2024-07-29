@@ -2,18 +2,17 @@ import cx from "clsx";
 import {truncateEthAddress, valueToNumber} from "@betfinio/hooks/dist/utils";
 import {CustomNodeElementProps} from "react-d3-tree";
 import {useAccount} from "wagmi";
-import {ArrowLongLeftIcon, ArrowLongRightIcon, Square3Stack3DIcon, UsersIcon} from "@heroicons/react/24/solid";
 import {useMemo} from "react";
 import {Blackjack} from "@betfinio/ui/dist/icons";
-import * as Tooltip from "@radix-ui/react-tooltip"
 import {Address} from "viem";
 import {useTreeMember} from "@/src/lib/query";
 import {useCustomUsername, useUsername} from "betfinio_app/lib/query/username";
 import {ZeroAddress} from "@betfinio/abi";
 import {getSide} from "@/src/lib/utils.ts";
 import {useQueryClient} from "@tanstack/react-query";
-import {UserPlus} from "lucide-react";
+import {ArrowLeft, ArrowRight, Layers3, UserPlus, UsersIcon} from "lucide-react";
 import {BetValue} from "betfinio_app/BetValue";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "betfinio_app/tooltip";
 
 function MiddleNode({data, node, horizontal = false}: {
 	data: Address,
@@ -30,11 +29,13 @@ function MiddleNode({data, node, horizontal = false}: {
 		if (!query.data) return []
 		const badges = []
 		const side = getSide(query.data.index || 0n, me?.index || 0n)
-		badges.push(side ? 'right' : 'left')
+		badges.push(side || 'left')
 		if (query.data.bets > 0n) badges.push('betting')
 		if (query.data.volume > 0n) badges.push('staking')
 		return badges
-	}, [query.data])
+	}, [query.data, me])
+	
+	console.log(icons)
 	
 	
 	const handleInvite = (e: any, parent: string) => {
@@ -84,59 +85,51 @@ function MiddleNode({data, node, horizontal = false}: {
 	}
 	
 	const renderBetting = () => {
-		return <Tooltip.Provider>
-			<Tooltip.Root>
-				<Tooltip.Trigger>
+		return <TooltipProvider>
+			<Tooltip>
+				<TooltipTrigger asChild>
 					<div className={'w-full flex justify-center'}>
 						<Blackjack className={'w-1/2 stroke-0'}/>
 					</div>
-				</Tooltip.Trigger>
-				<Tooltip.Portal>
-					<Tooltip.Content
-						className="data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade text-white bg-black data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade select-none rounded-[4px] px-[15px] py-[10px] text-[15px] leading-none shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] will-change-[transform,opacity]">
-						<Tooltip.Arrow/>
-						<p className={'font-semibold'}>User bets volume:</p>
-						<p className={'text-yellow-400'}>
-							{valueToNumber(query.data.bets).toLocaleString() + " BET"}
-						</p>
-					</Tooltip.Content>
-				</Tooltip.Portal>
-			</Tooltip.Root>
-		</Tooltip.Provider>
+				</TooltipTrigger>
+				<TooltipContent>
+					<p className={'font-semibold'}>User bets volume:</p>
+					<p className={'text-yellow-400'}>
+						{valueToNumber(query.data.bets).toLocaleString() + " BET"}
+					</p>
+				</TooltipContent>
+			</Tooltip>
+		</TooltipProvider>
 		
 		
 	}
 	const renderLeft = () => {
-		return <ArrowLongLeftIcon className={'w-2/3'}/>
+		return <ArrowLeft className={'w-2/3'}/>
 	}
 	const renderRight = () => {
-		return <ArrowLongRightIcon className={'w-2/3'}/>
+		return <ArrowRight className={'w-2/3'}/>
 	}
 	const renderStaking = () => {
-		return <Tooltip.Provider>
-			<Tooltip.Root>
-				<Tooltip.Trigger>
+		return <TooltipProvider>
+			<Tooltip>
+				<TooltipTrigger>
 					<div className={'w-full flex justify-center'}>
-						<Square3Stack3DIcon className={'w-2/3 stroke-0'}/>
+						<Layers3 className={'w-2/3'}/>
 					</div>
-				</Tooltip.Trigger>
-				<Tooltip.Portal>
-					<Tooltip.Content
-						className="data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade select-none rounded-[4px] bg-black text-white px-[15px] py-[10px] text-[15px] leading-none shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] will-change-[transform,opacity]">
-						<Tooltip.Arrow/>
-						<p className={'font-semibold'}>User staking volume:</p>
-						<p className={'text-yellow-400'}>
-							{valueToNumber(query.data.volume).toLocaleString() + " BET"}
-						</p>
-					</Tooltip.Content>
-				</Tooltip.Portal>
-			</Tooltip.Root>
-		</Tooltip.Provider>
+				</TooltipTrigger>
+				<TooltipContent>
+					<p className={'font-semibold'}>User staking volume:</p>
+					<p className={'text-yellow-400'}>
+						{valueToNumber(query.data.volume).toLocaleString() + " BET"}
+					</p>
+				</TooltipContent>
+			</Tooltip>
+		</TooltipProvider>
 	}
 	
 	const volume = query.data.volumeLeft + query.data.volumeRight + query.data.betsLeft / 100n + query.data.betsRight / 100n
 	return <foreignObject width={300} height={110} x={-135} y={-45} className={''}>
-		<div className={cx(horizontal && 'w-full h-full flex flex-row flex-nowrap')}>
+		<div className={cx(horizontal && 'w-full h-full flex flex-row flex-nowrap relative')}>
 			
 			<div className={cx('border-2  border-purple-box bg-primaryLight p-4 w-[270px] h-[90px] rounded-xl flex flex-col items-center justify-start gap-1', {
 				'border-red-roulette': query.data.isInviting,

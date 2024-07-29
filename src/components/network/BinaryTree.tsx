@@ -10,10 +10,11 @@ import MiddleNode from "@/src/components/network/tree/MiddleNode.tsx";
 import BigNode from "@/src/components/network/tree/BigNode.tsx";
 import SmallNode from "@/src/components/network/tree/SmallNode.tsx";
 import DotNode from "@/src/components/network/tree/DotNode.tsx";
-import {Expand} from "lucide-react";
+import {ArrowLeft, ArrowRight, Expand, Layers3} from "lucide-react";
 import {toast} from "betfinio_app/use-toast";
 import {useQueryClient} from "@tanstack/react-query";
 import {TreeMember} from "betfinio_app/lib/types";
+import Legend from "./Legend";
 
 
 const BinaryTree = () => {
@@ -114,8 +115,8 @@ const BinaryTree = () => {
 	const getPathStyle = (linkData: TreeLinkDatum) => {
 		const source = linkData.source.data.name
 		const target = linkData.target.data.name
-		const data = queryClient.getQueryData(['affiliate', 'binary', 'tree', 'member', source]) as TreeMember
-		return cx('stroke-2 !stroke-purple-box', {
+		const data = queryClient.getQueryData(['affiliate', 'members', 'tree', 'member', source]) as TreeMember
+		return cx('stroke-2 stroke-purple-box', {
 			'[stroke-dasharray:5] !stroke-opacity-70': target === ZeroAddress,
 			'!stroke-0': target === ZeroAddress && zoom <= 0.5,
 			'!stroke-red-roulette': data?.isInviting,
@@ -147,13 +148,14 @@ const BinaryTree = () => {
 			ways of displaying the same structure. <br/> The only important for your matching bonus is binary
 			tree. <br/> However, linear tree helps you to better recognise active inviters in your structure.
 		</div>
+		<Legend/>
 		<div className={' border border-gray-800 rounded-md mt-2 md:mt-3 lg:mt-4 h-[80vh] relative'} ref={boxRef}>
 			<div className={cx('absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl bg-primaryLighter w-[100px] h-[50px]')}>
 				<div className={'w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer'} onClick={zoomPlus}>+</div>
 				<div className={'w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer'} onClick={zoomMinus}>-</div>
 			</div>
 			<div onClick={() => handle.enter()}
-			     className={'absolute top-2 right-2 border cursor-pointer border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px] '}>
+			     className={'absolute top-2 right-2 border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px] '}>
 				<Expand className={'w-6 h-6'}/>
 			</div>
 			<FullScreen handle={handle}>

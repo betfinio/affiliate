@@ -77,7 +77,7 @@ const MintModal: FC<{ open: boolean, onClose: () => void, initialMembers?: NewMe
 				
 				return (<div className={'relative max-h-[40px]'}>
 						<Input
-							className={cx(!isValid && 'border-red-500 pr-10')}
+							className={cx(!isValid && 'border-red-roulette pr-10')}
 							value={value || ''}
 							onChange={e => setValue(e.target.value as Address)}
 							onBlur={onBlur}
@@ -85,7 +85,7 @@ const MintModal: FC<{ open: boolean, onClose: () => void, initialMembers?: NewMe
 						<TooltipProvider>
 							<Tooltip>
 								<TooltipTrigger asChild>
-									<CircleAlert className={cx(!isValid ? 'absolute top-2 right-2 w-6 h-6 text-red-500' : 'hidden')}/>
+									<CircleAlert className={cx(!isValid ? 'absolute top-2 right-2 w-6 h-6 text-red-roulette' : 'hidden')}/>
 								</TooltipTrigger>
 								<TooltipContent>
 									Invalid address

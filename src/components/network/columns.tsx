@@ -66,13 +66,13 @@ export const columns = [
 			<DataTableColumnHeader column={column} title="Member"/>
 		),
 		cell: ({getValue, row}) => <div className={'flex flex-row items-center gap-2'}>
-			<div className={cx('w-6 h-6 rounded-full', {
+			<div className={cx('!w-6 aspect-square !h-6 rounded-full', {
 				'bg-green-400': row.original.category === 'active',
 				'bg-red-roulette': row.original.category === 'inviting',
 				'bg-yellow-400': row.original.category === 'matching',
 				'bg-[#292546]': row.original.category === 'inactive',
 			})}/>
-			<div className={cx(' flex flex-col text-xs')}>
+			<div className={cx('flex flex-col text-xs')}>
 				<span>{truncateEthAddress(getValue())}</span>
 				<span className={'text-gray-400'}>{row.original.username}</span>
 			</div>
@@ -87,7 +87,7 @@ export const columns = [
 		cell: ({getValue}) => {
 			return (
 				<div className="flex items-center justify-center">
-					<div className={'border border-gray-500 rounded-full px-1 py-0.5 min-w-[40px] flex justify-center'}>
+					<div className={'border border-gray-500 rounded-full px-1 py-0.5 lg:min-w-[40px] flex justify-center'}>
 						{getValue()}
 					</div>
 				</div>
@@ -130,6 +130,9 @@ export const columns = [
 		header: ({column}) => (
 			<DataTableColumnHeader column={column} title="Staking"/>
 		),
+		meta: {
+			className: 'hidden lg:table-cell '
+		},
 		cell: ({getValue}) => {
 			return (
 				<div className="flex items-center justify-center">
@@ -146,6 +149,9 @@ export const columns = [
 		header: ({column}) => (
 			<DataTableColumnHeader column={column} title="Betting"/>
 		),
+		meta: {
+			className: 'hidden lg:table-cell '
+		},
 		cell: ({getValue}) => {
 			return (
 				<div className="flex items-center justify-center">
@@ -214,6 +220,9 @@ export const columns = [
 	}),
 	columnHelper.accessor('staking_volume', {
 		id: 'staking_volume',
+		meta: {
+			className: 'hidden xl:table-cell '
+		},
 		header: ({column}) => (
 			<DataTableColumnHeader column={column} title="Staking volume"/>
 		),
@@ -230,6 +239,9 @@ export const columns = [
 	}),
 	columnHelper.accessor('betting_volume', {
 		id: 'betting_volume',
+		meta: {
+			className: 'hidden xl:table-cell '
+		},
 		header: ({column}) => (
 			<DataTableColumnHeader column={column} title="Betting volume"/>
 		),

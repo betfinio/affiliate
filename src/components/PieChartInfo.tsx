@@ -10,22 +10,24 @@ import {PieCustomLayerProps} from "@nivo/pie/dist/types/types";
 const PieChartInfo: FC = () => {
 	const {address = ZeroAddress} = useAccount()
 	const {data: balance} = useEarningBalances(address)
+	const zero = balance.staking.total + balance.bets.total + balance.matching.total === 0n
+	
 	const data = useMemo(() => {
 		return [{
 			color: '#292546',
 			id: 'betting',
 			label: "Betting",
-			value: valueToNumber(balance.bets.total)
+			value: zero ? 30 : valueToNumber(balance.bets.total)
 		}, {
 			color: '#facc15',
 			id: 'staking',
 			label: "Staking",
-			value: valueToNumber(balance.staking.total)
+			value: zero ? 30 : valueToNumber(balance.staking.total)
 		}, {
 			color: '#dd375f',
 			id: 'matching',
 			label: "Matching",
-			value: valueToNumber(balance.matching.total)
+			value: zero ? 30 : valueToNumber(balance.matching.total)
 		}].filter(e => !!e)
 	}, [balance])
 	return <div className={'flex w-full h-[400px] p-4 flex-col items-center justify-center'}>
@@ -36,7 +38,9 @@ const PieChartInfo: FC = () => {
 			margin={{top: 60, right: 20, bottom: 10, left: 20}}
 			padAngle={1}
 			cornerRadius={5}
-			tooltip={({datum}) => <div className={'bg-primaryLighter p-2 text-xs flex flex-row items-center gap-1 rounded-md'}>{datum.label}: <BetValue value={datum.value} withIcon/></div>}
+			tooltip={({datum}) => <div className={'bg-primaryLighter p-2 text-xs flex flex-row items-center gap-1 rounded-md'}>
+				{datum.label}: <BetValue value={zero ? 0 : datum.value} withIcon/>
+			</div>}
 			colors={{datum: 'data.color'}}
 			legends={[
 				{
@@ -64,7 +68,7 @@ const PieChartInfo: FC = () => {
 					]
 				}
 			]}
-			layers={['arcs', 'arcLabels', 'arcLinkLabels', 'legends', CenteredMetric]}
+			layers={['arcs', 'arcLabels', 'arcLinkLabels', 'legends', !zero ? CenteredMetric : ZeroMetrics]}
 			enableArcLabels={false}
 			enableArcLinkLabels={false}
 			arcLinkLabelsThickness={3}
@@ -74,12 +78,11 @@ const PieChartInfo: FC = () => {
 	</div>
 };
 
-const CenteredMetric: React.FC<PieCustomLayerProps<any>> = ({dataWithArc, centerX, centerY}) => {
+const CenteredMetric: FC<PieCustomLayerProps<any>> = ({dataWithArc, centerX, centerY}) => {
 	let total = 0
 	dataWithArc.forEach(datum => {
 		total += datum.value
 	})
-	
 	return (
 		<foreignObject x={centerX - 50} y={centerY - 25} width={100} height={50}>
 			<div className={'w-full h-full flex items-center justify-center'}>
@@ -87,6 +90,14 @@ const CenteredMetric: React.FC<PieCustomLayerProps<any>> = ({dataWithArc, center
 			</div>
 		</foreignObject>
 	)
+}
+
+const ZeroMetrics: FC<PieCustomLayerProps<any>> = ({centerX, centerY}) => {
+	return <foreignObject x={centerX - 50} y={centerY - 25} width={100} height={50}>
+		<div className={'w-full h-full flex items-center justify-center'}>
+			<BetValue value={0} withIcon/>
+		</div>
+	</foreignObject>
 }
 
 export default PieChartInfo

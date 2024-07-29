@@ -1,6 +1,5 @@
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "betfinio_app/tabs";
 import LinearTable from "@/src/components/network/LinearTable.tsx";
-import {Link} from "@tanstack/react-router";
 import LinearTree from "@/src/components/network/LinearTree.tsx";
 import BinaryTree from "@/src/components/network/BinaryTree.tsx";
 

@@ -13,6 +13,7 @@ import {useQueryClient} from "@tanstack/react-query";
 import {ArrowLeft, ArrowRight, Layers3, UserPlus, UsersIcon} from "lucide-react";
 import {BetValue} from "betfinio_app/BetValue";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "betfinio_app/tooltip";
+import {useOpenProfile} from "betfinio_app/lib/query/shared";
 
 function MiddleNode({data, node, horizontal = false}: {
 	data: Address,
@@ -25,6 +26,7 @@ function MiddleNode({data, node, horizontal = false}: {
 	const {data: customUsername} = useCustomUsername(address, data as Address);
 	const queryClient = useQueryClient();
 	const {data: me} = useTreeMember(address);
+	const {open} = useOpenProfile();
 	const icons = useMemo(() => {
 		if (!query.data) return []
 		const badges = []
@@ -34,8 +36,6 @@ function MiddleNode({data, node, horizontal = false}: {
 		if (query.data.volume > 0n) badges.push('staking')
 		return badges
 	}, [query.data, me])
-	
-	console.log(icons)
 	
 	
 	const handleInvite = (e: any, parent: string) => {
@@ -65,7 +65,7 @@ function MiddleNode({data, node, horizontal = false}: {
 	
 	const handleClick = (e: any) => {
 		e.stopPropagation();
-		queryClient.setQueryData(['affiliate', 'memberProfile'], query.data.member);
+		open(query.data.member);
 	}
 	
 	const renderIcon = (icon: string, index: number) => {

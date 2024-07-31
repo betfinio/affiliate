@@ -1,10 +1,11 @@
 import {Address} from "viem";
 import {AffiliateContract, AffiliateFundContract, defaultMulticall, MultimintContract, PassContract, ZeroAddress} from "@betfinio/abi";
-import {Balance, Member, Options, TreeMember} from "betfinio_app/lib/types";
+import {Balance, Member, Options, TreeMember, defaultTreeMember} from "betfinio_app/lib/types";
 import {isMember} from "betfinio_app/lib/api/pass";
 import {multicall, readContract, writeContract} from "@wagmi/core";
 import {MemberWithUsername, TableMember} from "@/src/lib/types.ts";
-import {defaultTreeMember, getLevel, getSide} from "@/src/lib/utils.ts";
+import {getLevel, getSide} from "@/src/lib/utils.ts";
+
 
 const PASS_ADDRESS = import.meta.env.PUBLIC_PASS_ADDRESS;
 const AFFILIATE_ADDRESS = import.meta.env.PUBLIC_AFFILIATE_ADDRESS;

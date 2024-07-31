@@ -18,14 +18,13 @@ import {
 import {useAccount, useConfig} from "wagmi";
 import {waitForTransactionReceipt} from "@wagmi/core"
 import {useSupabase} from "betfinio_app/supabase";
-import {Balance} from "betfinio_app/lib/types";
+import {Balance, TreeMember} from "betfinio_app/lib/types";
 import {MemberWithUsername, TableMember} from "@/src/lib/types.ts";
 import {useTranslation} from "react-i18next";
 import {useToast} from "betfinio_app/use-toast";
-import {getTransactionLink} from "@/src/components/utils.tsx";
 import {type WriteContractReturnType} from '@wagmi/core'
 import {ZeroAddress} from "@betfinio/abi";
-import {TreeMember} from "betfinio_app/compiled-types/lib/types/affiliate";
+import {getTransactionLink} from "betfinio_app/helpers";
 
 
 export const useMember = (address?: Address) => {

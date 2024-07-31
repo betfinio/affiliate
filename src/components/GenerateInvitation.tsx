@@ -8,10 +8,11 @@ import MemberInput from "@/src/components/MemberInput.tsx";
 import {BetValue} from "betfinio_app/BetValue";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "betfinio_app/tabs";
 import {Button} from "betfinio_app/button";
-import {Link2Icon} from "lucide-react";
+import {CircleHelp, Link2Icon} from "lucide-react";
 import MintModal from "@/src/components/MintModal.tsx";
 import {Address} from "viem";
 import {toast} from "betfinio_app/use-toast";
+import {Link} from "@tanstack/react-router";
 
 const GenerateInvitation: FC = () => {
 	const {t} = useTranslation('', {keyPrefix: "affiliate.generate"})
@@ -55,6 +56,9 @@ const GenerateInvitation: FC = () => {
 	return (<div className={'grow w-full flex items-end'}>
 			<div className={cx('w-full relative',)}>
 				{(member && !member.is.inviting || !account) && <StakeRequired/>}
+				<a target="_blank" href={'https://betfin.gitbook.io/betfin-public/v/affiliate-manual/affiliate-explanation/binary-tree-and-matching-bonus'}>
+					<CircleHelp className={'absolute top-4 right-4 w-5 h-5'}/>
+				</a>
 				<div className={cx('rounded-lg border md:border-2 h-full border-yellow-400 p-3 md:p-7 md:pt-5 pb-5 ', member && !member.is.inviting && "blur-md")}>
 					<div className={'flex justify-between items-start'}>
 						<div className={' font-semibold'}>
@@ -66,30 +70,46 @@ const GenerateInvitation: FC = () => {
 							onChange={handleFileChange}
 							style={{display: 'none'}}
 						/>
+					
 					</div>
 					<Tabs defaultValue={'auto'}>
 						<TabsList>
 							<TabsTrigger value={'auto'}>Auto position</TabsTrigger>
 							<TabsTrigger value={'manual'}>Manual position</TabsTrigger>
 						</TabsList>
-						<TabsContent value={'manual'}>
+						<TabsContent value={'manual'} className={'flex flex-col gap-2 mt-1'}>
+							<div className={'text-xs'}>Address of new user:</div>
+							<input value={address} onChange={(e) => setAddress(e.target.value)}
+							       placeholder={"New member address: 0x..."}
+							       className={'px-2 md:px-4 py-2 border bg-primary h-[40px] rounded-lg border-gray-400 flex justify-center items-center col-span-5 xl:col-span-3'}/>
+							<div className={'text-xs'}>Parent of new user in Binary tree:</div>
 							<MemberInput value={parent} onChange={setParent}/>
+							<div className={'flex flex-row items-center justify-end gap-2 w-full'}>
+								<Button onClick={handleGenerate} className={'px-4 py-3 flex justify-center items-center w-1/2'}>
+									{t('generate')}
+								</Button>
+								<Button variant={'outline'} onClick={handleLink} className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}>
+									<Link2Icon className={'w-3 h-3'}/>
+									{t('create')}
+								</Button>
+							</div>
+						</TabsContent>
+						<TabsContent value={'auto'} className={'flex gap-2 flex-col mt-0'}>
+							<div className={'text-xs'}>Address of new user:</div>
+							<input value={address} onChange={(e) => setAddress(e.target.value)}
+							       placeholder={"New member address: 0x..."}
+							       className={'px-2 md:px-4 py-2 border bg-primary h-[40px] rounded-lg border-gray-400 flex justify-center items-center w-full '}/>
+							<div className={'flex flex-row items-center justify-end gap-2 w-full'}>
+								<Button onClick={handleGenerate} className={'px-4 py-3 flex justify-center items-center w-1/2'}>
+									{t('generate')}
+								</Button>
+								<Button variant={'outline'} onClick={handleLink} className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}>
+									<Link2Icon className={'w-3 h-3'}/>
+									{t('create')}
+								</Button>
+							</div>
 						</TabsContent>
 					</Tabs>
-					<div className={'mt-2 md:mt-3 gap-3 font-semibold text-sm grid xl:grid-cols-5 pb-2 relative'}>
-						<input value={address} onChange={(e) => setAddress(e.target.value)}
-						       placeholder={"New member address: 0x..."}
-						       className={'px-2 md:px-4 py-2 border bg-primary h-[40px] rounded-lg border-gray-400 flex justify-center items-center col-span-5 xl:col-span-3'}/>
-						<div className={'col-span-5 xl:col-span-2 flex flex-row items-center gap-2 '}>
-							<Button onClick={handleGenerate} className={'px-4 py-3 flex justify-center items-center w-1/2 '}>
-								{t('generate')}
-							</Button>
-							<Button variant={'outline'} onClick={handleLink} className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap'}>
-								<Link2Icon className={'w-3 h-3'}/>
-								{t('create')}
-							</Button>
-						</div>
-					</div>
 					<Button variant={'secondary'} onClick={handleUploadClick}
 					        className={cx('text-xs mt-1 text-white rounded-lg h-[8px] bg-transparent px-0 flex flex-row gap-1 cursor-pointer')}>
 						<span className={'text-yellow-400'}>+</span> Upload invitation CSV

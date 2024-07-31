@@ -50,15 +50,7 @@ const MintModal: FC<{ open: boolean, onClose: () => void, initialMembers?: NewMe
 	}
 	
 	const columns = [
-		columnHelper.accessor('parent', {
-			header: "Parent",
-			meta: {
-				className: 'w-[150px] md:w-[200px] p-2 py-1'
-			},
-			cell: (props) => <MemberInput
-				value={props.getValue()}
-				onChange={(val) => handleParentChange(props.row.index, val)}/>
-		}), columnHelper.accessor('address', {
+		columnHelper.accessor('address', {
 			header: "Address",
 			meta: {
 				className: 'p-2 py-1'
@@ -95,6 +87,15 @@ const MintModal: FC<{ open: boolean, onClose: () => void, initialMembers?: NewMe
 					</div>
 				)
 			},
+		}),
+		columnHelper.accessor('parent', {
+			header: "Parent",
+			meta: {
+				className: 'w-[150px] md:w-[200px] p-2 py-1'
+			},
+			cell: (props) => <MemberInput
+				value={props.getValue()}
+				onChange={(val) => handleParentChange(props.row.index, val)}/>
 		}),
 		columnHelper.display({
 			id: "actions",

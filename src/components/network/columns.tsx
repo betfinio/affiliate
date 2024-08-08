@@ -10,6 +10,8 @@ import {Address} from "viem";
 import {FC} from "react";
 import {useCustomUsername} from "betfinio_app/lib/query/username";
 import {useAccount} from "wagmi";
+import { useRegistrationDate } from "betfinio_app/lib/query/shared";
+import {DateTime} from "luxon";
 
 export const sides = [
 	{
@@ -279,9 +281,9 @@ export const columns = [
 export const MemberAddress: FC<{ member: Address, username?: string }> = ({member, username}) => {
 	const {address} = useAccount();
 	const {data: custom} = useCustomUsername(address, member)
-	
+	const {data: date = 0} = useRegistrationDate(member)
 	return <div className={cx('flex flex-col text-xs')}>
 		<span className={'text-sm'}>{custom ? custom : username ? username : truncateEthAddress(member)}</span>
-		<span className={'text-gray-400'}>24.02.2024</span>
+		<span className={'text-gray-400'}>{DateTime.fromMillis(date).toFormat('DD')}</span>
 	</div>
 }

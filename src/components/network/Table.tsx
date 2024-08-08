@@ -30,7 +30,7 @@ export function DataTable<TData, TValue>({
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
 		'activity': false,
 		'category': false,
-		'username': false
+		'username': false,
 	})
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([{
 		id: 'side',
@@ -61,9 +61,9 @@ export function DataTable<TData, TValue>({
 	})
 	
 	return (
-		<div className="space-y-2 affiliate">
+		<div className="space-y-2 affiliate w-full">
 			<DataTableToolbar table={table}/>
-			<div className="rounded-md border border-gray-800">
+			<div className="rounded-md border border-gray-800 w-full">
 				<Table>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (

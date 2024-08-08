@@ -4,7 +4,7 @@ import LinearTree from "@/src/components/network/LinearTree.tsx";
 import BinaryTree from "@/src/components/network/BinaryTree.tsx";
 
 const TablesWrapper = () => {
-	return <div className={'mt-4 overflow-x-hidden max-w-[100vw]'}>
+	return <div className={'mt-4 overflow-x-hidden max-w-[98vw] w-full'}>
 		<Tabs defaultValue={'linear_table'} className={'min-h-[40vh]'}>
 			<TabsList>
 				<TabsTrigger value={'linear_table'}>Linear table</TabsTrigger>

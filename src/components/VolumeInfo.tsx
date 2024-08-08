@@ -44,7 +44,6 @@ const UnmatchedLeftVolume: FC = () => {
 	if (!member) return null;
 	const left = member.volume.left + (member.bets.left / 100n) - member.matched.left;
 	const right = member.volume.right + (member.bets.right / 100n) - member.matched.right;
-	const leftPer = valueToNumber(left / (left + right)) * 100 || 0
 	return <div
 		className='relative cursor-pointer border border-gray-800 px-6 lg:px-0 py-6 lg:py-8 flex flex-col gap-2 items-center bg-primaryLighter rounded-lg'>
 		<div className={'grid grid-cols-3 items-center'}>
@@ -79,8 +78,6 @@ const UnmatchedRightVolume: FC = () => {
 	if (!member) return null;
 	const left = member.volume.left + (member.bets.left / 100n) - member.matched.left;
 	const right = member.volume.right + (member.bets.right / 100n) - member.matched.right;
-	const rightPer = valueToNumber(right / (left + right)) * 100 || 0
-	console.log(right, left)
 	return <div
 		className='relative cursor-pointer border border-gray-800 py-6 lg:py-8 flex flex-col px-6 gap-2 items-center bg-primaryLighter rounded-lg'>
 		<div className={'grid grid-cols-3 items-center gap-4'}>

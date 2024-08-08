@@ -6,6 +6,10 @@ import {Blackjack} from "@betfinio/ui/dist/icons";
 import {truncateEthAddress} from "@betfinio/abi";
 import {BetValue} from "betfinio_app/BetValue";
 import cx from "clsx";
+import {Address} from "viem";
+import {FC} from "react";
+import {useCustomUsername} from "betfinio_app/lib/query/username";
+import {useAccount} from "wagmi";
 
 export const sides = [
 	{
@@ -55,7 +59,7 @@ export const categories = [
 	},
 ]
 
-const columnHelper = createColumnHelper<TableMember>()
+export const columnHelper = createColumnHelper<TableMember>()
 
 export const columns = [
 	columnHelper.accessor('member', {
@@ -72,10 +76,7 @@ export const columns = [
 				'bg-yellow-400': row.original.category === 'matching',
 				'bg-[#292546]': row.original.category === 'inactive',
 			})}/>
-			<div className={cx('flex flex-col text-xs')}>
-				<span>{truncateEthAddress(getValue())}</span>
-				<span className={'text-gray-400'}>{row.original.username}</span>
-			</div>
+			<MemberAddress member={getValue()} username={row.original.username || undefined}/>
 		</div>,
 		enableSorting: false,
 		enableHiding: false,
@@ -273,3 +274,14 @@ export const columns = [
 		},
 	})
 ]
+
+
+export const MemberAddress: FC<{ member: Address, username?: string }> = ({member, username}) => {
+	const {address} = useAccount();
+	const {data: custom} = useCustomUsername(address, member)
+	
+	return <div className={cx('flex flex-col text-xs')}>
+		<span className={'text-sm'}>{custom ? custom : username ? username : truncateEthAddress(member)}</span>
+		<span className={'text-gray-400'}>24.02.2024</span>
+	</div>
+}

@@ -308,6 +308,6 @@ export const MemberAddress: FC<{ member: Address, username?: string }> = ({membe
 	const {data: date = 0} = useRegistrationDate(member)
 	return <div className={cx('flex flex-col text-xs')}>
 		<span className={'text-sm'}>{custom ? custom : username ? username : truncateEthAddress(member)}</span>
-		<span className={'text-gray-400'}>{DateTime.fromMillis(date).toFormat('DD')}</span>
+		<span className={'text-gray-400'}>{date > 0 && DateTime.fromMillis(date).toFormat('DD')}</span>
 	</div>
 }

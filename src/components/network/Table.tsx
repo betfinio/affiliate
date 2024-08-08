@@ -31,6 +31,7 @@ export function DataTable<TData, TValue>({
 		'activity': false,
 		'category': false,
 		'username': false,
+		'level': false,
 	})
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([{
 		id: 'side',

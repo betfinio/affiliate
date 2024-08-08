@@ -9,9 +9,24 @@ const getApp = () => {
 		case 'development':
 			return 'betfinio_app@https://betfin-app-dev.web.app/mf-manifest.json'
 		case 'production':
-			return 'betfinio_app@https://betfin-app.web.app/mf-manifest.json'
+			return 'betfinio_app@https://betfin.io/mf-manifest.json'
+		case 'production-ua':
+			return 'betfinio_app@https://betfin.gg/mf-manifest.json'
 		default:
 			return 'betfinio_app@http://localhost:5555/mf-manifest.json'
+	}
+}
+
+function getOutput() {
+	switch (process.env.PUBLIC_ENVIRONMENT) {
+		case 'development':
+			return 'https://betfin-affiliate-dev.web.app';
+		case 'production':
+			return 'https://affiliate.betfin.io';
+		case 'production-ua':
+			return 'https://affiliate.betfin.gg';
+		default:
+			return 'http://localhost:5555';
 	}
 }
 
@@ -21,15 +36,13 @@ export default defineConfig({
 	},
 	dev: {
 		assetPrefix: 'http://localhost:8888',
-		hmr: true,
-		liveReload: false
 	},
 	html: {
 		title: 'BetFin Affiliate',
 		favicon: './src/assets/favicon.svg',
 	},
 	output: {
-		assetPrefix: process.env.PUBLIC_ENVIRONMENT === 'production' ? 'https://betfin-affiliate.web.app' : 'https://betfin-affiliate-dev.web.app'
+		assetPrefix: getOutput()
 	},
 	plugins: [pluginReact()],
 	tools: {

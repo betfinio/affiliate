@@ -4,9 +4,10 @@ import {Popover} from "betfinio_app/popover"
 import {Button} from "betfinio_app/button";
 import {CheckIcon, CirclePlus} from "lucide-react";
 import {Badge} from "betfinio_app/badge";
-import {Command, CommandEmpty, CommandList, CommandInput, CommandGroup, CommandItem, CommandSeparator} from "betfinio_app/command";
+import {Command, CommandList, CommandGroup, CommandItem} from "betfinio_app/command";
 import {Separator} from "betfinio_app/separator";
 import cx from "clsx";
+import {ComponentType} from "react";
 
 interface DataTableFacetedFilterProps<TData, TValue> {
 	column?: Column<TData, TValue>
@@ -14,7 +15,7 @@ interface DataTableFacetedFilterProps<TData, TValue> {
 	options: {
 		label: string
 		value: string
-		icon?: React.ComponentType<{ className?: string }>
+		icon?: ComponentType<{ className?: string }>
 	}[]
 }
 
@@ -91,18 +92,18 @@ export function DataTableFacetedFilter<TData, TValue>({
 									>
 										<div
 											className={cx(
-												"mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+												"mr-2 flex h-4 w-4 items-center justify-center  rounded-sm border ",
 												isSelected
-													? "bg-primary text-white"
-													: "opacity-50 [&_svg]:invisible"
+													? "bg-primary text-white "
+													: "[&_svg]:invisible"
 											)}
 										>
-											<CheckIcon className={cx("h-4 w-4")}/>
+											{isSelected && <CheckIcon className={cx("h-4 w-4")}/>}
 										</div>
 										{option.icon && (
-											<option.icon className="mr-2 h-4 w-4 text-muted-foreground"/>
+											<option.icon className={cx('mr-2 h-4 w-4', isSelected && 'text-white')}/>
 										)}
-										<span>{option.label}</span>
+										<span className={cx(isSelected && 'text-white')}>{option.label}</span>
 										{facets?.get(option.value) && (
 											<span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
                         {facets.get(option.value)}

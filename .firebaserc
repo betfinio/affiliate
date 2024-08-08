@@ -11,6 +11,9 @@
         "affiliate-dev": [
           "betfin-affiliate-dev"
         ]
+        "affiliate-ua": [
+          "betfin-affiliate-ua"
+        ]
       }
     }
   }

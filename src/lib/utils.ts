@@ -1,5 +1,5 @@
-import {TreeMember} from "betfinio_app/lib/types";
-import {ZeroAddress} from "@betfinio/abi";
+import { ZeroAddress } from '@betfinio/abi';
+import { TreeMember } from 'betfinio_app/lib/types';
 
 export const getSide = (id: bigint, parent: bigint): 'left' | 'right' | null => {
 	if (id === 0n) return null;
@@ -11,7 +11,7 @@ export const getSide = (id: bigint, parent: bigint): 'left' | 'right' | null => 
 		else tmp = (tmp - 1n) / 2n;
 	}
 	return null;
-}
+};
 
 export const getLevel = (id: bigint, parent: bigint): number => {
 	if (id === 0n) return 0;
@@ -25,5 +25,4 @@ export const getLevel = (id: bigint, parent: bigint): number => {
 		lvl++;
 	}
 	return lvl;
-}
-
+};

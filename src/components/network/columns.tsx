@@ -1,307 +1,294 @@
-import {createColumnHelper} from "@tanstack/react-table"
-import {DataTableColumnHeader} from "@/src/components/network/ColumnHeader.tsx";
-import {TableMember} from "@/src/lib/types";
-import {Annoyed, ArrowLeft, ArrowLeftCircle, ArrowRight, ArrowRightCircle, Dices, Layers3} from "lucide-react";
-import {Blackjack} from "@betfinio/ui/dist/icons";
-import {truncateEthAddress} from "@betfinio/abi";
-import {BetValue} from "betfinio_app/BetValue";
-import cx from "clsx";
-import {Address} from "viem";
-import {FC} from "react";
-import {useCustomUsername} from "betfinio_app/lib/query/username";
-import {useAccount} from "wagmi";
-import {useRegistrationDate} from "betfinio_app/lib/query/shared";
-import {DateTime} from "luxon";
+import { DataTableColumnHeader } from '@/src/components/network/ColumnHeader.tsx';
+import type { TableMember } from '@/src/lib/types';
+import { truncateEthAddress } from '@betfinio/abi';
+import { Blackjack } from '@betfinio/ui/dist/icons';
+import { createColumnHelper } from '@tanstack/react-table';
+import { BetValue } from 'betfinio_app/BetValue';
+import { useRegistrationDate } from 'betfinio_app/lib/query/shared';
+import { useCustomUsername } from 'betfinio_app/lib/query/username';
+import cx from 'clsx';
+import { Annoyed, ArrowLeft, ArrowLeftCircle, ArrowRight, ArrowRightCircle, Dices, Layers3 } from 'lucide-react';
+import { DateTime } from 'luxon';
+import type { FC } from 'react';
+import type { Address } from 'viem';
+import { useAccount } from 'wagmi';
 
 export const sides = [
 	{
-		value: "left",
-		label: "Left",
+		value: 'left',
+		label: 'Left',
 		icon: ArrowLeft,
 	},
 	{
-		value: "right",
-		label: "Right",
+		value: 'right',
+		label: 'Right',
 		icon: ArrowRight,
-	}
-]
+	},
+];
 
 export const activities = [
 	{
-		label: "Betting",
-		value: "betting",
+		label: 'Betting',
+		value: 'betting',
 		icon: Blackjack,
 	},
 	{
-		label: "Staking",
-		value: "staking",
+		label: 'Staking',
+		value: 'staking',
 		icon: Layers3,
 	},
-]
+];
 export const categories = [
 	{
-		value: "inviting",
-		label: "Direct affiliate active",
+		value: 'inviting',
+		label: 'Direct affiliate active',
 		icon: Blackjack,
 	},
 	{
-		value: "matching",
-		label: "Binary matching active",
+		value: 'matching',
+		label: 'Binary matching active',
 		icon: Layers3,
 	},
 	{
-		value: "active",
-		label: "Active member",
+		value: 'active',
+		label: 'Active member',
 		icon: Dices,
 	},
 	{
-		value: "inactive",
-		label: "Inactive member",
+		value: 'inactive',
+		label: 'Inactive member',
 		icon: Annoyed,
 	},
-]
+];
 
-export const columnHelper = createColumnHelper<TableMember>()
+export const columnHelper = createColumnHelper<TableMember>();
 export const getColumns = (depth: number) => [
 	columnHelper.group({
 		id: 'memberInfo',
-		header: () => <div className={'w-full text-center border-x border-gray-800'}>Client</div>,
+		header: () => <div className={'w-full text-center border-x border-gray-800'}>Member's data</div>,
 		columns: [
 			columnHelper.accessor('member', {
 				meta: {
-					className: "min-w-[130px]",
+					className: 'min-w-[130px]',
 				},
-				header: ({column}) => (
-					<DataTableColumnHeader column={column} title="Member"/>
+				header: ({ column }) => <DataTableColumnHeader column={column} title="Member" />,
+				cell: ({ getValue, row }) => (
+					<div className={'flex whitespace-nowrap flex-row items-center gap-2'}>
+						<div
+							className={cx('!w-6 aspect-square !h-6 rounded-full', {
+								'bg-green-400': row.original.category === 'active',
+								'bg-red-roulette': row.original.category === 'inviting',
+								'bg-yellow-400': row.original.category === 'matching',
+								'bg-[#292546]': row.original.category === 'inactive',
+							})}
+						/>
+						<MemberAddress member={getValue()} username={row.original.username || undefined} />
+					</div>
 				),
-				cell: ({getValue, row}) => <div className={'flex whitespace-nowrap flex-row items-center gap-2'}>
-					<div className={cx('!w-6 aspect-square !h-6 rounded-full', {
-						'bg-green-400': row.original.category === 'active',
-						'bg-red-roulette': row.original.category === 'inviting',
-						'bg-yellow-400': row.original.category === 'matching',
-						'bg-[#292546]': row.original.category === 'inactive',
-					})}/>
-					<MemberAddress member={getValue()} username={row.original.username || undefined}/>
-				</div>,
 				enableSorting: false,
 				enableHiding: false,
 			}),
-			depth > 0 ? columnHelper.accessor('level', {
-				id: 'lvl',
-				header: ({column}) => (
-					<DataTableColumnHeader column={column} title="LVL"/>
-				),
-				cell: () => {
-					return (
-						<div className="flex items-center justify-center">
-							<div className={'border border-gray-500 rounded-full px-1 py-0.5 lg:min-w-[40px] flex justify-center'}>
-								{depth}
-							</div>
-						</div>
-					)
-				},
-			}) : null,
+			depth > 0
+				? columnHelper.accessor('level', {
+						id: 'lvl',
+						header: ({ column }) => <DataTableColumnHeader column={column} title="LVL" />,
+						cell: () => {
+							return (
+								<div className="flex items-center justify-center">
+									<div className={'border border-gray-500 rounded-full px-1 py-0.5 lg:min-w-[40px] flex justify-center'}>{depth}</div>
+								</div>
+							);
+						},
+					})
+				: null,
 			columnHelper.accessor('side', {
-				header: ({column}) => (
-					<DataTableColumnHeader column={column} title="Side"/>
+				header: ({ column }) => (
+					<div className={'border-r border-gray-800'}>
+						<DataTableColumnHeader column={column} title="Side" />
+					</div>
 				),
-				cell: ({row}) => {
-					const side = sides.find(
-						(status) => status.value === row.getValue("side")
-					)
+				cell: ({ row }) => {
+					const side = sides.find((status) => status.value === row.getValue('side'));
 					if (!side) {
-						return null
+						return null;
 					}
 					const classNames = {
 						'text-green-400': row.original.category === 'active',
 						'text-red-roulette': row.original.category === 'inviting',
 						'text-yellow-400': row.original.category === 'matching',
 						'text-gray-400': row.original.category === 'inactive',
-					}
+					};
 					return (
-						<div className="flex items-center justify-center">
-							{row.original.side === 'left' ?
-								<ArrowLeftCircle className={cx('w-6 h-6', classNames)}/> :
-								<ArrowRightCircle className={cx('w-6 h-6', classNames)}/>}
+						<div className="flex items-center justify-center  border-gray-800 border-r">
+							{row.original.side === 'left' ? (
+								<ArrowLeftCircle className={cx('w-6 h-6', classNames)} />
+							) : (
+								<ArrowRightCircle className={cx('w-6 h-6', classNames)} />
+							)}
 						</div>
-					)
+					);
 				},
 				filterFn: (row, id, value) => {
-					return value.includes(row.getValue(id))
+					return value.includes(row.getValue(id));
 				},
-			})
-		].filter((e) => e !== null)
+			}),
+		].filter((e) => e !== null),
 	}),
 	columnHelper.group({
 		meta: {
-			className: 'hidden lg:table-cell '
+			className: 'hidden lg:table-cell ',
 		},
 		id: 'activity',
-		header: () => <div className={'w-full text-center border-x border-gray-800'}>Activity</div>,
+		header: () => <div className={'w-full text-center border-r border-gray-800'}>Member's activity</div>,
 		columns: [
 			columnHelper.accessor('staking', {
-				header: ({column}) => (
-					<DataTableColumnHeader column={column} title="Staking"/>
-				),
+				header: ({ column }) => <DataTableColumnHeader column={column} title="Staking" />,
 				meta: {
-					className: 'hidden lg:table-cell '
+					className: 'hidden lg:table-cell ',
 				},
-				cell: ({getValue}) => {
+				cell: ({ getValue }) => {
 					return (
 						<div className="flex items-center justify-center">
-							<BetValue value={getValue()} withIcon/>
+							<BetValue value={getValue()} withIcon />
 						</div>
-					)
+					);
 				},
 				filterFn: (row, id, value) => {
-					return value.includes(row.getValue(id))
+					return value.includes(row.getValue(id));
 				},
 			}),
-			
+
 			columnHelper.accessor('betting', {
-				header: ({column}) => (
-					<DataTableColumnHeader column={column} title="Betting"/>
+				header: ({ column }) => (
+					<div className={'border-r border-gray-800'}>
+						<DataTableColumnHeader column={column} title="Betting" />
+					</div>
 				),
 				meta: {
-					className: 'hidden lg:table-cell '
+					className: 'hidden lg:table-cell ',
 				},
-				cell: ({getValue}) => {
+				cell: ({ getValue }) => {
 					return (
-						<div className="flex items-center justify-center">
-							<BetValue value={getValue()} withIcon/>
+						<div className="flex items-center justify-center border-gray-800 border-r">
+							<BetValue value={getValue()} withIcon />
 						</div>
-					)
+					);
 				},
 				filterFn: (row, id, value) => {
-					return value.includes(row.getValue(id))
+					return value.includes(row.getValue(id));
 				},
-			})
-		]
+			}),
+		],
 	}),
 	columnHelper.group({
 		id: 'network',
-		header: () => <div className={'w-full text-center border-x border-gray-800'}>Network</div>,
+		header: () => <div className={'w-full text-center'}>Member's Network</div>,
 		columns: [
 			columnHelper.accessor('activity', {
 				id: 'activity',
-				header: ({column}) => (
-					<DataTableColumnHeader column={column} title="Activity"/>
-				),
+				header: ({ column }) => <DataTableColumnHeader column={column} title="Activity" />,
 				enableHiding: true,
 				cell: () => null,
 				filterFn: (row, id, value) => {
-					return value.some((v: string) => (row.getValue(id) as string[]).includes(v))
+					return value.some((v: string) => (row.getValue(id) as string[]).includes(v));
 				},
 			}),
 			columnHelper.accessor('category', {
 				id: 'category',
-				header: ({column}) => (
-					<DataTableColumnHeader column={column} title="Category"/>
-				),
+				header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
 				enableHiding: true,
-				cell: ({row}) => {
-					const category = categories.find(
-						(priority) => priority.value === row.getValue("category")
-					)
-					
+				cell: ({ row }) => {
+					const category = categories.find((priority) => priority.value === row.getValue('category'));
+
 					if (!category) {
-						return null
+						return null;
 					}
-					
+
 					return (
 						<div className="flex items-center justify-center">
-							{category.icon && (
-								<category.icon className="mr-2 h-4 w-4 text-muted-foreground"/>
-							)}
+							{category.icon && <category.icon className="mr-2 h-4 w-4 text-muted-foreground" />}
 							<span>{category.label}</span>
 						</div>
-					)
+					);
 				},
 				filterFn: (row, id, value) => {
-					return value.includes(row.getValue(id))
+					return value.includes(row.getValue(id));
 				},
 			}),
 			columnHelper.accessor('direct_count', {
 				id: 'count',
-				header: ({column}) => (
-					<DataTableColumnHeader column={column} title="Direct(total)"/>
-				),
-				cell: ({row}) => {
+				header: ({ column }) => <DataTableColumnHeader column={column} title="Direct(total)" />,
+				cell: ({ row }) => {
 					return (
 						<div className="flex items-center justify-center">
 							{Number(row.original.direct_count)} ({Number(row.original.binary_count)})
 						</div>
-					)
+					);
 				},
 				filterFn: (row, id, value) => {
-					return value.includes(row.getValue(id))
+					return value.includes(row.getValue(id));
 				},
 			}),
 			columnHelper.accessor('staking_volume', {
 				id: 'staking_volume',
 				meta: {
-					className: 'hidden xl:table-cell '
+					className: 'hidden xl:table-cell ',
 				},
-				header: ({column}) => (
-					<DataTableColumnHeader column={column} title="Staking volume"/>
-				),
-				cell: ({getValue}) => {
+				header: ({ column }) => <DataTableColumnHeader column={column} title="Staking volume" />,
+				cell: ({ getValue }) => {
 					return (
 						<div className="flex items-center justify-center">
-							<BetValue value={getValue()} withIcon/>
+							<BetValue value={getValue()} withIcon />
 						</div>
-					)
+					);
 				},
 				filterFn: (row, id, value) => {
-					return value.includes(row.getValue(id))
+					return value.includes(row.getValue(id));
 				},
 			}),
 			columnHelper.accessor('betting_volume', {
 				id: 'betting_volume',
 				meta: {
-					className: 'hidden xl:table-cell '
+					className: 'hidden xl:table-cell ',
 				},
-				header: ({column}) => (
-					<DataTableColumnHeader column={column} title="Betting volume"/>
-				),
-				cell: ({getValue}) => {
+				header: ({ column }) => <DataTableColumnHeader column={column} title="Betting volume" />,
+				cell: ({ getValue }) => {
 					return (
 						<div className="flex items-center justify-center">
-							<BetValue value={getValue()} withIcon/>
+							<BetValue value={getValue()} withIcon />
 						</div>
-					)
+					);
 				},
 				filterFn: (row, id, value) => {
-					return value.includes(row.getValue(id))
+					return value.includes(row.getValue(id));
 				},
 			}),
 			columnHelper.accessor('betting_volume', {
 				id: 'total_volume',
-				header: ({column}) => (
-					<DataTableColumnHeader column={column} title="Total volume"/>
-				),
-				cell: ({row}) => {
+				header: ({ column }) => <DataTableColumnHeader column={column} title="Total volume" />,
+				cell: ({ row }) => {
 					return (
 						<div className="flex items-center justify-center">
-							<BetValue value={row.original.betting_volume + row.original.staking_volume} withIcon/>
+							<BetValue value={row.original.betting_volume / 100n + row.original.staking_volume} withIcon />
 						</div>
-					)
+					);
 				},
 				filterFn: (row, id, value) => {
-					return value.includes(row.getValue(id))
+					return value.includes(row.getValue(id));
 				},
-			})
-		]
+			}),
+		],
 	}),
-]
+];
 
-
-export const MemberAddress: FC<{ member: Address, username?: string }> = ({member, username}) => {
-	const {address} = useAccount();
-	const {data: custom} = useCustomUsername(address, member)
-	const {data: date = 0} = useRegistrationDate(member)
-	return <div className={cx('flex flex-col text-xs')}>
-		<span className={'text-sm'}>{custom ? custom : username ? username : truncateEthAddress(member)}</span>
-		<span className={'text-gray-400'}>{date > 0 && DateTime.fromMillis(date).toFormat('DD')}</span>
-	</div>
-}
+export const MemberAddress: FC<{ member: Address; username?: string }> = ({ member, username }) => {
+	const { address } = useAccount();
+	const { data: custom } = useCustomUsername(address, member);
+	const { data: date = 0 } = useRegistrationDate(member);
+	return (
+		<div className={cx('flex flex-col text-xs')}>
+			<span className={'text-sm'}>{custom ? custom : username ? username : truncateEthAddress(member)}</span>
+			<span className={'text-gray-400'}>{date > 0 && DateTime.fromMillis(date).toFormat('DD')}</span>
+		</div>
+	);
+};

@@ -28,7 +28,7 @@ jobs:
       - run: bun install
         env:
           BUN_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - run: bun run build --env-mode production
+      - run: bun run build --env-mode production-ua
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'

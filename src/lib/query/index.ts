@@ -1,46 +1,46 @@
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {Address} from "viem";
-import {Member} from "betfinio_app/lib/types";
 import {
 	claimDirect,
 	claimMatching,
 	fetchAffiliateConditions,
 	fetchBalances,
 	fetchDailyLimit,
-	fetchInviteCondition, fetchLinearMembers,
+	fetchInviteCondition,
+	fetchLinearMembers,
 	fetchMember,
 	fetchMemberSide,
-	fetchPendingMatching, fetchTreeMember,
+	fetchPendingMatching,
+	fetchTreeMember,
 	findMembersByAddress,
 	findMembersByUsername,
-	multimint
-} from "@/src/lib/api";
-import {useAccount, useConfig} from "wagmi";
-import {waitForTransactionReceipt} from "@wagmi/core"
-import {useSupabase} from "betfinio_app/supabase";
-import {Balance, TreeMember} from "betfinio_app/lib/types";
-import {MemberWithUsername, TableMember} from "@/src/lib/types.ts";
-import {useTranslation} from "react-i18next";
-import {useToast} from "betfinio_app/use-toast";
-import {type WriteContractReturnType} from '@wagmi/core'
-import {ZeroAddress} from "@betfinio/abi";
-import {getTransactionLink} from "betfinio_app/helpers";
-
+	multimint,
+} from '@/src/lib/api';
+import type { MemberWithUsername, TableMember } from '@/src/lib/types.ts';
+import { ZeroAddress } from '@betfinio/abi';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { waitForTransactionReceipt } from '@wagmi/core';
+import type { WriteContractReturnType } from '@wagmi/core';
+import { getTransactionLink } from 'betfinio_app/helpers';
+import type { Member } from 'betfinio_app/lib/types';
+import type { Balance, TreeMember } from 'betfinio_app/lib/types';
+import { useSupabase } from 'betfinio_app/supabase';
+import { useToast } from 'betfinio_app/use-toast';
+import { useTranslation } from 'react-i18next';
+import type { Address, WriteContractErrorType } from 'viem';
+import { useAccount, useConfig } from 'wagmi';
 
 export const useMember = (address?: Address) => {
-	const config = useConfig()
-	const {client} = useSupabase()
+	const config = useConfig();
+	const { client } = useSupabase();
 	return useQuery<Member | undefined>({
 		queryKey: ['affiliate', 'member', address],
-		queryFn: async () => fetchMember(address, {config: config, supabase: client}),
+		queryFn: async () => fetchMember(address, { config: config, supabase: client }),
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
-	})
-}
-
+	});
+};
 
 export const useEarningBalances = (address?: Address) => {
-	const config = useConfig()
+	const config = useConfig();
 	return useQuery<Balance>({
 		queryKey: ['affiliate', 'balances', address],
 		initialData: {
@@ -61,236 +61,238 @@ export const useEarningBalances = (address?: Address) => {
 				claimed: 0n,
 				total: 0n,
 				claimableDaily: 0n,
-			}
+			},
 		},
-		queryFn: async () => fetchBalances(address, {config})
-	})
-}
-
+		queryFn: async () => fetchBalances(address, { config }),
+	});
+};
 
 export const usePendingMatchingBonus = (address?: Address) => {
 	const config = useConfig();
-	const {client} = useSupabase();
+	const { client } = useSupabase();
 	return useQuery<bigint>({
 		queryKey: ['affiliate', 'pendingMatching', address],
-		queryFn: async () => fetchPendingMatching(address, {config: config, supabase: client})
-	})
-}
+		queryFn: async () => fetchPendingMatching(address, { config: config, supabase: client }),
+	});
+};
 export const useDailyLimit = (address?: Address) => {
 	const config = useConfig();
 	return useQuery<bigint>({
 		queryKey: ['affiliate', 'dailyLimit', address],
-		queryFn: async () => fetchDailyLimit(address, {config})
-	})
-}
+		queryFn: async () => fetchDailyLimit(address, { config }),
+	});
+};
 
 export const useInviteCondition = () => {
 	const config = useConfig();
 	return useQuery({
 		queryKey: ['affiliate', 'inviteStakingCondition'],
-		queryFn: () => fetchInviteCondition({config})
-	})
-}
+		queryFn: () => fetchInviteCondition({ config }),
+	});
+};
 
 export const usePossibleUsernames = (value: string) => {
-	const {client} = useSupabase()
+	const { client } = useSupabase();
 	return useQuery<MemberWithUsername[]>({
 		queryKey: ['affiliate', 'possibleUsernames', value],
-		queryFn: async () => findMembersByUsername(value, {supabase: client}),
+		queryFn: async () => findMembersByUsername(value, { supabase: client }),
 		enabled: value.length > 2,
-	})
-}
+	});
+};
 export const usePossibleAddresses = (value: string) => {
-	const {client} = useSupabase()
+	const { client } = useSupabase();
 	return useQuery<MemberWithUsername[]>({
 		queryKey: ['affiliate', 'possibleAddresses', value],
-		queryFn: async () => findMembersByAddress(value, {supabase: client}),
+		queryFn: async () => findMembersByAddress(value, { supabase: client }),
 		enabled: value.length > 2,
-	})
-}
+	});
+};
 export const useMemberSide = (member: Address | undefined, user: Address | undefined) => {
-	const {client} = useSupabase()
+	const { client } = useSupabase();
 	return useQuery<'left' | 'right' | null>({
 		queryKey: ['affiliate', 'side', member, user],
-		queryFn: async () => fetchMemberSide(member, user, {supabase: client}),
-	})
-}
+		queryFn: async () => fetchMemberSide(member, user, { supabase: client }),
+	});
+};
 
 export const useAffiliateConditions = () => {
 	const config = useConfig();
 	return useQuery<bigint[]>({
 		queryKey: ['affiliate', 'conditions'],
-		queryFn: () => fetchAffiliateConditions({config})
-	})
-}
-
+		queryFn: () => fetchAffiliateConditions({ config }),
+	});
+};
 
 export const useLinearMembers = (address: Address) => {
 	const config = useConfig();
-	const {client} = useSupabase();
+	const { client } = useSupabase();
 	return useQuery<TableMember[]>({
 		queryKey: ['affiliate', 'members', 'linear', address],
-		queryFn: () => fetchLinearMembers(address, {config, supabase: client}),
+		queryFn: () => fetchLinearMembers(address, { config, supabase: client }),
 		refetchOnWindowFocus: false,
-		refetchOnMount: false
-	})
-}
+		refetchOnMount: false,
+	});
+};
 
 export const useTreeMember = (address: Address) => {
-	const {client} = useSupabase();
+	const { client } = useSupabase();
 	return useQuery<TreeMember>({
 		queryKey: ['affiliate', 'members', 'tree', 'member', address],
-		queryFn: () => fetchTreeMember(address, {supabase: client}),
+		queryFn: () => fetchTreeMember(address, { supabase: client }),
 		refetchOnMount: false,
-		refetchOnWindowFocus: false
-	})
-}
+		refetchOnWindowFocus: false,
+	});
+};
 
 interface MintParams {
-	members: Address[],
-	parents: Address[]
+	members: Address[];
+	parents: Address[];
 }
 
 export const useMultimint = () => {
 	const config = useConfig();
-	const {t} = useTranslation('', {keyPrefix: 'shared.errors'})
-	const {toast} = useToast();
-	return useMutation<any, any, MintParams>({
+	const { t } = useTranslation('', { keyPrefix: 'shared.errors' });
+	const { toast } = useToast();
+	return useMutation<WriteContractReturnType, WriteContractErrorType, MintParams>({
 		mutationKey: ['affiliate', 'multimint'],
-		mutationFn: ({members, parents}) => multimint(members, parents, {config}),
+		mutationFn: ({ members, parents }) => multimint(members, parents, { config }),
 		onError: (e) => {
-			console.log('error', e, e.cause, e.cause.reason)
-			if (e && e.cause && e.cause.reason) {
+			// @ts-ignore
+			console.log('error', e, e.cause, e.cause.reason);
+			// @ts-ignore
+			if (e?.cause?.reason) {
 				toast({
-					title: "Failed to mint passes",
+					title: 'Failed to mint passes',
+					// @ts-ignore
 					description: t(e.cause.reason),
-					variant: 'destructive'
-				})
+					variant: 'destructive',
+				});
 			} else {
 				toast({
 					title: t('unknown'),
-					variant: 'destructive'
-				})
+					variant: 'destructive',
+				});
 			}
 		},
 		onSuccess: async (data) => {
 			if (data !== undefined) {
-				const {id, update} = toast({
-					title: "Minting passes",
-					description: "Transaction submitted",
+				const { id, update } = toast({
+					title: 'Minting passes',
+					description: 'Transaction submitted',
 					variant: 'loading',
-					duration: 60 * 1000
-				})
+					duration: 60 * 1000,
+				});
 				await waitForTransactionReceipt(config, {
-					hash: data
-				})
+					hash: data,
+				});
 				update({
-					title: "Passes were minted",
-					description: "Transaction confirmed",
+					title: 'Passes were minted',
+					description: 'Transaction confirmed',
 					variant: 'default',
 					duration: 5 * 1000,
 					id: id,
-					action: getTransactionLink(data)
-				})
+					action: getTransactionLink(data),
+				});
 			}
-		}
-	})
-}
-
+		},
+	});
+};
 
 export const useClaimDirect = () => {
 	const config = useConfig();
 	const queryClient = useQueryClient();
-	const {t} = useTranslation('', {keyPrefix: 'shared.errors'})
-	const {toast} = useToast();
-	return useMutation<WriteContractReturnType, any>({
+	const { t } = useTranslation('', { keyPrefix: 'shared.errors' });
+	const { toast } = useToast();
+	return useMutation<WriteContractReturnType, WriteContractErrorType>({
 		mutationKey: ['affiliate', 'claim', 'direct'],
-		mutationFn: () => claimDirect({config}),
+		mutationFn: () => claimDirect({ config }),
 		onError: (e) => {
-			console.log('error', e, e.cause, e.cause.reason)
-			if (e && e.cause && e.cause.reason) {
+			// @ts-ignore
+			if (e?.cause?.reason) {
 				toast({
-					title: "Failed to claim direct bonus",
+					title: 'Failed to claim direct bonus',
+					// @ts-ignore
 					description: t(e.cause.reason),
-					variant: 'destructive'
-				})
+					variant: 'destructive',
+				});
 			} else {
 				toast({
 					title: t('unknown'),
-					variant: 'destructive'
-				})
+					variant: 'destructive',
+				});
 			}
 		},
 		onSuccess: async (data) => {
 			if (data !== undefined) {
-				const {id, update} = toast({
-					title: "Claiming direct bonus",
-					description: "Transaction submitted",
+				const { id, update } = toast({
+					title: 'Claiming direct bonus',
+					description: 'Transaction submitted',
 					variant: 'loading',
-					duration: 60 * 1000
-				})
+					duration: 60 * 1000,
+				});
 				await waitForTransactionReceipt(config, {
-					hash: data
-				})
+					hash: data,
+				});
 				update({
-					title: "Direct bonus claimed",
-					description: "Transaction confirmed",
+					title: 'Direct bonus claimed',
+					description: 'Transaction confirmed',
 					variant: 'default',
 					duration: 5 * 1000,
 					id: id,
-					action: getTransactionLink(data)
-				})
-				await queryClient.invalidateQueries({queryKey: ['affiliate']})
+					action: getTransactionLink(data),
+				});
+				await queryClient.invalidateQueries({ queryKey: ['affiliate'] });
 			}
-		}
-	})
-}
+		},
+	});
+};
 
 export const useClaimMatching = () => {
 	const config = useConfig();
 	const queryClient = useQueryClient();
-	const {address = ZeroAddress} = useAccount()
-	const {t} = useTranslation('', {keyPrefix: 'shared.errors'})
-	const {toast} = useToast();
-	return useMutation<WriteContractReturnType, any>({
+	const { address = ZeroAddress } = useAccount();
+	const { t } = useTranslation('', { keyPrefix: 'shared.errors' });
+	const { toast } = useToast();
+	return useMutation<WriteContractReturnType, WriteContractErrorType>({
 		mutationKey: ['affiliate', 'claim', 'matching'],
-		mutationFn: () => claimMatching(address, {config}),
+		mutationFn: () => claimMatching(address, { config }),
 		onError: (e) => {
-			console.log('error', e, e.cause, e.cause.reason)
-			if (e && e.cause && e.cause.reason) {
+			// @ts-ignore
+			if (e?.cause?.reason) {
 				toast({
-					title: "Failed to claim matching bonus",
+					title: 'Failed to claim matching bonus',
+					// @ts-ignore
 					description: t(e.cause.reason),
-					variant: 'destructive'
-				})
+					variant: 'destructive',
+				});
 			} else {
 				toast({
 					title: t('unknown'),
-					variant: 'destructive'
-				})
+					variant: 'destructive',
+				});
 			}
 		},
 		onSuccess: async (data) => {
 			if (data !== undefined) {
-				const {id, update} = toast({
-					title: "Claiming matching bonus",
-					description: "Transaction submitted",
+				const { id, update } = toast({
+					title: 'Claiming matching bonus',
+					description: 'Transaction submitted',
 					variant: 'loading',
-					duration: 60 * 1000
-				})
+					duration: 60 * 1000,
+				});
 				await waitForTransactionReceipt(config, {
-					hash: data
-				})
+					hash: data,
+				});
 				update({
-					title: "Matching bonus claimed",
-					description: "Transaction confirmed",
+					title: 'Matching bonus claimed',
+					description: 'Transaction confirmed',
 					variant: 'default',
 					duration: 5 * 1000,
 					id: id,
-					action: getTransactionLink(data)
-				})
-				await queryClient.invalidateQueries({queryKey: ['affiliate']})
+					action: getTransactionLink(data),
+				});
+				await queryClient.invalidateQueries({ queryKey: ['affiliate'] });
 			}
-		}
-	})
-}
+		},
+	});
+};

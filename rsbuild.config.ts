@@ -1,21 +1,21 @@
-import {defineConfig} from '@rsbuild/core';
-import {pluginReact} from '@rsbuild/plugin-react';
-import {ModuleFederationPlugin} from "@module-federation/enhanced/rspack";
-import {TanStackRouterRspack} from '@tanstack/router-plugin/rspack'
-import {dependencies} from "./package.json";
+import { ModuleFederationPlugin } from '@module-federation/enhanced/rspack';
+import { defineConfig } from '@rsbuild/core';
+import { pluginReact } from '@rsbuild/plugin-react';
+import { TanStackRouterRspack } from '@tanstack/router-plugin/rspack';
+import { dependencies } from './package.json';
 
 const getApp = () => {
 	switch (process.env.PUBLIC_ENVIRONMENT) {
 		case 'development':
-			return 'betfinio_app@https://betfin-app-dev.web.app/mf-manifest.json'
+			return 'betfinio_app@https://betfin-app-dev.web.app/mf-manifest.json';
 		case 'production':
-			return 'betfinio_app@https://app.betfin.io/mf-manifest.json'
+			return 'betfinio_app@https://app.betfin.io/mf-manifest.json';
 		case 'production-ua':
-			return 'betfinio_app@https://app.betfin.gg/mf-manifest.json'
+			return 'betfinio_app@https://app.betfin.gg/mf-manifest.json';
 		default:
-			return 'betfinio_app@http://localhost:5555/mf-manifest.json'
+			return 'betfinio_app@http://localhost:5555/mf-manifest.json';
 	}
-}
+};
 
 function getOutput() {
 	switch (process.env.PUBLIC_ENVIRONMENT) {
@@ -42,13 +42,15 @@ export default defineConfig({
 		favicon: './src/assets/favicon.svg',
 	},
 	output: {
-		assetPrefix: getOutput()
+		assetPrefix: getOutput(),
 	},
 	plugins: [pluginReact()],
 	tools: {
-		rspack: (config, {appendPlugins}) => {
-			config.output!.uniqueName = 'betfinio_affiliate';
-			appendPlugins([
+		rspack: {
+			output: {
+				uniqueName: 'betfinio_affiliate',
+			},
+			plugins: [
 				TanStackRouterRspack(),
 				new ModuleFederationPlugin({
 					name: 'betfinio_affiliate',
@@ -56,57 +58,57 @@ export default defineConfig({
 						betfinio_app: getApp(),
 					},
 					shared: {
-						'react': {
+						react: {
 							singleton: true,
-							requiredVersion: dependencies['react']
+							requiredVersion: dependencies.react,
 						},
 						'react-dom': {
 							singleton: true,
-							requiredVersion: dependencies['react-dom']
+							requiredVersion: dependencies['react-dom'],
 						},
-						"@tanstack/react-router": {
+						'@tanstack/react-router': {
 							singleton: true,
-							requiredVersion: dependencies['@tanstack/react-router']
+							requiredVersion: dependencies['@tanstack/react-router'],
 						},
-						"@tanstack/react-query": {
+						'@tanstack/react-query': {
 							singleton: true,
-							requiredVersion: dependencies['@tanstack/react-query']
+							requiredVersion: dependencies['@tanstack/react-query'],
 						},
-						"@tanstack/react-table": {
+						'@tanstack/react-table': {
 							singleton: true,
-							requiredVersion: dependencies['@tanstack/react-table']
+							requiredVersion: dependencies['@tanstack/react-table'],
 						},
-						"lucide-react": {
+						'lucide-react': {
 							singleton: true,
-							requiredVersion: dependencies['lucide-react']
+							requiredVersion: dependencies['lucide-react'],
 						},
-						"@supabase/supabase-js": {
+						'@supabase/supabase-js': {
 							singleton: true,
-							requiredVersion: dependencies['@supabase/supabase-js']
+							requiredVersion: dependencies['@supabase/supabase-js'],
 						},
-						"i18next": {
+						i18next: {
 							singleton: true,
-							requiredVersion: dependencies['i18next']
+							requiredVersion: dependencies.i18next,
 						},
-						"react-i18next": {
+						'react-i18next': {
 							singleton: true,
-							requiredVersion: dependencies['react-i18next']
+							requiredVersion: dependencies['react-i18next'],
 						},
-						"tailwindcss-animate": {
+						'tailwindcss-animate': {
 							singleton: true,
-							requiredVersion: dependencies['tailwindcss-animate']
+							requiredVersion: dependencies['tailwindcss-animate'],
 						},
-						"tailwindcss": {
+						tailwindcss: {
 							singleton: true,
-							requiredVersion: dependencies['tailwindcss']
+							requiredVersion: dependencies.tailwindcss,
 						},
-						"wagmi": {
+						wagmi: {
 							singleton: true,
-							requiredVersion: dependencies['wagmi']
+							requiredVersion: dependencies.wagmi,
 						},
 					},
 				}),
-			]);
+			],
 		},
 	},
 });

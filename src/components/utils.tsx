@@ -9,6 +9,7 @@ const spring = {
 };
 
 export function withClick(ComponentA: ComponentType, ComponentB: ComponentType): ComponentType {
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	return (props: any) => {
 		const [isFlipped, setIsFlipped] = useState(false);
 

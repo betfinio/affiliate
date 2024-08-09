@@ -10,7 +10,6 @@ export interface NavItemProps {
     className?: string;
     external?: boolean;
     minimized?: boolean;
-    onClick?: () => void;
 }
 declare const NavItem: FC<NavItemProps>;
 export default NavItem;

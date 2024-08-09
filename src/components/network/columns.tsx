@@ -62,12 +62,10 @@ export const categories = [
 ]
 
 export const columnHelper = createColumnHelper<TableMember>()
-
-export const columns = [
+export const getColumns = (depth: number) => [
 	columnHelper.group({
 		id: 'memberInfo',
 		header: () => <div className={'w-full text-center border-x border-gray-800'}>Client</div>,
-		
 		columns: [
 			columnHelper.accessor('member', {
 				meta: {
@@ -88,23 +86,21 @@ export const columns = [
 				enableSorting: false,
 				enableHiding: false,
 			}),
-			columnHelper.accessor('level', {
+			depth > 0 ? columnHelper.accessor('level', {
+				id: 'lvl',
 				header: ({column}) => (
 					<DataTableColumnHeader column={column} title="LVL"/>
 				),
-				cell: ({getValue}) => {
+				cell: () => {
 					return (
 						<div className="flex items-center justify-center">
 							<div className={'border border-gray-500 rounded-full px-1 py-0.5 lg:min-w-[40px] flex justify-center'}>
-								{getValue()}
+								{depth}
 							</div>
 						</div>
 					)
 				},
-				filterFn: (row, id, value) => {
-					return value.includes(row.getValue(id))
-				},
-			}),
+			}) : null,
 			columnHelper.accessor('side', {
 				header: ({column}) => (
 					<DataTableColumnHeader column={column} title="Side"/>
@@ -134,9 +130,8 @@ export const columns = [
 					return value.includes(row.getValue(id))
 				},
 			})
-		]
+		].filter((e) => e !== null)
 	}),
-	
 	columnHelper.group({
 		meta: {
 			className: 'hidden lg:table-cell '
@@ -187,7 +182,6 @@ export const columns = [
 		id: 'network',
 		header: () => <div className={'w-full text-center border-x border-gray-800'}>Network</div>,
 		columns: [
-			
 			columnHelper.accessor('activity', {
 				id: 'activity',
 				header: ({column}) => (

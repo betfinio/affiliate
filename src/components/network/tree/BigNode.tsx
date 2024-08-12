@@ -1,12 +1,10 @@
 import { useTreeMember } from '@/src/lib/query';
-import { ZeroAddress } from '@betfinio/abi';
-import { truncateEthAddress, valueToNumber } from '@betfinio/hooks/dist/utils';
-import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { truncateEthAddress, valueToNumber, ZeroAddress } from '@betfinio/abi';
 import { useQueryClient } from '@tanstack/react-query';
 import { BetValue } from 'betfinio_app/BetValue';
 import { useUsername } from 'betfinio_app/lib/query/username';
 import cx from 'clsx';
-import { UserPlus } from 'lucide-react';
+import { ArrowLeftIcon, ArrowRightIcon, UserPlus } from 'lucide-react';
 import type { MouseEvent } from 'react';
 import type { CustomNodeElementProps } from 'react-d3-tree';
 import type { Address } from 'viem';

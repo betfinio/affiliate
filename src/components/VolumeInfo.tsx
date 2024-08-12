@@ -1,12 +1,11 @@
 import { withClick } from '@/src/components/utils.tsx';
 import { useMember } from '@/src/lib/query';
-import { ZeroAddress } from '@betfinio/abi';
-import { valueToNumber } from '@betfinio/hooks/dist/utils';
-import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/react/24/solid';
+import { valueToNumber, ZeroAddress } from '@betfinio/abi';
 import { BetValue } from 'betfinio_app/BetValue';
 import cx from 'clsx';
 import type { FC } from 'react';
 import { useAccount } from 'wagmi';
+import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 
 const VolumeInfo: FC = () => {
 	const LeftCard = withClick(UnmatchedLeftVolume, MatchedLeftVolume);
@@ -43,7 +42,7 @@ const UnmatchedLeftVolume: FC = () => {
 	return (
 		<div className="relative cursor-pointer border border-gray-800 px-6 lg:px-0 py-6 lg:py-8 flex flex-col gap-2 items-center bg-primaryLighter rounded-lg">
 			<div className={'grid grid-cols-3 items-center'}>
-				<ArrowLongLeftIcon className={'hidden lg:block w-16 h-16 text-yellow-400 col-span-1 border-2 border-yellow-400 rounded-full p-2'} />
+				<ArrowLeftIcon className={'hidden lg:block w-16 h-16 text-yellow-400 col-span-1 border-2 border-yellow-400 rounded-full p-2'} />
 				<div className={'col-span-2 text-sm lg:text-xl whitespace-nowrap'}>
 					<div>
 						Unmatched <b className={'text-yellow-400'}>Left</b> volume
@@ -84,7 +83,7 @@ const UnmatchedRightVolume: FC = () => {
 					)}
 				</div>
 				<div className={'hidden lg:flex flex-row justify-end'}>
-					<ArrowLongRightIcon className={'w-16 h-16 text-yellow-400 col-span-1 border-2 border-yellow-400 rounded-full p-2'} />
+					<ArrowRightIcon className={'w-16 h-16 text-yellow-400 col-span-1 border-2 border-yellow-400 rounded-full p-2'} />
 				</div>
 			</div>
 		</div>
@@ -99,7 +98,7 @@ const MatchedLeftVolume: FC = () => {
 	return (
 		<div className="relative cursor-pointer  py-6 lg:py-10 flex flex-col px-8 gap-2 items-center bg-primaryLight rounded-lg border border-gray-800">
 			<div className={'grid grid-cols-3 items-center w-full'}>
-				<ArrowLongLeftIcon className={'w-16 h-16 text-primary col-span-1 bg-yellow-400 border-2 border-yellow-400 rounded-full p-2'} />
+				<ArrowLeftIcon className={'w-16 h-16 text-primary col-span-1 bg-yellow-400 border-2 border-yellow-400 rounded-full p-2'} />
 				<div className={'col-span-2 text-sm lg:text-xl'}>
 					<div>
 						Total <b className={'text-yellow-400'}>Left</b> volume
@@ -134,7 +133,7 @@ const MatchedRightVolume: FC = () => {
 					</div>
 				</div>
 				<div className={'flex flex-row justify-end'}>
-					<ArrowLongRightIcon className={'w-16 h-16 text-primary col-span-1 bg-yellow-400 border-2 border-yellow-400 rounded-full p-2'} />
+					<ArrowRightIcon className={'w-16 h-16 text-primary col-span-1 bg-yellow-400 border-2 border-yellow-400 rounded-full p-2'} />
 				</div>
 			</div>
 		</div>

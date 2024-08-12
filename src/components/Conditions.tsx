@@ -1,6 +1,5 @@
 import { useAffiliateConditions, useMember } from '@/src/lib/query';
-import { ZeroAddress } from '@betfinio/abi';
-import { valueToNumber } from '@betfinio/hooks/dist/utils';
+import { valueToNumber, ZeroAddress } from '@betfinio/abi';
 import { Bonus, Check, Letter, Staking, Warning } from '@betfinio/ui/dist/icons';
 import { BetValue } from 'betfinio_app/BetValue';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'betfinio_app/tabs';

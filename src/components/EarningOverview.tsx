@@ -1,8 +1,6 @@
 import { useClaimDirect, useClaimMatching, useDailyLimit, useEarningBalances, usePendingMatchingBonus } from '@/src/lib/query';
-import { ZeroAddress } from '@betfinio/abi';
-import { valueToNumber } from '@betfinio/hooks/dist/utils';
+import { valueToNumber, ZeroAddress } from '@betfinio/abi';
 import { Blackjack, DepthAffiliate, DirectAffiliate, MoneyUp } from '@betfinio/ui/dist/icons';
-import { Square3Stack3DIcon } from '@heroicons/react/24/outline';
 import { BetValue } from 'betfinio_app/BetValue';
 import { Button } from 'betfinio_app/button';
 import { getStakingUrl } from 'betfinio_app/lib';
@@ -10,7 +8,7 @@ import { Skeleton } from 'betfinio_app/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'betfinio_app/tooltip';
 import cx from 'clsx';
 import { motion } from 'framer-motion';
-import { Loader } from 'lucide-react';
+import { Layers3, Loader } from 'lucide-react';
 import { DateTime } from 'luxon';
 import millify from 'millify';
 import { type FC, useMemo } from 'react';
@@ -73,7 +71,7 @@ const EarningOverview: FC = () => {
 							<tr>
 								<td className={'text-left  py-2'}>
 									<div className={'flex flex-row items-center gap-1'}>
-										<Square3Stack3DIcon className={'w-4 h-4 text-yellow-400'} />
+										<Layers3 className={'w-4 h-4 text-yellow-400'} />
 										{t('table.staking')}
 									</div>
 								</td>

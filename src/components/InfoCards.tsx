@@ -20,8 +20,8 @@ const InfoCards: FC = () => {
 	const { data: balance, isLoading: isBalanceLoading } = useEarningBalances(address);
 
 	const children = { direct: member?.invitees || 0, total: (member?.count.left || 0) + (member?.count.right || 0) };
-	const volume = member?.volume.left || 0n + (member?.volume.right || 0n);
-	const income = balance?.staking.total || 0n + (balance?.bets.total || 0n) + (balance?.matching.total || 0n);
+	const volume = (member?.volume.left || 0n) + (member?.volume.right || 0n);
+	const income = (balance?.staking.total || 0n) + (balance?.bets.total || 0n) + (balance?.matching.total || 0n);
 	return (
 		<div className={cx('grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 lg:gap-4 ')}>
 			<TooltipProvider delayDuration={0}>

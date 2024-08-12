@@ -10,7 +10,7 @@ import { Input } from 'betfinio_app/input';
 import { ScrollArea } from 'betfinio_app/scroll-area';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'betfinio_app/tooltip';
 import cx from 'clsx';
-import { CircleAlert, Loader, MoreHorizontal } from 'lucide-react';
+import { CircleAlert, Loader, MoreHorizontal, Trash } from 'lucide-react';
 import { type FC, useEffect, useState } from 'react';
 import { type Address, isAddress } from 'viem';
 import { useAccount } from 'wagmi';
@@ -100,19 +100,7 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 				className: 'w-[60px]',
 			},
 			cell: ({ row }) => {
-				return (
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" className="h-8 w-8 p-0">
-								<span className="sr-only">Open menu</span>
-								<MoreHorizontal className="h-4 w-4" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuItem onClick={() => handleRemove(row.index)}>Delete</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				);
+				return <Trash className={'cursor-pointer w-4 h-4'} onClick={() => handleRemove(row.index)} />;
 			},
 		}),
 	];

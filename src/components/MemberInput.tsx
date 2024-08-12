@@ -61,16 +61,16 @@ const MemberInfo: FC<{ member: Address | null }> = ({ member }) => {
 		<>
 			{member ? truncateEthAddress(member) : 'Select parent'}
 			{side === 'right' && (
-				<Badge variant={'destructive'} className={'flex gap-1'}>
+				<Badge className={'flex gap-1 bg-yellow-400 text-black'}>
 					Right <ArrowRight className={'w-3 h-3'} />
 				</Badge>
 			)}
 			{side === 'left' && (
-				<Badge variant={'destructive'} className={'flex gap-1'}>
+				<Badge className={'flex gap-1 bg-yellow-400 text-black'}>
 					Left <ArrowLeft className={'w-3 h-3'} />
 				</Badge>
 			)}
-			{address?.toLowerCase() === member?.toLowerCase() && <Badge>You</Badge>}
+			{address?.toLowerCase() === member?.toLowerCase() && <Badge className={'text-black bg-yellow-400'}>You</Badge>}
 		</>
 	);
 };
@@ -135,16 +135,16 @@ const MemberItem: FC<MemberWithUsername & { onSelect: (value: string) => void }>
 				{isDesktop ? member : truncateEthAddress(member)} {username && <Badge variant={'destructive'}>{username}</Badge>}
 			</div>
 			{side === 'right' && (
-				<Badge className={'flex gap-1'}>
+				<Badge className={'flex gap-1 text-black bg-yellow-400'}>
 					Right <ArrowRight className={'w-3 h-3'} />
 				</Badge>
 			)}
 			{side === 'left' && (
-				<Badge className={'flex gap-1'}>
+				<Badge className={'flex gap-1 text-black bg-yellow-400'}>
 					Left <ArrowLeft className={'w-3 h-3'} />
 				</Badge>
 			)}
-			{address?.toLowerCase() === member.toLowerCase() && <Badge>You</Badge>}
+			{address?.toLowerCase() === member.toLowerCase() && <Badge className={'text-black bg-yellow-400'}>You</Badge>}
 		</CommandItem>
 	);
 };

@@ -35,7 +35,7 @@ const PieChartInfo: FC = () => {
 		].filter((e) => !!e);
 	}, [balance]);
 	return (
-		<div className={'flex w-full h-[400px] p-4 flex-col items-center justify-center'}>
+		<div className={'flex w-full h-[430px] p-4 flex-col items-center justify-center'}>
 			<div>Earnings overview</div>
 			<ResponsivePie
 				data={data}

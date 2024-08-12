@@ -3,17 +3,17 @@ import { getSide } from '@/src/lib/utils.ts';
 import { ZeroAddress } from '@betfinio/abi';
 import { truncateEthAddress, valueToNumber } from '@betfinio/hooks/dist/utils';
 import { Blackjack } from '@betfinio/ui/dist/icons';
-import { useQueryClient } from '@tanstack/react-query';
 import { BetValue } from 'betfinio_app/BetValue';
 import { useOpenProfile } from 'betfinio_app/lib/query/shared';
 import { useCustomUsername, useUsername } from 'betfinio_app/lib/query/username';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'betfinio_app/tooltip';
 import cx from 'clsx';
 import { ArrowLeft, ArrowRight, Layers3, UserPlus, UsersIcon } from 'lucide-react';
-import { type MouseEvent, useMemo } from 'react';
+import { type MouseEvent, useMemo, useState } from 'react';
 import type { CustomNodeElementProps } from 'react-d3-tree';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
+import MintModal from '@/src/components/MintModal.tsx';
 
 function MiddleNode({
 	data,
@@ -28,22 +28,23 @@ function MiddleNode({
 	const { data: username } = useUsername(data);
 	const { address = ZeroAddress } = useAccount();
 	const { data: customUsername } = useCustomUsername(address, data as Address);
-	const queryClient = useQueryClient();
-	const { data: me } = useTreeMember(address);
+	const { data: member } = useTreeMember(address);
 	const { open } = useOpenProfile();
+	const [inviteModal, setInviteModal] = useState<boolean>(false);
+
 	const icons = useMemo(() => {
 		if (!query.data) return [];
 		const badges = [];
-		const side = getSide(query.data.index || 0n, me?.index || 0n);
+		const side = getSide(query.data.index || 0n, member?.index || 0n);
 		badges.push(side || 'left');
 		if (query.data.bets > 0n) badges.push('betting');
 		if (query.data.volume > 0n) badges.push('staking');
 		return badges;
-	}, [query.data, me]);
+	}, [query.data, member]);
 
 	const handleInvite = (e: MouseEvent, parent: string) => {
 		e.stopPropagation();
-		queryClient.setQueryData(['affiliate', 'inviteMember'], parent);
+		setInviteModal(true);
 	};
 
 	if (query.isFetching || query.isRefetching || !query.data)
@@ -140,98 +141,103 @@ function MiddleNode({
 
 	const volume = query.data.volumeLeft + query.data.volumeRight + query.data.betsLeft / 100n + query.data.betsRight / 100n;
 	return (
-		<foreignObject width={300} height={110} x={-135} y={-45} className={''}>
-			<div className={cx(horizontal && 'w-full h-full flex flex-row flex-nowrap relative')}>
-				<div
-					className={cx('border-2  border-purple-box bg-primaryLight p-4 w-[270px] h-[90px] rounded-xl flex flex-col items-center justify-start gap-1', {
-						'border-red-roulette': query.data.isInviting,
-						'!border-yellow-400': query.data.isMatching,
-						'!border-green-500': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
-					})}
-					onClick={handleClick}
-				>
-					<div className={'w-full flex flex-row justify-between items-center'}>
-						{customUsername || username || truncateEthAddress(query.data.member || ZeroAddress)}
-						{address.toLowerCase() === query.data.inviter.toLowerCase() ? (
-							<div
-								className={cx('border w-6 h-6 flex items-center justify-center rounded-full border-purple-box text-purple-box', {
-									'border-red-roulette text-red-roulette': query.data.isInviting,
-									'!border-yellow-400 !text-yellow-400': query.data.isMatching,
-									'!bg-green-500 !border-green-500 !text-white': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
-								})}
-							>
-								{horizontal ? query.data.count : <span className={'text-sm'}>D</span>}
-							</div>
-						) : address.toLowerCase() === data.toLowerCase() ? null : (
-							<div
-								className={cx('border w-6 h-6 flex items-center justify-center rounded-full border-purple-box text-purple-box', {
-									'border-red-roulette text-red-roulette': query.data.isInviting,
-									'!border-yellow-400 !text-yellow-400': query.data.isMatching,
-									'!bg-green-600 !border-green-600': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
-								})}
-							>
-								{horizontal ? query.data.count : <span className={'text-sm'}>B</span>}
-							</div>
-						)}
-					</div>
-					<div className={'w-full flex flex-row justify-between items-end'}>
-						<span className={'text-purple-box underline text-sm'}>{truncateEthAddress(query.data.member || ZeroAddress)}</span>
-						<div className={'flex gap-1 font-thin'}>
-							<BetValue className={'font-semibold'} prefix={'Total volume: '} withIcon value={valueToNumber(volume)} /> /
-							<div className={'flex flex-row items-center gap-[1px]'}>
-								<BetValue prefix={'Binary network size: '} postfix={''} value={valueToNumber(query.data.countLeft + query.data.countRight, 0, 0)} />
-								<UsersIcon className={'w-4 h-4 text-yellow-400'} />
-							</div>
-						</div>
-					</div>
-					<div className={' -bottom-[12.5px] left-[15px] h-[25px] grid grid-cols-3 w-full gap-1'}>
-						<div className={'col-span-1 flex flex-row items-center gap-1'}>{icons.map(renderIcon)}</div>
-						<div className={cx('flex justify-center')}>
-							{hasChildren ? (
+		<>
+			<foreignObject width={300} height={110} x={-135} y={-45} className={''}>
+				<div className={cx(horizontal && 'w-full h-full flex flex-row flex-nowrap relative')}>
+					<div
+						className={cx('border-2  border-purple-box bg-primaryLight p-4 w-[270px] h-[90px] rounded-xl flex flex-col items-center justify-start gap-1', {
+							'border-red-roulette': query.data.isInviting,
+							'!border-yellow-400': query.data.isMatching,
+							'!border-green-500': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
+						})}
+						onClick={handleClick}
+					>
+						<div className={'w-full flex flex-row justify-between items-center'}>
+							{customUsername || username || truncateEthAddress(query.data.member || ZeroAddress)}
+							{address.toLowerCase() === query.data.inviter.toLowerCase() ? (
 								<div
-									onClick={handleExpand}
-									className={cx('w-6 h-6 rounded-full border-2 border-purple-box bg-purple-box flex flex-row items-center justify-center text-xl', {
-										'!bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
-										'!bg-red-roulette border-red-roulette': query.data.isInviting,
+									className={cx('border w-6 h-6 flex items-center justify-center rounded-full border-purple-box text-purple-box', {
+										'border-red-roulette text-red-roulette': query.data.isInviting,
+										'!border-yellow-400 !text-yellow-400': query.data.isMatching,
 										'!bg-green-500 !border-green-500 !text-white': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
-										hidden: horizontal,
 									})}
 								>
-									+
+									{horizontal ? query.data.count : <span className={'text-sm'}>D</span>}
 								</div>
-							) : (
+							) : address.toLowerCase() === data.toLowerCase() ? null : (
 								<div
-									onClick={(e) => handleInvite(e, data)}
-									className={cx('w-6 h-6 rounded-full border-2 border-purple-box bg-purple-box flex flex-row items-center justify-center text-xl', {
-										'!bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
-										'!bg-red-roulette border-red-roulette': query.data.isInviting,
-										'!bg-green-500 !border-green-500 !text-white': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
-										hidden: horizontal,
+									className={cx('border w-6 h-6 flex items-center justify-center rounded-full border-purple-box text-purple-box', {
+										'border-red-roulette text-red-roulette': query.data.isInviting,
+										'!border-yellow-400 !text-yellow-400': query.data.isMatching,
+										'!bg-green-600 !border-green-600': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
 									})}
 								>
-									<UserPlus className={'h-full'} size={13} onClick={(e) => handleInvite(e, data)} />
+									{horizontal ? query.data.count : <span className={'text-sm'}>B</span>}
 								</div>
 							)}
 						</div>
+						<div className={'w-full flex flex-row justify-between items-end'}>
+							<span className={'text-purple-box underline text-sm'}>{truncateEthAddress(query.data.member || ZeroAddress)}</span>
+							<div className={'flex gap-1 font-thin'}>
+								<BetValue className={'font-semibold'} prefix={'Total volume: '} withIcon value={valueToNumber(volume)} /> /
+								<div className={'flex flex-row items-center gap-[1px]'}>
+									<BetValue prefix={'Binary network size: '} postfix={''} value={valueToNumber(query.data.countLeft + query.data.countRight, 0, 0)} />
+									<UsersIcon className={'w-4 h-4 text-yellow-400'} />
+								</div>
+							</div>
+						</div>
+						<div className={' -bottom-[12.5px] left-[15px] h-[25px] grid grid-cols-3 w-full gap-1'}>
+							<div className={'col-span-1 flex flex-row items-center gap-1'}>{icons.map(renderIcon)}</div>
+							<div className={cx('flex justify-center')}>
+								{hasChildren ? (
+									<div
+										onClick={handleExpand}
+										className={cx('w-6 h-6 rounded-full border-2 border-purple-box bg-purple-box flex flex-row items-center justify-center text-xl', {
+											'!bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
+											'!bg-red-roulette border-red-roulette': query.data.isInviting,
+											'!bg-green-500 !border-green-500 !text-white': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
+											hidden: horizontal,
+										})}
+									>
+										+
+									</div>
+								) : (
+									<div
+										onClick={(e) => handleInvite(e, data)}
+										className={cx('w-6 h-6 rounded-full border-2 border-purple-box bg-purple-box flex flex-row items-center justify-center text-xl', {
+											'!bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
+											'!bg-red-roulette border-red-roulette': query.data.isInviting,
+											'!bg-green-500 !border-green-500 !text-white': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
+											hidden: horizontal,
+										})}
+									>
+										<UserPlus className={'h-full'} size={13} onClick={(e) => handleInvite(e, data)} />
+									</div>
+								)}
+							</div>
+						</div>
+					</div>
+					<div className={cx('flex justify-center h-[90px] items-center -ml-3', !horizontal && 'hidden')}>
+						{hasChildren && (
+							<div
+								onClick={handleExpand}
+								className={cx('w-6 h-6 rounded-full border-2 border-purple-box bg-purple-box flex flex-row items-center justify-center text-xl', {
+									'!bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
+									'!bg-red-roulette border-red-roulette': query.data.isInviting,
+									'!bg-green-500 !border-green-500 !text-white': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
+									'': horizontal,
+								})}
+							>
+								+
+							</div>
+						)}
 					</div>
 				</div>
-				<div className={cx('flex justify-center h-[90px] items-center -ml-3', !horizontal && 'hidden')}>
-					{hasChildren && (
-						<div
-							onClick={handleExpand}
-							className={cx('w-6 h-6 rounded-full border-2 border-purple-box bg-purple-box flex flex-row items-center justify-center text-xl', {
-								'!bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
-								'!bg-red-roulette border-red-roulette': query.data.isInviting,
-								'!bg-green-500 !border-green-500 !text-white': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
-								'': horizontal,
-							})}
-						>
-							+
-						</div>
-					)}
-				</div>
-			</div>
-		</foreignObject>
+			</foreignObject>
+			{inviteModal && (
+				<MintModal open={inviteModal} onClose={() => setInviteModal(false)} initialMembers={[{ address: address, parent: data }]} />
+			)}
+		</>
 	);
 }
 

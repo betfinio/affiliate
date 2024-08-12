@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from 'react';
 export interface NavItemProps {
     icon?: ReactNode;
     label: string;
@@ -10,6 +10,7 @@ export interface NavItemProps {
     className?: string;
     external?: boolean;
     minimized?: boolean;
+    onClick?: () => void;
 }
 declare const NavItem: FC<NavItemProps>;
 export default NavItem;

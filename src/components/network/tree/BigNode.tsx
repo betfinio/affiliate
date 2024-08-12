@@ -1,5 +1,5 @@
 import { useTreeMember } from '@/src/lib/query';
-import { truncateEthAddress, valueToNumber, ZeroAddress } from '@betfinio/abi';
+import { ZeroAddress, truncateEthAddress, valueToNumber } from '@betfinio/abi';
 import { useQueryClient } from '@tanstack/react-query';
 import { BetValue } from 'betfinio_app/BetValue';
 import { useUsername } from 'betfinio_app/lib/query/username';

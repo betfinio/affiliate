@@ -1,10 +1,10 @@
 import { useEarningBalances } from '@/src/lib/query';
+import { ZeroAddress, valueToNumber } from '@betfinio/abi';
 import { type MayHaveLabel, ResponsivePie } from '@nivo/pie';
 import type { PieCustomLayerProps } from '@nivo/pie/dist/types/types';
 import { BetValue } from 'betfinio_app/BetValue';
 import { type FC, useMemo } from 'react';
 import { useAccount } from 'wagmi';
-import {valueToNumber, ZeroAddress} from "@betfinio/abi";
 
 const PieChartInfo: FC = () => {
 	const { address = ZeroAddress } = useAccount();

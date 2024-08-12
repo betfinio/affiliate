@@ -1,11 +1,11 @@
 import { withClick } from '@/src/components/utils.tsx';
 import { useMember } from '@/src/lib/query';
-import { valueToNumber, ZeroAddress } from '@betfinio/abi';
+import { ZeroAddress, valueToNumber } from '@betfinio/abi';
 import { BetValue } from 'betfinio_app/BetValue';
 import cx from 'clsx';
+import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import type { FC } from 'react';
 import { useAccount } from 'wagmi';
-import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 
 const VolumeInfo: FC = () => {
 	const LeftCard = withClick(UnmatchedLeftVolume, MatchedLeftVolume);

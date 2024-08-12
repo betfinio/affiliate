@@ -1,3 +1,4 @@
+import MintModal from '@/src/components/MintModal.tsx';
 import { useTreeMember } from '@/src/lib/query';
 import { getSide } from '@/src/lib/utils.ts';
 import { ZeroAddress } from '@betfinio/abi';
@@ -13,7 +14,6 @@ import { type MouseEvent, useMemo, useState } from 'react';
 import type { CustomNodeElementProps } from 'react-d3-tree';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import MintModal from '@/src/components/MintModal.tsx';
 
 function MiddleNode({
 	data,
@@ -234,9 +234,7 @@ function MiddleNode({
 					</div>
 				</div>
 			</foreignObject>
-			{inviteModal && (
-				<MintModal open={inviteModal} onClose={() => setInviteModal(false)} initialMembers={[{ address: address, parent: data }]} />
-			)}
+			{inviteModal && <MintModal open={inviteModal} onClose={() => setInviteModal(false)} initialMembers={[{ address: address, parent: data }]} />}
 		</>
 	);
 }

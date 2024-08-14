@@ -3,6 +3,7 @@ import { useTreeMember } from '@/src/lib/query';
 import { getSide } from '@/src/lib/utils.ts';
 import { ZeroAddress, truncateEthAddress, valueToNumber } from '@betfinio/abi';
 import { Blackjack } from '@betfinio/ui/dist/icons';
+import { logger } from '@rsbuild/core';
 import { BetValue } from 'betfinio_app/BetValue';
 import { useOpenProfile } from 'betfinio_app/lib/query/shared';
 import { useCustomUsername, useUsername } from 'betfinio_app/lib/query/username';
@@ -30,6 +31,7 @@ function MiddleNode({
 	const { data: member } = useTreeMember(address);
 	const { open } = useOpenProfile();
 	const [inviteModal, setInviteModal] = useState<boolean>(false);
+	const [parent, setParent] = useState<Address | null>(null);
 
 	const icons = useMemo(() => {
 		if (!query.data) return [];
@@ -41,30 +43,18 @@ function MiddleNode({
 		return badges;
 	}, [query.data, member]);
 
-	const handleInvite = (e: MouseEvent, parent: string) => {
+	const handleInvite = (e: MouseEvent, parent: Address) => {
+		console.log('invite', parent, inviteModal);
 		e.stopPropagation();
-		setInviteModal(true);
+		setParent(() => parent);
+		setInviteModal(() => true);
+		console.log('set');
 	};
 
 	if (query.isFetching || query.isRefetching || !query.data)
 		return (
 			<foreignObject width={'270px'} height={'90px'} x={-135} y={-45}>
 				<div className={'w-full h-full border border-purple-box bg-purple-box rounded-md flex justify-center items-center'}>Loading...</div>
-			</foreignObject>
-		);
-
-	if (data === ZeroAddress)
-		return (
-			<foreignObject width={'300px'} height={'110px'} x={-135} y={-45}>
-				<div
-					onClick={(e) => handleInvite(e, node.hierarchyPointNode.parent?.data.name ?? ZeroAddress)}
-					className={cx(
-						'border-2 border-dashed border-opacity-45  border-purple-box bg-primaryLight p-4 w-[270px] h-[90px] rounded-xl flex flex-col items-center justify-start gap-1',
-						{},
-					)}
-				>
-					<UserPlus className={'h-full text-gray-400'} size={40} />
-				</div>
 			</foreignObject>
 		);
 
@@ -138,6 +128,24 @@ function MiddleNode({
 		);
 	};
 
+	if (data === ZeroAddress)
+		return (
+			<foreignObject width={'300px'} height={'110px'} x={-135} y={-45}>
+				<div
+					onClick={(e) => handleInvite(e, (node.hierarchyPointNode.parent?.data.name as Address) ?? ZeroAddress)}
+					className={cx(
+						'border-2 border-dashed border-opacity-45  border-purple-box bg-primaryLight p-4 w-[270px] h-[90px] rounded-xl flex flex-col items-center justify-start gap-1',
+					)}
+				>
+					<UserPlus className={'h-full text-gray-400'} size={40} />
+				</div>
+				{inviteModal && (
+					<MintModal open={inviteModal} onClose={() => setInviteModal(false)} initialMembers={[{ address: address, parent: parent || address }]} />
+				)}
+				g
+			</foreignObject>
+		);
+	console.log(inviteModal, parent);
 	const volume = query.data.volumeLeft + query.data.volumeRight + query.data.betsLeft / 100n + query.data.betsRight / 100n;
 	return (
 		<>
@@ -233,7 +241,7 @@ function MiddleNode({
 					</div>
 				</div>
 			</foreignObject>
-			{inviteModal && <MintModal open={inviteModal} onClose={() => setInviteModal(false)} initialMembers={[{ address: address, parent: data }]} />}
+			{inviteModal && <MintModal open={inviteModal} onClose={() => setInviteModal(false)} initialMembers={[{ address: address, parent: parent || address }]} />}
 		</>
 	);
 }

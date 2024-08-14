@@ -53,7 +53,7 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 		columnHelper.accessor('address', {
 			header: 'Address',
 			meta: {
-				className: 'p-2 py-1',
+				className: 'lg:p-2 py-1',
 			},
 			cell: ({ getValue, row: { index } }) => {
 				const initialValue = getValue();
@@ -90,14 +90,14 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 		columnHelper.accessor('parent', {
 			header: 'Parent',
 			meta: {
-				className: 'w-[150px] md:w-[200px] p-2 py-1',
+				className: 'w-[150px] md:w-[200px] lg:p-2 py-1',
 			},
 			cell: (props) => <MemberInput value={props.getValue()} onChange={(val) => handleParentChange(props.row.index, val)} />,
 		}),
 		columnHelper.display({
 			id: 'actions',
 			meta: {
-				className: 'w-[60px]',
+				className: 'lg:w-[60px]',
 			},
 			cell: ({ row }) => {
 				return <Trash className={'cursor-pointer w-4 h-4'} onClick={() => handleRemove(row.index)} />;
@@ -106,8 +106,8 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 	];
 	return (
 		<Dialog open={open} onOpenChange={() => onClose()}>
-			<DialogContent className={'affiliate text-white p-4 '}>
-				<ScrollArea className={'max-h-[90vh]'}>
+			<DialogContent className={'affiliate text-white p-4'}>
+				<ScrollArea className={'max-h-[90vh] lg:min-w-[800px]'}>
 					<DialogHeader>
 						<DialogTitle className={'text-xl'}>Mint new passes</DialogTitle>
 						<DialogDescription className={'text-sm text-gray-400'}>

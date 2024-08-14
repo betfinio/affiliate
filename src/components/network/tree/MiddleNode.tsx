@@ -142,7 +142,6 @@ function MiddleNode({
 				{inviteModal && (
 					<MintModal open={inviteModal} onClose={() => setInviteModal(false)} initialMembers={[{ address: address, parent: parent || address }]} />
 				)}
-				g
 			</foreignObject>
 		);
 	console.log(inviteModal, parent);

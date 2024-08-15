@@ -64,6 +64,8 @@ export const useEarningBalances = (address?: Address) => {
 			},
 		},
 		queryFn: async () => fetchBalances(address, { config }),
+		refetchOnMount: true,
+		refetchOnWindowFocus: true,
 	});
 };
 

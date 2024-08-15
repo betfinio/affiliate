@@ -89,7 +89,7 @@ export function DataTable<TData, TValue>({ columns, data, onRowClick }: DataTabl
 					<TableBody>
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
-								<TableRow key={row.id} onClick={(e: MouseEvent) => handleClick(e, row.original)}>
+								<TableRow className={'cursor-pointer'} key={row.id} onClick={(e: MouseEvent) => handleClick(e, row.original)}>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell key={cell.id} className={cx(cell.column.columnDef.meta?.className, 'h-[50px]')}>
 											{flexRender(cell.column.columnDef.cell, cell.getContext())}

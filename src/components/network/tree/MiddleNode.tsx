@@ -144,7 +144,6 @@ function MiddleNode({
 				)}
 			</foreignObject>
 		);
-	console.log(inviteModal, parent);
 	const volume = query.data.volumeLeft + query.data.volumeRight + query.data.betsLeft / 100n + query.data.betsRight / 100n;
 	return (
 		<>

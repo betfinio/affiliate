@@ -1,3 +1,4 @@
+import MintModal from '@/src/components/MintModal.tsx';
 import { useTreeMember } from '@/src/lib/query';
 import { ZeroAddress, truncateEthAddress, valueToNumber } from '@betfinio/abi';
 import { useQueryClient } from '@tanstack/react-query';
@@ -5,7 +6,7 @@ import { BetValue } from 'betfinio_app/BetValue';
 import { useUsername } from 'betfinio_app/lib/query/username';
 import cx from 'clsx';
 import { ArrowLeftIcon, ArrowRightIcon, UserPlus } from 'lucide-react';
-import type { MouseEvent } from 'react';
+import { type MouseEvent, useState } from 'react';
 import type { CustomNodeElementProps } from 'react-d3-tree';
 import type { Address } from 'viem';
 
@@ -13,6 +14,8 @@ function BigNode({ data, node, horizontal = false }: { data: Address; node: Cust
 	const { data: username } = useUsername(data);
 	const query = useTreeMember(data);
 	const queryClient = useQueryClient();
+	const [inviteModal, setInviteModal] = useState<boolean>(false);
+
 	if (query.isFetching || query.isRefetching || !query.data)
 		return (
 			<foreignObject width={'270px'} height={'90px'} x={-135}>
@@ -27,7 +30,7 @@ function BigNode({ data, node, horizontal = false }: { data: Address; node: Cust
 
 	const handleInvite = (e: MouseEvent, parent: string) => {
 		e.stopPropagation();
-		queryClient.setQueryData(['affiliate', 'inviteMember'], parent);
+		setInviteModal(true);
 	};
 
 	return (
@@ -83,13 +86,13 @@ function BigNode({ data, node, horizontal = false }: { data: Address; node: Cust
 					) : (
 						<div
 							onClick={(e) => handleInvite(e, data)}
-							className={cx('w-6 h-6 border-2  text-lg flex justify-center items-center border-purple-box bg-purple-box text-white rounded-full', {
+							className={cx('w-6 h-6 border-2 p-0.5  text-lg flex justify-center items-center border-purple-box bg-purple-box text-white rounded-full', {
 								'bg-red-roulette border-red-roulette': query.data.isInviting && !query.data.isMatching,
 								'bg-yellow-400 border-yellow-400 !text-black': query.data.isMatching,
 								hidden: horizontal,
 							})}
 						>
-							<UserPlus className={'h-full'} size={20} onClick={(e) => handleInvite(e, data)} />
+							<UserPlus className={'w-full h-ull'} />
 						</div>
 					)}
 				</div>
@@ -105,6 +108,7 @@ function BigNode({ data, node, horizontal = false }: { data: Address; node: Cust
 						+
 					</div>
 				</div>
+				{inviteModal && <MintModal open={inviteModal} onClose={() => setInviteModal(false)} initialMembers={[{ address: data, parent: data }]} />}
 			</div>
 		</foreignObject>
 	);

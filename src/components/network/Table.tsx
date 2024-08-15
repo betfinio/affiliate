@@ -15,14 +15,15 @@ import {
 } from '@tanstack/react-table';
 import { DataTablePagination, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'betfinio_app/table';
 import cx from 'clsx';
-import { useState } from 'react';
+import { type MouseEvent, useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+	onRowClick?: (row: TData) => void;
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, onRowClick }: DataTableProps<TData, TValue>) {
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
 		activity: false,
 		category: false,
@@ -60,6 +61,13 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 		getFacetedUniqueValues: getFacetedUniqueValues(),
 	});
 
+	const handleClick = (e: MouseEvent, row: TData) => {
+		console.log();
+		if ((e.target as HTMLElement).role !== 'menuitem') {
+			onRowClick?.(row);
+		}
+	};
+
 	return (
 		<div className="space-y-2 affiliate w-full">
 			<DataTableToolbar table={table} />
@@ -81,7 +89,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 					<TableBody>
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
-								<TableRow key={row.id}>
+								<TableRow className={'cursor-pointer'} key={row.id} onClick={(e: MouseEvent) => handleClick(e, row.original)}>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell key={cell.id} className={cx(cell.column.columnDef.meta?.className, 'h-[50px]')}>
 											{flexRender(cell.column.columnDef.cell, cell.getContext())}

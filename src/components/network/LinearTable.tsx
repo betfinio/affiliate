@@ -1,5 +1,6 @@
 import { columnHelper, getColumns } from '@/src/components/network/columns.tsx';
-import { useLinearMembers } from '@/src/lib/query';
+import { useLinearMembers, useMember, useMemberSide } from '@/src/lib/query';
+import type { TableMember } from '@/src/lib/types.ts';
 import { ZeroAddress, truncateEthAddress } from '@betfinio/abi';
 import { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from 'betfinio_app/breadcrumb';
 import { Button } from 'betfinio_app/button';
@@ -7,7 +8,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useOpenProfile } from 'betfinio_app/lib/query/shared';
 import { useCustomUsername, useUsername } from 'betfinio_app/lib/query/username';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'betfinio_app/tooltip';
-import { MoreHorizontal } from 'lucide-react';
+import cx from 'clsx';
+import { ArrowLeft, ArrowRight, Loader, MoreHorizontal } from 'lucide-react';
 import { type FC, useEffect, useState } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
@@ -28,6 +30,10 @@ const LinearTable = () => {
 	};
 	const handleExpandMember = (member: Address) => {
 		setPath((p) => [...p, member]);
+	};
+	const handleRowClick = (row: TableMember) => {
+		console.log('row click');
+		open(row.member);
 	};
 	const columnsWithActions = [
 		...getColumns(path.length - 1),
@@ -61,7 +67,7 @@ const LinearTable = () => {
 					<Path path={path} onChange={setPath} />
 				</div>
 			)}
-			<DataTable columns={columnsWithActions} data={data} />
+			<DataTable columns={columnsWithActions} data={data} onRowClick={handleRowClick} />
 		</div>
 	);
 };
@@ -72,10 +78,7 @@ export const Path: FC<{ path: Address[]; onChange: (path: Address[]) => void }> 
 	return (
 		<Breadcrumb>
 			<BreadcrumbList className={'p-2'}>
-				<BreadcrumbItem className={'cursor-pointer bg-yellow-400 text-black rounded-md px-2 '} onClick={() => onChange([path[0]])}>
-					<UsernameOrAddress member={path[0]} />
-					(me)
-				</BreadcrumbItem>
+				<UsernameOrAddress member={path[0]} onClick={() => onChange([path[0]])} />
 				{path.length > 3 && (
 					<>
 						<BreadcrumbSeparator />
@@ -90,8 +93,8 @@ export const Path: FC<{ path: Address[]; onChange: (path: Address[]) => void }> 
 										.slice(1, path.length - 1)
 										.reverse()
 										.map((member, index) => (
-											<DropdownMenuItem key={index} onClick={() => onChange(path.slice(0, path.length - 1 - index))}>
-												<UsernameOrAddress member={member} />
+											<DropdownMenuItem key={index} className={'affiliate'}>
+												<UsernameOrAddress member={member} onClick={() => onChange(path.slice(0, path.length - 1 - index))} />
 											</DropdownMenuItem>
 										))}
 								</DropdownMenuContent>
@@ -102,17 +105,13 @@ export const Path: FC<{ path: Address[]; onChange: (path: Address[]) => void }> 
 				{path.length === 3 && (
 					<>
 						<BreadcrumbSeparator />
-						<BreadcrumbItem className={'cursor-pointer bg-secondaryLight text-white rounded-md px-2 '} onClick={() => onChange(path.slice(0, 2))}>
-							<UsernameOrAddress member={path[1]} />
-						</BreadcrumbItem>
+						<UsernameOrAddress member={path[1]} onClick={() => onChange(path.slice(0, 2))} />
 					</>
 				)}
 				{path.length > 1 && (
 					<>
 						<BreadcrumbSeparator />
-						<BreadcrumbItem className={'cursor-pointer bg-secondaryLight text-white rounded-md px-2 '}>
-							<UsernameOrAddress member={path[path.length - 1]} />
-						</BreadcrumbItem>
+						<UsernameOrAddress member={path[path.length - 1]} onClick={() => {}} />
 					</>
 				)}
 			</BreadcrumbList>
@@ -120,17 +119,39 @@ export const Path: FC<{ path: Address[]; onChange: (path: Address[]) => void }> 
 	);
 };
 
-export const UsernameOrAddress: FC<{ member: Address }> = ({ member }) => {
+export const UsernameOrAddress: FC<{ member: Address; onClick: () => void }> = ({ member, onClick }) => {
 	const { address } = useAccount();
 	const { data: username } = useUsername(member);
 	const { data: customUsername } = useCustomUsername(address, member);
-
+	const { data: side } = useMemberSide(address, member);
+	const { data: memberInfo } = useMember(member);
+	if (!memberInfo) {
+		return (
+			<BreadcrumbItem>
+				<Loader className={'w-3 h-3 animate-spin'} />
+			</BreadcrumbItem>
+		);
+	}
 	return (
-		<TooltipProvider>
-			<Tooltip>
-				<TooltipTrigger>{customUsername || username || truncateEthAddress(member)}</TooltipTrigger>
-				<TooltipContent>{member}</TooltipContent>
-			</Tooltip>
-		</TooltipProvider>
+		<BreadcrumbItem
+			className={cx('cursor-pointer rounded-md px-2 ', {
+				'bg-yellow-400 text-black': memberInfo.is.matching,
+				'bg-red-roulette text-white': memberInfo.is.inviting && !memberInfo.is.matching,
+				'bg-green-roulette text-white': (memberInfo.volume.member > 0n || memberInfo.bets.member > 0n) && !memberInfo.is.inviting,
+			})}
+			onClick={onClick}
+		>
+			<TooltipProvider>
+				<Tooltip>
+					<TooltipTrigger className={'flex flex-row items-center gap-2'}>
+						{customUsername || username || truncateEthAddress(member)}
+						<div className={cx('bg-secondary rounded-full text-white p-0.5', member === address && 'hidden')}>
+							{side === 'left' ? <ArrowLeft className={'w-3 h-3'} /> : <ArrowRight className={'w-3 h-3'} />}
+						</div>
+					</TooltipTrigger>
+					<TooltipContent>{member}</TooltipContent>
+				</Tooltip>
+			</TooltipProvider>
+		</BreadcrumbItem>
 	);
 };

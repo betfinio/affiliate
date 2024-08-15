@@ -4,8 +4,6 @@ import type { TableMember } from '@/src/lib/types.ts';
 import { ZeroAddress, truncateEthAddress } from '@betfinio/abi';
 import { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from 'betfinio_app/breadcrumb';
 import { Button } from 'betfinio_app/button';
-import { useTreeMember } from 'betfinio_app/compiled-types/lib/query/affiliate';
-import { defaultTreeMember } from 'betfinio_app/compiled-types/lib/types/affiliate';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'betfinio_app/dropdown-menu';
 import { useOpenProfile } from 'betfinio_app/lib/query/shared';
 import { useCustomUsername, useUsername } from 'betfinio_app/lib/query/username';
@@ -85,7 +83,7 @@ export const Path: FC<{ path: Address[]; onChange: (path: Address[]) => void }> 
 					<>
 						<BreadcrumbSeparator />
 						<BreadcrumbItem>
-							<DropdownMenu className={'affiliate'}>
+							<DropdownMenu>
 								<DropdownMenuTrigger className="flex items-center gap-1">
 									<BreadcrumbEllipsis className="h-4 w-4" />
 									<span className="sr-only">Toggle menu</span>
@@ -95,7 +93,7 @@ export const Path: FC<{ path: Address[]; onChange: (path: Address[]) => void }> 
 										.slice(1, path.length - 1)
 										.reverse()
 										.map((member, index) => (
-											<DropdownMenuItem key={index}>
+											<DropdownMenuItem key={index} className={'affiliate'}>
 												<UsernameOrAddress member={member} onClick={() => onChange(path.slice(0, path.length - 1 - index))} />
 											</DropdownMenuItem>
 										))}

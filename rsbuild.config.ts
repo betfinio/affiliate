@@ -20,9 +20,9 @@ const getApp = () => {
 function getOutput() {
 	switch (process.env.PUBLIC_ENVIRONMENT) {
 		case 'development':
-			return 'https://affiliate.betfin.dev';
+			return '/';
 		case 'production':
-			return 'https://affiliate.betfin.io';
+			return '/';
 		case 'production-ua':
 			return 'https://affiliate.betfin.gg';
 		default:

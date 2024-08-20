@@ -7,7 +7,6 @@ import { getStakingUrl } from 'betfinio_app/lib';
 import { Skeleton } from 'betfinio_app/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'betfinio_app/tooltip';
 import cx from 'clsx';
-import { motion } from 'framer-motion';
 import { Layers3, Loader } from 'lucide-react';
 import { DateTime } from 'luxon';
 import millify from 'millify';

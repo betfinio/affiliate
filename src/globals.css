@@ -8,7 +8,6 @@ html, body {
 
 @layer base {
 	* {
-		@apply border-border;
 		user-select: none;
 	}
 }

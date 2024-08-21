@@ -7,7 +7,7 @@ import { dependencies } from './package.json';
 const getApp = () => {
 	switch (process.env.PUBLIC_ENVIRONMENT) {
 		case 'development':
-			return 'betfinio_app@https://betfin.dev/app/mf-manifest.json';
+			return 'betfinio_app@https://app.betfin.dev/mf-manifest.json';
 		case 'production':
 			return 'betfinio_app@https://app.betfin.io/mf-manifest.json';
 		case 'production-ua':
@@ -20,9 +20,9 @@ const getApp = () => {
 function getOutput() {
 	switch (process.env.PUBLIC_ENVIRONMENT) {
 		case 'development':
-			return 'https://betfin.dev/affiliate';
+			return 'https://affiliate.betfin.dev/';
 		case 'production':
-			return 'https://app.betfin.io/';
+			return 'https://affiliate.betfin.io/';
 		case 'production-ua':
 			return 'https://affiliate.betfin.gg';
 		default:

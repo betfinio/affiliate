@@ -10,7 +10,7 @@ const getApp = () => {
 			return 'betfinio_app@https://app.betfin.dev/mf-manifest.json';
 		case 'production':
 			return 'betfinio_app@https://app.betfin.io/mf-manifest.json';
-		case 'production-ua':
+		case 'production-gg':
 			return 'betfinio_app@https://app.betfin.gg/mf-manifest.json';
 		default:
 			return 'betfinio_app@http://localhost:5555/mf-manifest.json';
@@ -23,7 +23,7 @@ function getOutput() {
 			return 'https://affiliate.betfin.dev/';
 		case 'production':
 			return 'https://affiliate.betfin.io/';
-		case 'production-ua':
+		case 'production-gg':
 			return 'https://affiliate.betfin.gg';
 		default:
 			return 'http://localhost:5555';

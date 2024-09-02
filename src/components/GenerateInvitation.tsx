@@ -3,7 +3,7 @@ import MintModal from '@/src/components/MintModal.tsx';
 import { useInviteCondition, useMember } from '@/src/lib/query';
 import { BetValue } from 'betfinio_app/BetValue';
 import { Button } from 'betfinio_app/button';
-import { getStakingUrl } from 'betfinio_app/lib';
+import { getAcademyUrl, getStakingUrl } from 'betfinio_app/lib';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'betfinio_app/tabs';
 import { toast } from 'betfinio_app/use-toast';
 import cx from 'clsx';
@@ -25,6 +25,15 @@ const GenerateInvitation: FC = () => {
 	const handleLink = async () => {
 		const code = account + (parent || account);
 		await navigator.clipboard.writeText(`${window.origin}/?code=${code}`);
+		toast({
+			title: 'Link copied',
+			description: 'The invitation link has been copied to your clipboard',
+			variant: 'default',
+		});
+	};
+	const handleAcademyLink = async () => {
+		const code = account + (parent || account);
+		await navigator.clipboard.writeText(`${getAcademyUrl('/new')}/?code=${code}`);
 		toast({
 			title: 'Link copied',
 			description: 'The invitation link has been copied to your clipboard',
@@ -93,6 +102,10 @@ const GenerateInvitation: FC = () => {
 									<Link2Icon className={'w-3 h-3'} />
 									{t('create')}
 								</Button>
+								<Button variant={'outline'} onClick={handleAcademyLink} className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}>
+									<Link2Icon className={'w-3 h-3'} />
+									{t('academy_link')}
+								</Button>
 							</div>
 						</TabsContent>
 						<TabsContent value={'auto'} className={'flex gap-2 flex-col mt-0'}>
@@ -110,6 +123,10 @@ const GenerateInvitation: FC = () => {
 								<Button variant={'outline'} onClick={handleLink} className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}>
 									<Link2Icon className={'w-3 h-3'} />
 									{t('create')}
+								</Button>
+								<Button variant={'outline'} onClick={handleAcademyLink} className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}>
+									<Link2Icon className={'w-3 h-3'} />
+									{t('academy_link')}
 								</Button>
 							</div>
 						</TabsContent>

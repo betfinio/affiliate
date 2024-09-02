@@ -30,6 +30,7 @@
 		"title": "Generate invitation to a specific wallet:",
 		"generate": "Generate",
 		"create": "Create link",
+		"academy_link": "Academy link",
 		"position": {
 			"auto": "Auto position",
 			"manual": "Choose position"

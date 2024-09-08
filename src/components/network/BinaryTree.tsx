@@ -1,31 +1,41 @@
-import BigNode from '@/src/components/network/tree/BigNode.tsx';
-import DotNode from '@/src/components/network/tree/DotNode.tsx';
-import MiddleNode from '@/src/components/network/tree/MiddleNode.tsx';
-import SmallNode from '@/src/components/network/tree/SmallNode.tsx';
+import BigNode from '@/src/components/network/tree/BigNode';
+import DotNode from '@/src/components/network/tree/DotNode';
+import MiddleNode from '@/src/components/network/tree/MiddleNode';
+import SmallNode from '@/src/components/network/tree/SmallNode';
 import { ZeroAddress } from '@betfinio/abi';
 import { useQueryClient } from '@tanstack/react-query';
-import type { TreeMember } from 'betfinio_app/lib/types';
 import { useSupabase } from 'betfinio_app/supabase';
-import { toast } from 'betfinio_app/use-toast';
 import cx from 'clsx';
-import { Expand } from 'lucide-react';
+import type React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import Tree, { type CustomNodeElementProps, type Point, type RawNodeDatum, type TreeLinkDatum, type TreeNodeDatum } from 'react-d3-tree';
+import Tree, { type TreeNodeDatum, type CustomNodeElementProps, type Point, type RawNodeDatum, type TreeLinkDatum } from 'react-d3-tree';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import Legend from './Legend';
+import type { TreeOptionValue } from './tree/TreeLevelsMenu';
 
-const BinaryTree = () => {
+interface TreeMember {
+	id: string;
+	member: string;
+	isInviting?: boolean;
+	isMatching?: boolean;
+	volume?: bigint;
+	bets?: bigint;
+}
+
+type MembersState = Record<Address, Address[] | undefined>;
+const BinaryTree: React.FC = () => {
 	const handle = useFullScreenHandle();
-	const [members, setMembers] = useState<Record<Address, Address[] | undefined>>({});
+	const [members, setMembers] = useState<MembersState>({});
 	const { address: me = ZeroAddress } = useAccount();
 	const address = me.toLowerCase() as Address;
 	const { client } = useSupabase();
-	const [zoom, setZoom] = useState(1);
-	const [translate, setTranslate] = useState<Point>({ x: 0, y: 0 });
-	const [level, setLevel] = useState<number>(1);
+	const [zoom, setZoom] = useState<number>(1);
+	const [translate, setTranslate] = useState<Point>({ x: 0, y: 500 });
+	const [level] = useState<number>(1);
 	const queryClient = useQueryClient();
+
 	useEffect(() => {
 		if (address) setMembers({ [address]: undefined });
 		else setMembers({});
@@ -48,45 +58,106 @@ const BinaryTree = () => {
 		if (r) children.push(transform(r, right));
 		return { name: member, children: children };
 	};
-	const data = useMemo(() => {
+
+	const data = useMemo<RawNodeDatum>(() => {
 		return transform(address, members[address] || []);
 	}, [members, address]);
 
-	const getNodeSize = () => {
+	const getNodeSize = (): { x: number; y: number } => {
 		return { x: 300, y: 200 };
 	};
 
-	const expand = async (member: string, lvl: number = level) => {
+	const getLevelChildren = async (member: Address) => {
 		if (!client) return;
-		if (lvl <= 0) return;
 		const doc = await client.from('tree').select('id::text').eq('member', member.toLowerCase()).single<{ id: string }>();
 		if (!doc.data) return;
 		const id = BigInt(doc.data.id);
 		const l = id * 2n + 1n;
 		const r = id * 2n + 2n;
-		const left = await client.from('tree').select('member').eq('id', l.toString()).single();
-		const right = await client.from('tree').select('member').eq('id', r.toString()).single();
-		const childrenData: string[] = [];
-		if (left.data) childrenData.push(left.data.member);
-		if (right.data) childrenData.push(right.data.member);
+
+		const left = await client.from('tree').select('member').eq('id', l.toString()).single<{ member: string }>();
+		const right = await client.from('tree').select('member').eq('id', r.toString()).single<{ member: string }>();
+
+		return { left, right };
+	};
+
+	const expand = async (member: Address, lvl: number): Promise<void> => {
+		if (!client || lvl <= 0) return;
+
+		const children = await getLevelChildren(member);
+		if (!children) return;
+		const { left, right } = children;
+		const childrenData: Address[] = [];
+		if (left.data) childrenData.push(left.data.member as Address);
+		if (right.data) childrenData.push(right.data.member as Address);
 		else if (left.data !== null) {
-			childrenData.push(ZeroAddress);
+			childrenData.push(ZeroAddress as Address);
 		}
-		setMembers((mem) => ({ ...mem, [member.toLowerCase()]: childrenData, ...Object.fromEntries(childrenData.map((key) => [key, undefined])) }));
+		setMembers((mem) => ({
+			...mem,
+			[member.toLowerCase()]: childrenData,
+			...Object.fromEntries(childrenData.map((key) => [key, undefined])),
+		}));
+
 		for (const child of childrenData) {
 			if (child === ZeroAddress) continue;
-			expand(child, lvl - 1).then(undefined);
+			await expand(child, lvl - 1);
 		}
 	};
 
-	const renderElement = (node: CustomNodeElementProps) => {
+	const expandBranch = async (direction: 'left' | 'right', lvl: number): Promise<void> => {
+		if (!address || !client) return;
+
+		const children = await getLevelChildren(address);
+		if (!children) return;
+		const { left, right } = children;
+		if (direction === 'left' && !left) return;
+		if (direction === 'right' && !right) return;
+		// Determine the target child based on the direction
+		const targetMember = direction === 'left' ? (left.data?.member as Address) : (right.data?.member as Address);
+
+		const childrenData: Address[] = [];
+		if (targetMember) childrenData.push(targetMember);
+
+		const nextMembers = {
+			...members,
+			[address.toLowerCase()]: childrenData,
+			...Object.fromEntries(childrenData.map((key) => [key, undefined])),
+		} as typeof members;
+
+		setMembers(nextMembers);
+		const rootChildren = nextMembers[address];
+		if (!rootChildren) return;
+
+		// If the target member is valid, expand it
+		if (targetMember && targetMember !== ZeroAddress) {
+			await expand(targetMember, lvl);
+		}
+	};
+
+	const handleLevelSelect = (value: TreeOptionValue) => {
+		switch (value) {
+			case 'left':
+			case 'right':
+				expandBranch(value, 1000);
+				return;
+			case '1':
+			case '5':
+			case '10':
+				expand(address, +value);
+				return;
+		}
+	};
+
+	const renderElement = (node: CustomNodeElementProps): JSX.Element => {
 		const addr = node.nodeDatum.name.toLowerCase() as Address;
+
 		if (zoom > 0.7) {
-			if (addr !== address) return <MiddleNode data={addr} node={node} />;
-			return <BigNode data={addr} node={node} />;
+			if (addr !== address) return <MiddleNode showLevelSelect={false} data={addr} node={node} />;
+			return <BigNode data={addr} node={node} onLevelSelect={handleLevelSelect} />;
 		}
 		if (zoom > 0.5) {
-			return <MiddleNode data={addr} node={node} />;
+			return <MiddleNode data={addr} node={node} showLevelSelect={addr === address} onLevelSelect={handleLevelSelect} />;
 		}
 		if (zoom > 0.2) {
 			return <SmallNode data={addr} node={node} />;
@@ -96,13 +167,9 @@ const BinaryTree = () => {
 
 	let t: NodeJS.Timeout | undefined = undefined;
 
-	const handleUpdate = (data: {
-		node: TreeNodeDatum | null;
-		zoom: number;
-		translate: Point;
-	}) => {
+	const handleUpdate = (data: { node: TreeNodeDatum | null; zoom: number; translate: Point }): void => {
 		if (data.node) {
-			if (members[data.node.name as Address] === undefined) expand(data.node.name).then(undefined);
+			if (members[data.node.name as Address] === undefined) expand(data.node.name as Address, level).then(undefined);
 		}
 		if (data.translate.x === translate.x && data.translate.y === translate.y && data.zoom === zoom) return;
 		clearTimeout(t);
@@ -112,50 +179,50 @@ const BinaryTree = () => {
 		}, 500);
 	};
 
-	const getPathStyle = (linkData: TreeLinkDatum) => {
-		const source = linkData.source.data.name;
-		const target = linkData.target.data.name;
-		const data = queryClient.getQueryData(['affiliate', 'members', 'tree', 'member', source]) as TreeMember;
+	const getPathStyle = (linkData: TreeLinkDatum): string => {
+		const source = linkData.source.data.name as Address;
+		const target = linkData.target.data.name as Address;
+		const data = queryClient.getQueryData<TreeMember>(['affiliate', 'members', 'tree', 'member', source]);
+
 		return cx('stroke-2 stroke-purple-box', {
 			'[stroke-dasharray:5] !stroke-opacity-70': target === ZeroAddress,
 			'!stroke-0': target === ZeroAddress && zoom <= 0.5,
 			'!stroke-red-roulette': data?.isInviting,
 			'!stroke-yellow-400': data?.isMatching,
-			'!stroke-green-500': (data?.volume > 0n || data?.bets > 0n) && !data?.isInviting,
+			'!stroke-green-500': (data?.volume ?? 0n) > 0n || ((data?.bets ?? 0n) > 0n && !data?.isInviting),
 		});
 	};
 
-	const zoomPlus = () => {
+	const zoomPlus = (): void => {
 		setZoom(zoom + 0.1);
 	};
 
-	const zoomMinus = () => {
+	const zoomMinus = (): void => {
 		setZoom(zoom - 0.1);
 	};
 
 	return (
 		<div>
-			<div className={'text-center text-xs font-semibold text-gray-500 italic px-5'}>
-				Linear and binary view are two ways of displaying the same structure. <br /> The only important for your matching bonus is binary tree. <br /> However,
-				linear tree helps you to better recognise active inviters in your structure.
+			<div className="text-center text-xs font-semibold text-gray-500 italic px-5">
+				Linear and binary view are two ways of displaying the same structure. <br />
+				The only important for your matching bonus is binary tree. <br />s However, linear tree helps you to better recognize active inviters in your structure.
 			</div>
+
 			<Legend />
-			<div className={' border border-gray-800 rounded-md mt-2 md:mt-3 lg:mt-4 h-[80vh] relative'} ref={boxRef}>
-				<div className={cx('absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl bg-primaryLighter w-[100px] h-[50px]')}>
-					<div className={'w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer'} onClick={zoomPlus}>
+			<div className="border border-gray-800 rounded-md mt-2 md:mt-3 lg:mt-4 h-[80vh] relative" ref={boxRef}>
+				<div className="absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl bg-primaryLighter w-[100px] h-[50px]">
+					<div className="w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer" onClick={zoomPlus}>
 						+
 					</div>
-					<div className={'w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer'} onClick={zoomMinus}>
+					<div className="w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer" onClick={zoomMinus}>
 						-
 					</div>
 				</div>
 				<div
 					onClick={() => handle.enter()}
-					className={
-						'absolute top-2 right-2 border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px] '
-					}
+					className="absolute top-2 right-2 border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px]"
 				>
-					<Expand className={'w-6 h-6'} />
+					⤢
 				</div>
 				<FullScreen handle={handle}>
 					{handle.active && (

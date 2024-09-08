@@ -4,13 +4,25 @@ import { ZeroAddress, truncateEthAddress, valueToNumber } from '@betfinio/abi';
 import { useQueryClient } from '@tanstack/react-query';
 import { BetValue } from 'betfinio_app/BetValue';
 import { useUsername } from 'betfinio_app/lib/query/username';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'betfinio_app/select';
 import cx from 'clsx';
 import { ArrowLeftIcon, ArrowRightIcon, UserPlus } from 'lucide-react';
 import { type MouseEvent, useState } from 'react';
 import type { CustomNodeElementProps } from 'react-d3-tree';
 import type { Address } from 'viem';
+import { TreeLevelsMenu, type TreeOptionValue } from './TreeLevelsMenu';
 
-function BigNode({ data, node, horizontal = false }: { data: Address; node: CustomNodeElementProps; horizontal?: boolean }) {
+function BigNode({
+	data,
+	node,
+	horizontal = false,
+	onLevelSelect,
+}: {
+	data: Address;
+	node: CustomNodeElementProps;
+	horizontal?: boolean;
+	onLevelSelect: (value: TreeOptionValue) => void;
+}) {
 	const { data: username } = useUsername(data);
 	const query = useTreeMember(data);
 	const queryClient = useQueryClient();
@@ -74,14 +86,14 @@ function BigNode({ data, node, horizontal = false }: { data: Address; node: Cust
 					</div>
 					{hasChildren ? (
 						<div
-							onClick={handleExpand}
+							// onClick={handleExpand}
 							className={cx('w-6 h-6 border-2 text-lg flex justify-center items-center border-purple-box bg-purple-box text-white rounded-full', {
 								'bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
 								'bg-red-roulette border-red-roulette': query.data.isInviting && !query.data.isMatching,
 								hidden: horizontal,
 							})}
 						>
-							+
+							<TreeLevelsMenu onLevelSelect={onLevelSelect} />
 						</div>
 					) : (
 						<div
@@ -104,9 +116,7 @@ function BigNode({ data, node, horizontal = false }: { data: Address; node: Cust
 							'!bg-red-roulette border-red-roulette': query.data.isInviting && !query.data.isMatching,
 							hidden: !horizontal,
 						})}
-					>
-						+
-					</div>
+					/>
 				</div>
 				{inviteModal && <MintModal open={inviteModal} onClose={() => setInviteModal(false)} initialMembers={[{ address: data, parent: data }]} />}
 			</div>

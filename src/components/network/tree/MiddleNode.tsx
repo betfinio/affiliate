@@ -13,15 +13,20 @@ import { type MouseEvent, useMemo, useState } from 'react';
 import type { CustomNodeElementProps } from 'react-d3-tree';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
+import { TreeLevelsMenu, type TreeOptionValue } from './TreeLevelsMenu';
 
 function MiddleNode({
 	data,
 	node,
 	horizontal = false,
+	onLevelSelect,
+	showLevelSelect,
 }: {
 	data: Address;
 	node: CustomNodeElementProps;
 	horizontal?: boolean;
+	onLevelSelect?: (value: TreeOptionValue) => void;
+	showLevelSelect: boolean;
 }) {
 	const query = useTreeMember(data);
 	const { data: username } = useUsername(data);
@@ -193,7 +198,13 @@ function MiddleNode({
 							<div className={cx('flex justify-center')}>
 								{hasChildren ? (
 									<div
-										onClick={handleExpand}
+										onClick={
+											showLevelSelect
+												? (e) => {
+														e.stopPropagation();
+													}
+												: handleExpand
+										}
 										className={cx('w-6 h-6 rounded-full border-2 border-purple-box bg-purple-box flex flex-row items-center justify-center text-xl', {
 											'!bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
 											'!bg-red-roulette border-red-roulette': query.data.isInviting,
@@ -201,7 +212,7 @@ function MiddleNode({
 											hidden: horizontal,
 										})}
 									>
-										+
+										{showLevelSelect && onLevelSelect ? <TreeLevelsMenu onLevelSelect={onLevelSelect} /> : '+'}
 									</div>
 								) : (
 									<div

@@ -81,7 +81,7 @@ const BinaryTree: React.FC = () => {
 		return { left, right };
 	};
 
-	const expand = async (member: Address, lvl: number): Promise<void> => {
+	const expand = async (member: Address, lvl: number,direction:"left"|"right"|"all"="all"): Promise<void> => {
 		if (!client || lvl <= 0) return;
 
 		const children = await getLevelChildren(member);
@@ -99,47 +99,56 @@ const BinaryTree: React.FC = () => {
 			...Object.fromEntries(childrenData.map((key) => [key, undefined])),
 		}));
 
-		for (const child of childrenData) {
-			if (child === ZeroAddress) continue;
-			await expand(child, lvl - 1);
-		}
+		// for (const child of childrenData) {
+		// 	if (child === ZeroAddress) continue;
+		// 	 expand(child, lvl - 1);
+		// }
+
+		if(direction==="left"||direction==="all"){
+
+			left.data?.member&&expand(left.data.member as Address,lvl-1,direction)
+			}
+		if(direction==="right"||direction==="all"){
+
+			right.data?.member&&expand(right.data.member as Address,lvl-1,direction)
+			}
 	};
 
-	const expandBranch = async (direction: 'left' | 'right', lvl: number): Promise<void> => {
-		if (!address || !client) return;
+	// const expandBranch = async (direction: 'left' | 'right', lvl: number): Promise<void> => {
+	// 	if (!address || !client) return;
 
-		const children = await getLevelChildren(address);
-		if (!children) return;
-		const { left, right } = children;
-		if (direction === 'left' && !left) return;
-		if (direction === 'right' && !right) return;
-		// Determine the target child based on the direction
-		const targetMember = direction === 'left' ? (left.data?.member as Address) : (right.data?.member as Address);
+	// 	const children = await getLevelChildren(address);
+	// 	if (!children) return;
+	// 	const { left, right } = children;
+	// 	if (direction === 'left' && !left) return;
+	// 	if (direction === 'right' && !right) return;
+	// 	// Determine the target child based on the direction
+	// 	const targetMember = direction === 'left' ? (left.data?.member as Address) : (right.data?.member as Address);
 
-		const childrenData: Address[] = [];
-		if (targetMember) childrenData.push(targetMember);
+	// 	const childrenData: Address[] = [];
+	// 	if (targetMember) childrenData.push(targetMember);
 
-		const nextMembers = {
-			...members,
-			[address.toLowerCase()]: childrenData,
-			...Object.fromEntries(childrenData.map((key) => [key, undefined])),
-		} as typeof members;
+	// 	const nextMembers = {
+	// 		...members,
+	// 		[address.toLowerCase()]: childrenData,
+	// 		...Object.fromEntries(childrenData.map((key) => [key, undefined])),
+	// 	} as typeof members;
 
-		setMembers(nextMembers);
-		const rootChildren = nextMembers[address];
-		if (!rootChildren) return;
+	// 	setMembers(nextMembers);
+	// 	const rootChildren = nextMembers[address];
+	// 	if (!rootChildren) return;
 
-		// If the target member is valid, expand it
-		if (targetMember && targetMember !== ZeroAddress) {
-			await expand(targetMember, lvl);
-		}
-	};
+	// 	// If the target member is valid, expand it
+	// 	if (targetMember && targetMember !== ZeroAddress) {
+	// 	 expandBranch(targetMember, lvl);
+	// 	}
+	// };
 
 	const handleLevelSelect = (value: TreeOptionValue) => {
 		switch (value) {
 			case 'left':
 			case 'right':
-				expandBranch(value, 1000);
+				expand(address, 1000,value );
 				return;
 			case '1':
 			case '5':
@@ -169,7 +178,7 @@ const BinaryTree: React.FC = () => {
 
 	const handleUpdate = (data: { node: TreeNodeDatum | null; zoom: number; translate: Point }): void => {
 		if (data.node) {
-			if (members[data.node.name as Address] === undefined) expand(data.node.name as Address, level).then(undefined);
+			if (members[data.node.name as Address] === undefined) expand(data.node.name as Address, level,).then(undefined);
 		}
 		if (data.translate.x === translate.x && data.translate.y === translate.y && data.zoom === zoom) return;
 		clearTimeout(t);

@@ -47,7 +47,6 @@ const GenerateInvitation: FC = () => {
 	};
 
 	const handleFileChange = () => {
-		console.log('uploaded');
 		toast({
 			title: 'Not supported',
 			description: 'This feature is not yet supported',

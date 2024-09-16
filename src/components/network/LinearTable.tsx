@@ -32,7 +32,6 @@ const LinearTable = () => {
 		setPath((p) => [...p, member]);
 	};
 	const handleRowClick = (row: TableMember) => {
-		console.log('row click');
 		open(row.member);
 	};
 	const columnsWithActions = [

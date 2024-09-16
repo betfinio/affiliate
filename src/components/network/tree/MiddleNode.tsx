@@ -3,7 +3,6 @@ import { useTreeMember } from '@/src/lib/query';
 import { getSide } from '@/src/lib/utils.ts';
 import { ZeroAddress, truncateEthAddress, valueToNumber } from '@betfinio/abi';
 import { Blackjack } from '@betfinio/ui/dist/icons';
-import { logger } from '@rsbuild/core';
 import { BetValue } from 'betfinio_app/BetValue';
 import { useOpenProfile } from 'betfinio_app/lib/query/shared';
 import { useCustomUsername, useUsername } from 'betfinio_app/lib/query/username';
@@ -53,11 +52,9 @@ function MiddleNode({
 	}, [query.data, member]);
 
 	const handleInvite = (e: MouseEvent, parent: Address) => {
-		console.log('invite', parent, inviteModal);
 		e.stopPropagation();
 		setParent(() => parent);
 		setInviteModal(() => true);
-		console.log('set');
 	};
 
 	if (query.isFetching || query.isRefetching || !query.data)

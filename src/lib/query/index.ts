@@ -1,3 +1,4 @@
+import logger from '@/src/config/logger';
 import {
 	claimDirect,
 	claimMatching,
@@ -17,11 +18,10 @@ import {
 import type { MemberWithUsername, TableMember } from '@/src/lib/types.ts';
 import { ZeroAddress } from '@betfinio/abi';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { waitForTransactionReceipt } from '@wagmi/core';
 import type { WriteContractReturnType } from '@wagmi/core';
+import { waitForTransactionReceipt } from '@wagmi/core';
 import { getTransactionLink } from 'betfinio_app/helpers';
-import type { Member } from 'betfinio_app/lib/types';
-import type { Balance, TreeMember } from 'betfinio_app/lib/types';
+import type { Balance, Member, TreeMember } from 'betfinio_app/lib/types';
 import { useSupabase } from 'betfinio_app/supabase';
 import { useToast } from 'betfinio_app/use-toast';
 import { useTranslation } from 'react-i18next';
@@ -161,7 +161,7 @@ export const useMultimint = () => {
 		mutationFn: ({ members, parents }) => multimint(members, parents, { config }),
 		onError: (e) => {
 			// @ts-ignore
-			console.log('error', e, e.cause, e.cause.reason);
+			logger.error(e, e.cause, e.cause.reason);
 			// @ts-ignore
 			if (e?.cause?.reason) {
 				toast({

@@ -1,3 +1,4 @@
+import logger from '@/src/config/logger';
 import { AFFILIATE, AFFILIATE_FUND, PASS } from '@/src/global.ts';
 import type { MemberWithUsername, TableMember } from '@/src/lib/types.ts';
 import { getLevel, getSide } from '@/src/lib/utils.ts';
@@ -21,7 +22,7 @@ export const fetchMember = async (address: Address | undefined, options: Options
 	if (!(await isMember(address, options))) {
 		throw new Error('Not a member');
 	}
-	console.log('fetching member', address);
+	logger.start('fetching member', address);
 	const data = await multicall(options.config, {
 		multicallAddress: defaultMulticall,
 		contracts: [
@@ -51,6 +52,8 @@ export const fetchMember = async (address: Address | undefined, options: Options
 			},
 		],
 	});
+	logger.success('fetched member', address);
+	logger.start('fetching member supabase', address);
 	const { data: doc } = await options.supabase
 		.from('members')
 		.select(
@@ -71,6 +74,7 @@ export const fetchMember = async (address: Address | undefined, options: Options
 			betsRight: string;
 			inviter: string;
 		}>();
+	logger.success('fetched member supabase', address);
 	if (!doc) {
 		throw new Error('Member not found');
 	}
@@ -120,7 +124,7 @@ export const fetchBalances = async (address: Address | undefined, options: Optio
 	if (!address) {
 		throw new Error('Address is not defined');
 	}
-	console.log('fetching earning balances of', address);
+	logger.start('fetching earning balances of', address);
 	const data = await multicall(options.config, {
 		multicallAddress: defaultMulticall,
 		contracts: [
@@ -258,7 +262,7 @@ export const findMembersByUsername = async (username: string, options: Options):
 		throw new Error('Supabase client is not defined');
 	}
 	const { data, error } = await options.supabase.from('metadata').select('member, username').ilike('username', `%${username.toLowerCase()}%`);
-	console.log(error);
+	logger.error(error);
 	if (!data) return [];
 	return data as MemberWithUsername[];
 };
@@ -268,7 +272,7 @@ export const findMembersByAddress = async (username: string, options: Options): 
 		throw new Error('Supabase client is not defined');
 	}
 	const { data, error } = await options.supabase.from('tree').select('member').ilike('member', `%${username.toLowerCase()}%`);
-	console.log(error);
+	logger.error(error);
 	if (!data) return [];
 	return data as MemberWithUsername[];
 };

@@ -4,7 +4,6 @@ import { ZeroAddress, truncateEthAddress, valueToNumber } from '@betfinio/abi';
 import { useQueryClient } from '@tanstack/react-query';
 import { BetValue } from 'betfinio_app/BetValue';
 import { useUsername } from 'betfinio_app/lib/query/username';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'betfinio_app/select';
 import cx from 'clsx';
 import { ArrowLeftIcon, ArrowRightIcon, UserPlus } from 'lucide-react';
 import { type MouseEvent, useState } from 'react';

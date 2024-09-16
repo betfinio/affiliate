@@ -1,4 +1,3 @@
-
 import logger from '@/src/config/logger';
 import { AFFILIATE, AFFILIATE_FUND, PASS } from '@/src/global.ts';
 import type { MemberWithUsername, TableMember } from '@/src/lib/types.ts';

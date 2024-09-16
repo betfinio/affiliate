@@ -14,19 +14,19 @@ const PieChartInfo: FC = () => {
 	const data = useMemo(() => {
 		return [
 			{
-				color: '#292546',
+				color: '#dd375f',
 				id: 'betting',
 				label: 'Betting',
 				value: zero ? 30 : valueToNumber(balance.bets.total),
 			},
 			{
-				color: '#facc15',
+				color: '#4ade80',
 				id: 'staking',
 				label: 'Staking',
 				value: zero ? 30 : valueToNumber(balance.staking.total),
 			},
 			{
-				color: '#dd375f',
+				color: '#facc15',
 				id: 'matching',
 				label: 'Matching',
 				value: zero ? 30 : valueToNumber(balance.matching.total),

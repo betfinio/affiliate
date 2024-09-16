@@ -1,3 +1,4 @@
+import { AFFILIATE, AFFILIATE_FUND, PASS } from '@/src/global.ts';
 import type { MemberWithUsername, TableMember } from '@/src/lib/types.ts';
 import { getLevel, getSide } from '@/src/lib/utils.ts';
 import { AffiliateContract, AffiliateFundContract, MultimintContract, PassContract, ZeroAddress, defaultMulticall } from '@betfinio/abi';
@@ -6,9 +7,6 @@ import { isMember } from 'betfinio_app/lib/api/pass';
 import { type Balance, type Member, type Options, type TreeMember, defaultTreeMember } from 'betfinio_app/lib/types';
 import type { Address } from 'viem';
 
-const PASS_ADDRESS = import.meta.env.PUBLIC_PASS_ADDRESS;
-const AFFILIATE_ADDRESS = import.meta.env.PUBLIC_AFFILIATE_ADDRESS;
-const AFFILIATE_FUND_ADDRESS = import.meta.env.PUBLIC_AFFILIATE_FUND_ADDRESS;
 export const fetchMember = async (address: Address | undefined, options: Options): Promise<Member | undefined> => {
 	if (!options.supabase) {
 		throw new Error('Supabase client is not defined');
@@ -29,25 +27,25 @@ export const fetchMember = async (address: Address | undefined, options: Options
 		contracts: [
 			{
 				abi: PassContract.abi,
-				address: PASS_ADDRESS,
+				address: PASS,
 				functionName: 'getInviteesCount',
 				args: [address],
 			},
 			{
 				abi: PassContract.abi,
-				address: PASS_ADDRESS,
+				address: PASS,
 				functionName: 'getInviter',
 				args: [address],
 			},
 			{
 				abi: AffiliateContract.abi,
-				address: AFFILIATE_ADDRESS,
+				address: AFFILIATE,
 				functionName: 'checkInviteCondition',
 				args: [address],
 			},
 			{
 				abi: AffiliateContract.abi,
-				address: AFFILIATE_ADDRESS,
+				address: AFFILIATE,
 				functionName: 'checkMatchingCondition',
 				args: [address],
 			},
@@ -128,61 +126,61 @@ export const fetchBalances = async (address: Address | undefined, options: Optio
 		contracts: [
 			{
 				abi: AffiliateFundContract.abi,
-				address: AFFILIATE_FUND_ADDRESS,
+				address: AFFILIATE_FUND,
 				functionName: 'getDirectBettingBonusFromInvitees',
 				args: [address],
 			},
 			{
 				abi: AffiliateFundContract.abi,
-				address: AFFILIATE_FUND_ADDRESS,
+				address: AFFILIATE_FUND,
 				functionName: 'getClaimableDirectBettingBonusFromInvitees',
 				args: [address],
 			},
 			{
 				abi: PassContract.abi,
-				address: PASS_ADDRESS,
+				address: PASS,
 				functionName: 'getClaimedDirectBettingBonus',
 				args: [address],
 			},
 			{
 				abi: AffiliateFundContract.abi,
-				address: AFFILIATE_FUND_ADDRESS,
+				address: AFFILIATE_FUND,
 				functionName: 'getDirectStakingBonusFromInvitees',
 				args: [address],
 			},
 			{
 				abi: AffiliateFundContract.abi,
-				address: AFFILIATE_FUND_ADDRESS,
+				address: AFFILIATE_FUND,
 				functionName: 'getClaimableDirectStakingBonusFromInvitees',
 				args: [address],
 			},
 			{
 				abi: PassContract.abi,
-				address: PASS_ADDRESS,
+				address: PASS,
 				functionName: 'getClaimedDirectStakingBonus',
 				args: [address],
 			},
 			{
 				abi: AffiliateContract.abi,
-				address: AFFILIATE_ADDRESS,
+				address: AFFILIATE,
 				functionName: 'matchedBonus',
 				args: [address],
 			},
 			{
 				abi: AffiliateFundContract.abi,
-				address: AFFILIATE_FUND_ADDRESS,
+				address: AFFILIATE_FUND,
 				functionName: 'getClaimableMatchingBonus',
 				args: [address],
 			},
 			{
 				abi: PassContract.abi,
-				address: PASS_ADDRESS,
+				address: PASS,
 				functionName: 'getClaimedMatchingBonus',
 				args: [address],
 			},
 			{
 				abi: AffiliateFundContract.abi,
-				address: AFFILIATE_FUND_ADDRESS,
+				address: AFFILIATE_FUND,
 				functionName: 'getClaimableMatchingBonusDaily',
 				args: [address],
 			},
@@ -222,7 +220,7 @@ export const fetchPendingMatching = async (address: Address | undefined, options
 	if (!doc.data) return 0n;
 	const claimable = (await readContract(options.config, {
 		abi: AffiliateContract.abi,
-		address: AFFILIATE_ADDRESS,
+		address: AFFILIATE,
 		functionName: 'matchedBonus',
 		args: [address],
 	})) as bigint;
@@ -237,7 +235,7 @@ export const fetchDailyLimit = async (address: Address | undefined, options: Opt
 	}
 	return (await readContract(options.config, {
 		abi: AffiliateContract.abi,
-		address: AFFILIATE_ADDRESS,
+		address: AFFILIATE,
 		functionName: 'getClaimableMatchingBonusDaily',
 		args: [address],
 	})) as bigint;
@@ -250,7 +248,7 @@ export const fetchInviteCondition = async (options: Options): Promise<bigint> =>
 
 	return (await readContract(options.config, {
 		abi: AffiliateContract.abi,
-		address: AFFILIATE_ADDRESS,
+		address: AFFILIATE,
 		functionName: 'inviteStakingCondition',
 	})) as bigint;
 };
@@ -297,17 +295,17 @@ export async function fetchAffiliateConditions(options: Options): Promise<bigint
 		contracts: [
 			{
 				abi: AffiliateContract.abi,
-				address: AFFILIATE_ADDRESS,
+				address: AFFILIATE,
 				functionName: 'inviteStakingCondition',
 			},
 			{
 				abi: AffiliateContract.abi,
-				address: AFFILIATE_ADDRESS,
+				address: AFFILIATE,
 				functionName: 'matchingStakingCondition',
 			},
 			{
 				abi: AffiliateContract.abi,
-				address: AFFILIATE_ADDRESS,
+				address: AFFILIATE,
 				functionName: 'matchingInviteeCondition',
 			},
 		],
@@ -408,7 +406,7 @@ export const multimint = async (members: Address[], parents: Address[], options:
 		abi: MultimintContract.abi,
 		address: import.meta.env.PUBLIC_MULTIMINT_ADDRESS as Address,
 		functionName: 'multimint',
-		args: [members, parents, PASS_ADDRESS],
+		args: [members, parents, PASS],
 	});
 };
 
@@ -418,7 +416,7 @@ export const claimDirect = async (options: Options) => {
 	}
 	return writeContract(options.config, {
 		abi: AffiliateFundContract.abi,
-		address: AFFILIATE_FUND_ADDRESS,
+		address: AFFILIATE_FUND,
 		functionName: 'claimDirectBonus',
 		args: [],
 	});
@@ -430,7 +428,7 @@ export const claimMatching = async (address: Address, options: Options) => {
 	}
 	return writeContract(options.config, {
 		abi: AffiliateFundContract.abi,
-		address: AFFILIATE_FUND_ADDRESS,
+		address: AFFILIATE_FUND,
 		functionName: 'claimMatchingBonus',
 		args: [address],
 	});

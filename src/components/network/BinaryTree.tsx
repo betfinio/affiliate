@@ -81,7 +81,7 @@ const BinaryTree: React.FC = () => {
 		return { left, right };
 	};
 
-	const expand = async (member: Address, lvl: number,direction:"left"|"right"|"all"="all"): Promise<void> => {
+	const expand = async (member: Address, lvl: number, direction: 'left' | 'right' | 'all' = 'all'): Promise<void> => {
 		if (!client || lvl <= 0) return;
 
 		const children = await getLevelChildren(member);
@@ -104,14 +104,12 @@ const BinaryTree: React.FC = () => {
 		// 	 expand(child, lvl - 1);
 		// }
 
-		if(direction==="left"||direction==="all"){
-
-			left.data?.member&&expand(left.data.member as Address,lvl-1,direction)
-			}
-		if(direction==="right"||direction==="all"){
-
-			right.data?.member&&expand(right.data.member as Address,lvl-1,direction)
-			}
+		if (direction === 'left' || direction === 'all') {
+			left.data?.member && expand(left.data.member as Address, lvl - 1, direction);
+		}
+		if (direction === 'right' || direction === 'all') {
+			right.data?.member && expand(right.data.member as Address, lvl - 1, direction);
+		}
 	};
 
 	// const expandBranch = async (direction: 'left' | 'right', lvl: number): Promise<void> => {
@@ -148,7 +146,7 @@ const BinaryTree: React.FC = () => {
 		switch (value) {
 			case 'left':
 			case 'right':
-				expand(address, 1000,value );
+				expand(address, 1000, value);
 				return;
 			case '1':
 			case '5':
@@ -178,7 +176,7 @@ const BinaryTree: React.FC = () => {
 
 	const handleUpdate = (data: { node: TreeNodeDatum | null; zoom: number; translate: Point }): void => {
 		if (data.node) {
-			if (members[data.node.name as Address] === undefined) expand(data.node.name as Address, level,).then(undefined);
+			if (members[data.node.name as Address] === undefined) expand(data.node.name as Address, level).then(undefined);
 		}
 		if (data.translate.x === translate.x && data.translate.y === translate.y && data.zoom === zoom) return;
 		clearTimeout(t);

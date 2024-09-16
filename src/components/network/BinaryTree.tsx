@@ -6,7 +6,6 @@ import { ZeroAddress } from '@betfinio/abi';
 import { useQueryClient } from '@tanstack/react-query';
 import type { TreeMember } from 'betfinio_app/lib/types';
 import { useSupabase } from 'betfinio_app/supabase';
-import { toast } from 'betfinio_app/use-toast';
 import cx from 'clsx';
 import { Expand } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';

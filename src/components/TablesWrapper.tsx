@@ -1,7 +1,7 @@
 import BinaryTree from '@/src/components/network/BinaryTree.tsx';
 import LinearTable from '@/src/components/network/LinearTable.tsx';
 import LinearTree from '@/src/components/network/LinearTree.tsx';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'betfinio_app/tabs';
+import {Tabs, TabsContent, TabsList, TabsTrigger} from 'betfinio_app/tabs';
 
 const TablesWrapper = () => {
 	return (

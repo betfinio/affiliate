@@ -12,14 +12,14 @@
 		"preview": "rsbuild preview"
 	},
 	"dependencies": {
-		"@betfinio/abi": "^1.0.5",
-		"@betfinio/ui": "^1.0.2",
+		"@betfinio/abi": "^1.0.8",
+		"@betfinio/ui": "^1.0.6",
 		"@module-federation/enhanced": "^0.3.5",
 		"@nivo/core": "^0.87.0",
 		"@nivo/pie": "^0.87.0",
 		"@supabase/supabase-js": "^2.45.4",
 		"@tanstack/react-query": "^5.56.2",
-		"@tanstack/react-router": "^1.57.15",
+		"@tanstack/react-router": "^1.57.18",
 		"@tanstack/react-table": "^8.20.5",
 		"chart.js": "^4.4.4",
 		"class-variance-authority": "^0.7.0",
@@ -37,11 +37,11 @@
 		"react-full-screen": "^1.1.1",
 		"react-i18next": "^15.0.2",
 		"tailwind-merge": "^2.5.2",
-		"tailwindcss": "^3.4.11",
+		"tailwindcss": "^3.4.12",
 		"tailwindcss-animate": "^1.0.7",
 		"usehooks-ts": "^3.1.0",
-		"viem": "^2.21.7",
-		"wagmi": "^2.12.11"
+		"viem": "^2.21.9",
+		"wagmi": "^2.12.12"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.1",
@@ -52,7 +52,7 @@
 		"@radix-ui/react-select": "^2.1.1",
 		"@types/luxon": "^3.4.2",
 		"@radix-ui/react-tabs": "^1.1.0",
-		"@types/react": "^18.3.5",
+		"@types/react": "^18.3.7",
 		"@types/react-dom": "^18.3.0",
 		"lefthook": "^1.7.15",
 		"typescript": "^5.6.2"

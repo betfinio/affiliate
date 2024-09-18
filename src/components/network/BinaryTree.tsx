@@ -106,7 +106,6 @@ const BinaryTree: React.FC = () => {
 		}
 	};
 
-
 	const handleCollapseNode = (address: Address) => {
 		console.log('[affilate]', address, 'address');
 

@@ -2,14 +2,14 @@ import BigNode from '@/src/components/network/tree/BigNode';
 import DotNode from '@/src/components/network/tree/DotNode';
 import MiddleNode from '@/src/components/network/tree/MiddleNode';
 import SmallNode from '@/src/components/network/tree/SmallNode';
+import logger from '@/src/config/logger';
 import { ZeroAddress } from '@betfinio/abi';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSupabase } from 'betfinio_app/supabase';
 import cx from 'clsx';
 import type React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import Tree, { type TreeNodeDatum, type CustomNodeElementProps, type Point, type RawNodeDatum, type TreeLinkDatum } from 'react-d3-tree';
-import { FullScreen, useFullScreenHandle } from 'react-full-screen';
+import Tree, { type CustomNodeElementProps, type Point, type RawNodeDatum, type TreeLinkDatum, type TreeNodeDatum } from 'react-d3-tree';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import Legend from './Legend';
@@ -26,7 +26,6 @@ interface TreeMember {
 
 type MembersState = Record<Address, Address[] | undefined>;
 const BinaryTree: React.FC = () => {
-	const handle = useFullScreenHandle();
 	const [members, setMembers] = useState<MembersState>({});
 	const { address: me = ZeroAddress } = useAccount();
 	const address = me.toLowerCase() as Address;
@@ -100,11 +99,6 @@ const BinaryTree: React.FC = () => {
 			...Object.fromEntries(childrenData.map((key) => [key, undefined])),
 		}));
 
-		// for (const child of childrenData) {
-		// 	if (child === ZeroAddress) continue;
-		// 	 expand(child, lvl - 1);
-		// }
-
 		if (direction === 'left' || direction === 'all') {
 			left.data?.member && expand(left.data.member as Address, lvl - 1, direction);
 		}
@@ -114,13 +108,11 @@ const BinaryTree: React.FC = () => {
 	};
 
 	const handleCollapseNode = (address: Address) => {
-		console.log('[affilate]', address, 'address');
-
+		logger.log('expand', address, 'address');
 		const next = { ...members };
 		delete next[address];
 		setMembers(next);
-
-		console.log('[affilate]', next, 'members');
+		logger.log('expand', next, 'members');
 	};
 
 	const handleLevelSelect = (value: TreeOptionValue, address: Address) => {

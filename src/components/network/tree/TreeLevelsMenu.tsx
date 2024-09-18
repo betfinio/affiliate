@@ -43,7 +43,7 @@ export const TreeLevelsMenu: React.FC<ITreeLevelsMenuProps> = ({ onLevelSelect, 
 	};
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger>+</DropdownMenuTrigger>
+			<DropdownMenuTrigger className={'w-full h-full flex items-center justify-center'}>+</DropdownMenuTrigger>
 			<DropdownMenuContent>
 				<DropdownMenuRadioGroup onClick={(e) => e.stopPropagation()} value={position} onValueChange={handleSetPosition}>
 					{treeOptions.map((option) => (

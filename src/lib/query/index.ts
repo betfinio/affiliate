@@ -143,6 +143,7 @@ export const useTreeMember = (address: Address) => {
 		queryFn: () => fetchTreeMember(address, { supabase: client }),
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
+		staleTime: 10 * 60 * 1000, //10min
 	});
 };
 

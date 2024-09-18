@@ -22,12 +22,16 @@ function MiddleNode({
 	horizontal = false,
 	onLevelSelect,
 	showLevelSelect,
+	handleCollapseNode,
+	isExpanded,
 }: {
 	data: Address;
 	node: CustomNodeElementProps;
 	horizontal?: boolean;
-	onLevelSelect?: (value: TreeOptionValue) => void;
+	onLevelSelect: (value: TreeOptionValue, address: Address) => void;
 	showLevelSelect: boolean;
+	handleCollapseNode: (address: Address) => void;
+	isExpanded: boolean;
 }) {
 	const query = useTreeMember(data);
 	const { data: username } = useUsername(data);
@@ -202,11 +206,12 @@ function MiddleNode({
 								{hasChildren ? (
 									<div
 										onClick={
-											showLevelSelect
+											isExpanded
 												? (e) => {
 														e.stopPropagation();
+														handleCollapseNode(data);
 													}
-												: handleExpand
+												: () => {}
 										}
 										className={cx('w-6 h-6 rounded-full border-2 border-purple-box bg-purple-box flex flex-row items-center justify-center text-xl', {
 											'!bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
@@ -215,7 +220,7 @@ function MiddleNode({
 											hidden: horizontal,
 										})}
 									>
-										{showLevelSelect && onLevelSelect ? <TreeLevelsMenu onLevelSelect={onLevelSelect} /> : '+'}
+										{!isExpanded ? <TreeLevelsMenu address={data} onLevelSelect={onLevelSelect} /> : '-'}
 									</div>
 								) : (
 									<div

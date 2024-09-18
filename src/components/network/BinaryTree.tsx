@@ -35,6 +35,7 @@ const BinaryTree: React.FC = () => {
 	const [translate, setTranslate] = useState<Point>({ x: 0, y: 500 });
 	const [level] = useState<number>(1);
 	const queryClient = useQueryClient();
+	const [isFullScreen, setIsFullScreen] = useState(false);
 
 	useEffect(() => {
 		if (address) setMembers({ [address]: undefined });
@@ -112,37 +113,17 @@ const BinaryTree: React.FC = () => {
 		}
 	};
 
-	// const expandBranch = async (direction: 'left' | 'right', lvl: number): Promise<void> => {
-	// 	if (!address || !client) return;
+	const handleCollapseNode = (address: Address) => {
+		console.log('[affilate]', address, 'address');
 
-	// 	const children = await getLevelChildren(address);
-	// 	if (!children) return;
-	// 	const { left, right } = children;
-	// 	if (direction === 'left' && !left) return;
-	// 	if (direction === 'right' && !right) return;
-	// 	// Determine the target child based on the direction
-	// 	const targetMember = direction === 'left' ? (left.data?.member as Address) : (right.data?.member as Address);
+		const next = { ...members };
+		delete next[address];
+		setMembers(next);
 
-	// 	const childrenData: Address[] = [];
-	// 	if (targetMember) childrenData.push(targetMember);
+		console.log('[affilate]', next, 'members');
+	};
 
-	// 	const nextMembers = {
-	// 		...members,
-	// 		[address.toLowerCase()]: childrenData,
-	// 		...Object.fromEntries(childrenData.map((key) => [key, undefined])),
-	// 	} as typeof members;
-
-	// 	setMembers(nextMembers);
-	// 	const rootChildren = nextMembers[address];
-	// 	if (!rootChildren) return;
-
-	// 	// If the target member is valid, expand it
-	// 	if (targetMember && targetMember !== ZeroAddress) {
-	// 	 expandBranch(targetMember, lvl);
-	// 	}
-	// };
-
-	const handleLevelSelect = (value: TreeOptionValue) => {
+	const handleLevelSelect = (value: TreeOptionValue, address: Address) => {
 		switch (value) {
 			case 'left':
 			case 'right':
@@ -160,16 +141,45 @@ const BinaryTree: React.FC = () => {
 		const addr = node.nodeDatum.name.toLowerCase() as Address;
 
 		if (zoom > 0.7) {
-			if (addr !== address) return <MiddleNode showLevelSelect={false} data={addr} node={node} />;
-			return <BigNode data={addr} node={node} onLevelSelect={handleLevelSelect} />;
+			if (addr !== address)
+				return (
+					<MiddleNode
+						onLevelSelect={handleLevelSelect}
+						showLevelSelect={false}
+						isExpanded={!!members[addr]}
+						data={addr}
+						node={node}
+						handleCollapseNode={handleCollapseNode}
+					/>
+				);
+			return <BigNode isExpanded={!!members[addr]} data={addr} node={node} handleCollapseNode={handleCollapseNode} onLevelSelect={handleLevelSelect} />;
 		}
 		if (zoom > 0.5) {
-			return <MiddleNode data={addr} node={node} showLevelSelect={addr === address} onLevelSelect={handleLevelSelect} />;
+			return (
+				<MiddleNode
+					data={addr}
+					node={node}
+					isExpanded={!!members[addr]}
+					showLevelSelect={addr === address}
+					onLevelSelect={handleLevelSelect}
+					handleCollapseNode={handleCollapseNode}
+				/>
+			);
 		}
 		if (zoom > 0.2) {
-			return <SmallNode data={addr} node={node} />;
+			return (
+				<SmallNode
+					isExpanded={!!members[addr]}
+					handleCollapseNode={handleCollapseNode}
+					handleExpand={() => handleLevelSelect('1', addr)}
+					data={addr}
+					node={node}
+				/>
+			);
 		}
-		return <DotNode data={addr} node={node} />;
+		return (
+			<DotNode data={addr} node={node} isExpanded={!!members[addr]} handleCollapseNode={handleCollapseNode} handleExpand={() => handleLevelSelect('1', addr)} />
+		);
 	};
 
 	let t: NodeJS.Timeout | undefined = undefined;
@@ -226,13 +236,13 @@ const BinaryTree: React.FC = () => {
 					</div>
 				</div>
 				<div
-					onClick={() => handle.enter()}
+					onClick={() => setIsFullScreen(true)}
 					className="absolute top-2 right-2 border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px]"
 				>
 					⤢
 				</div>
-				<FullScreen handle={handle}>
-					{handle.active && (
+				<div className={cx('fixed  z-50 inset-0 bg-primaryLighter', { hidden: !isFullScreen })}>
+					{
 						<>
 							<div className={cx('absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl w-[100px] h-[50px] z-10')}>
 								<div className={'w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer'} onClick={zoomPlus}>
@@ -240,6 +250,12 @@ const BinaryTree: React.FC = () => {
 								</div>
 								<div className={'w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer'} onClick={zoomMinus}>
 									-
+								</div>
+								<div
+									onClick={() => setIsFullScreen(false)}
+									className="fixed top-2 right-2 border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px]"
+								>
+									⤢
 								</div>
 							</div>
 							<Tree
@@ -256,8 +272,8 @@ const BinaryTree: React.FC = () => {
 								orientation={'vertical'}
 							/>
 						</>
-					)}
-				</FullScreen>
+					}
+				</div>
 				<Tree
 					data={data}
 					onUpdate={handleUpdate}

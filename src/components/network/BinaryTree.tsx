@@ -82,7 +82,7 @@ const BinaryTree: React.FC = () => {
 		return { left, right };
 	};
 
-	const expand = async (member: Address, lvl: number): Promise<void> => {
+	const expand = async (member: Address, lvl: number, direction: 'left' | 'right' | 'all' = 'all'): Promise<void> => {
 		if (!client || lvl <= 0) return;
 
 		const children = await getLevelChildren(member);
@@ -100,9 +100,16 @@ const BinaryTree: React.FC = () => {
 			...Object.fromEntries(childrenData.map((key) => [key, undefined])),
 		}));
 
-		for (const child of childrenData) {
-			if (child === ZeroAddress) continue;
-			await expand(child, lvl - 1);
+		// for (const child of childrenData) {
+		// 	if (child === ZeroAddress) continue;
+		// 	 expand(child, lvl - 1);
+		// }
+
+		if (direction === 'left' || direction === 'all') {
+			left.data?.member && expand(left.data.member as Address, lvl - 1, direction);
+		}
+		if (direction === 'right' || direction === 'all') {
+			right.data?.member && expand(right.data.member as Address, lvl - 1, direction);
 		}
 	};
 
@@ -120,7 +127,7 @@ const BinaryTree: React.FC = () => {
 		switch (value) {
 			case 'left':
 			case 'right':
-				expand(address, 1000);
+				expand(address, 1000, value);
 				return;
 			case '1':
 			case '5':

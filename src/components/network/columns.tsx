@@ -95,7 +95,7 @@ export const getColumns = (depth: number) => [
 						cell: () => {
 							return (
 								<div className="flex items-center justify-center">
-									<div className={'border border-gray-500 rounded-full px-1 py-0.5 lg:min-w-[40px] flex justify-center'}>{depth}</div>
+									<div className={'border border-gray-500 rounded-full px-1 py-0.5 lg:min-w-[40px] flex justify-center'}>{depth + 1}</div>
 								</div>
 							);
 						},

@@ -6,6 +6,7 @@ import logger from '@/src/config/logger';
 import { ZeroAddress } from '@betfinio/abi';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSupabase } from 'betfinio_app/supabase';
+import { TooltipProvider } from 'betfinio_app/tooltip';
 import cx from 'clsx';
 import type React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -14,7 +15,6 @@ import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import Legend from './Legend';
 import type { TreeOptionValue } from './tree/TreeLevelsMenu';
-import { TooltipProvider } from 'betfinio_app/tooltip';
 
 interface TreeMember {
 	id: string;

@@ -1,7 +1,7 @@
 import MintModal from '@/src/components/MintModal.tsx';
 import { useTreeMember } from '@/src/lib/query';
 import { getSide } from '@/src/lib/utils.ts';
-import { truncateEthAddress, valueToNumber, ZeroAddress } from '@betfinio/abi';
+import { ZeroAddress, truncateEthAddress, valueToNumber } from '@betfinio/abi';
 import { Blackjack } from '@betfinio/ui/dist/icons';
 import { BetValue } from 'betfinio_app/BetValue';
 import { useOpenProfile } from 'betfinio_app/lib/query/shared';

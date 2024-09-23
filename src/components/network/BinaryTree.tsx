@@ -14,6 +14,7 @@ import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import Legend from './Legend';
 import type { TreeOptionValue } from './tree/TreeLevelsMenu';
+import { TooltipProvider } from 'betfinio_app/tooltip';
 
 interface TreeMember {
 	id: string;
@@ -211,76 +212,80 @@ const BinaryTree: React.FC = () => {
 	};
 
 	return (
-		<div>
-			<div className="text-center text-xs font-semibold text-gray-500 italic px-5">
-				Linear and binary view are two ways of displaying the same structure. <br />
-				The only important for your matching bonus is binary tree. <br />s However, linear tree helps you to better recognize active inviters in your structure.
-			</div>
+		<TooltipProvider>
+			<div>
+				<div className="text-center text-xs font-semibold text-gray-500 italic px-5">
+					Linear and binary view are two ways of displaying the same structure. <br />
+					The only important for your matching bonus is binary tree. <br />s However, linear tree helps you to better recognize active inviters in your
+					structure.
+				</div>
 
-			<Legend />
-			<div className="border border-gray-800 rounded-md mt-2 md:mt-3 lg:mt-4 h-[80vh] relative" ref={boxRef}>
-				<div className="absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl bg-primaryLighter w-[100px] h-[50px]">
-					<div className="w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer" onClick={zoomPlus}>
-						+
+				<Legend />
+				<div className="border border-gray-800 rounded-md mt-2 md:mt-3 lg:mt-4 h-[80vh] relative" ref={boxRef}>
+					<div className="absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl bg-primaryLighter w-[100px] h-[50px]">
+						<div className="w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer" onClick={zoomPlus}>
+							+
+						</div>
+						<div className="w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer" onClick={zoomMinus}>
+							-
+						</div>
 					</div>
-					<div className="w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer" onClick={zoomMinus}>
-						-
+					<div
+						onClick={() => setIsFullScreen(true)}
+						className="absolute top-2 right-2 border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px]"
+					>
+						⤢
 					</div>
-				</div>
-				<div
-					onClick={() => setIsFullScreen(true)}
-					className="absolute top-2 right-2 border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px]"
-				>
-					⤢
-				</div>
-				<div className={cx('fixed  z-50 inset-0 bg-primaryLighter', { hidden: !isFullScreen })}>
-					{
-						<>
-							<div className={cx('absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl w-[100px] h-[50px] z-10')}>
-								<div className={'w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer'} onClick={zoomPlus}>
-									+
+					<div className={cx('fixed  z-50 inset-0 bg-primaryLighter', { hidden: !isFullScreen })}>
+						{
+							<>
+								<div className={cx('absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl w-[100px] h-[50px] z-10')}>
+									<div className={'w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer'} onClick={zoomPlus}>
+										+
+									</div>
+									<div className={'w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer'} onClick={zoomMinus}>
+										-
+									</div>
+									<div
+										onClick={() => setIsFullScreen(false)}
+										className="fixed top-2 right-2 border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px]"
+									>
+										⤢
+									</div>
 								</div>
-								<div className={'w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer'} onClick={zoomMinus}>
-									-
-								</div>
-								<div
-									onClick={() => setIsFullScreen(false)}
-									className="fixed top-2 right-2 border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px]"
-								>
-									⤢
-								</div>
-							</div>
-							<Tree
-								data={data}
-								onUpdate={handleUpdate}
-								pathFunc={'straight'}
-								nodeSize={getNodeSize()}
-								zoomable={true}
-								collapsible={true}
-								translate={translate}
-								zoom={zoom}
-								pathClassFunc={getPathStyle}
-								renderCustomNodeElement={renderElement}
-								orientation={'vertical'}
-							/>
-						</>
-					}
+								<Tree
+									data={data}
+									onUpdate={handleUpdate}
+									pathFunc={'straight'}
+									nodeSize={getNodeSize()}
+									zoomable={true}
+									collapsible={true}
+									translate={translate}
+									zoom={zoom}
+									pathClassFunc={getPathStyle}
+									renderCustomNodeElement={renderElement}
+									orientation={'vertical'}
+								/>
+							</>
+						}
+					</div>
+
+					<Tree
+						data={data}
+						onUpdate={handleUpdate}
+						pathFunc={'straight'}
+						nodeSize={getNodeSize()}
+						zoomable={true}
+						collapsible={true}
+						translate={translate}
+						zoom={zoom}
+						pathClassFunc={getPathStyle}
+						renderCustomNodeElement={renderElement}
+						orientation={'vertical'}
+					/>
 				</div>
-				<Tree
-					data={data}
-					onUpdate={handleUpdate}
-					pathFunc={'straight'}
-					nodeSize={getNodeSize()}
-					zoomable={true}
-					collapsible={true}
-					translate={translate}
-					zoom={zoom}
-					pathClassFunc={getPathStyle}
-					renderCustomNodeElement={renderElement}
-					orientation={'vertical'}
-				/>
 			</div>
-		</div>
+		</TooltipProvider>
 	);
 };
 

@@ -1,5 +1,5 @@
 import { useEarningBalances, useMember } from '@/src/lib/query';
-import { ZeroAddress, truncateEthAddress, valueToNumber } from '@betfinio/abi';
+import { truncateEthAddress, valueToNumber } from '@betfinio/abi';
 import CoinStack from '@betfinio/ui/dist/icons/CoinStack';
 import GoldenBars from '@betfinio/ui/dist/icons/GoldenBars';
 import Network from '@betfinio/ui/dist/icons/Network';
@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 const InfoCards: FC = () => {
-	const { t } = useTranslation('', { keyPrefix: 'affiliate.cards' });
+	const { t } = useTranslation('affiliate', { keyPrefix: 'cards' });
 	const { address } = useAccount();
 	const { data: member } = useMember(address);
 	const { data: balance } = useEarningBalances(address);

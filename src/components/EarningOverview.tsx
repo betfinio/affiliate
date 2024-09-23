@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 const EarningOverview: FC = () => {
-	const { t } = useTranslation('', { keyPrefix: 'affiliate.earnings' });
+	const { t } = useTranslation('affiliate', { keyPrefix: 'earnings' });
 	const { address = ZeroAddress } = useAccount();
 	const { data: limit = 0n } = useDailyLimit(address);
 	const { data: pending = 0n } = usePendingMatchingBonus(address);
@@ -25,7 +25,6 @@ const EarningOverview: FC = () => {
 
 	const time = useMemo(() => {
 		const now = DateTime.now().toUTC();
-
 		const tomorrow = now.plus({ days: now.hour >= 0 ? 1 : 0 }).set({
 			hour: 0,
 			minute: 0,
@@ -55,13 +54,13 @@ const EarningOverview: FC = () => {
 								<th className={'pb-3 text-right font-medium '}>
 									<div className={'flex flex-row items-center justify-end gap-1'}>
 										<DirectAffiliate className={'w-4 h-4'} />
-										Direct <span className={'hidden md:block'}>bonus</span>
+										{t('table.direct')} <span className={'hidden md:block'}>{t('table.bonus')}</span>
 									</div>
 								</th>
 								<th className={'pb-3 text-right font-medium'}>
 									<div className={'flex flex-row items-center justify-end gap-1'}>
 										<DepthAffiliate className={'w-4 h-4'} />
-										Matching <span className={'hidden md:block'}>bonus</span>
+										{t('table.depth')} <span className={'hidden md:block'}>{t('table.bonus')}</span>
 									</div>
 								</th>
 							</tr>

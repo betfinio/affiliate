@@ -1,0 +1,96 @@
+{
+	"login": "Please connect the wallet",
+	"not-member": "You are not a member. Please ask someone to invite you or enter the referral code:",
+	"cards": {
+		"referer": "Your inviter",
+		"networkSize": "Your binary tree size",
+		"networkVolume": "Your network volume",
+		"children_total": "{total} total",
+		"children_direct": "{direct} direct",
+		"networkIncome": "Your total network earnings"
+	},
+	"earnings": {
+		"title": "Affiliate earnings overview",
+		"overview": "Earnings overview",
+		"betting": "Betting",
+		"staking": "Staking",
+		"matching": "Matching",
+		"claim": "Claim",
+		"claimDirect": "Direct earnings",
+		"claimMatching": "Matching earnings",
+		"claimed": "Already claimed {claimed} BET",
+		"limit": "Limit for daily claim: {limit}",
+		"table": {
+			"source": "Earnings source",
+			"direct": "Direct",
+			"bonus": "bonus",
+			"depth": "Matching",
+			"income": "Income",
+			"staking": "Staking",
+			"matching": "Matching",
+			"bets": "Bets"
+		}
+	},
+	"generate": {
+		"title": "Generate invitation to a specific wallet:",
+		"generate": "Generate",
+		"create": "Create link",
+		"academy_link": "Academy link",
+		"position": {
+			"auto": "Auto position",
+			"manual": "Choose position"
+		},
+		"newMember": "Address of new user:",
+		"placeholder": "New member address: 0x...",
+		"upload": "Upload invitation CSV",
+		"newParent": "Parent of new user in Binary tree:",
+		"selectParent": "Select parent",
+		"filter": "Filter members...",
+		"noMembers": "No members found",
+		"loading": "Loading..."
+	},
+	"conditions": {
+		"title": "Affiliate conditions overview",
+		"direct": "Direct affiliate",
+		"binary": "Binary matching",
+		"conditions": "Conditions",
+		"bonus": "Bonus",
+		"limit": "Limitations",
+		"noLimit": "No limit",
+		"stake": "Stake for",
+		"directStake": " direct stake",
+		"directBet": " direct bet",
+		"invite": "Invite {count} users",
+		"inviteExplain": "Both of your invitees should stake for at least {amount} BET each",
+		"weakLeg": "weak leg",
+		"subtitle": "* {stakes}% stakes + {bets}% bets",
+		"or": "or",
+		"day": "day",
+		"explain": "Sum of conservative + dynamic staking"
+	},
+	"view": {
+		"tabs": {
+			"binary": "Binary Structure",
+			"linear": "Linear Structure"
+		},
+		"table": {
+			"title": "Table",
+			"description": "Active networkers in your structure",
+			"member": "Member",
+			"level": "Binar LVL",
+			"staking": "Staking",
+			"betting": "Betting",
+			"side": "Side",
+			"left": "Left",
+			"right": "Right",
+			"affiliates": "Affiliates",
+			"invitesVars": "{invites} ({direct} direct)",
+			"affiliatedStaking": "Affiliated staking",
+			"affiliatedBetting": "Affiliated betting",
+			"revenue": "Revenue"
+		},
+		"tree": {
+			"title": "Genealogy tree"
+		}
+	}
+}

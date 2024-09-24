@@ -4,6 +4,7 @@ import MiddleNode from '@/src/components/network/tree/MiddleNode.tsx';
 import SmallNode from '@/src/components/network/tree/SmallNode.tsx';
 import { ZeroAddress } from '@betfinio/abi';
 import { useSupabase } from 'betfinio_app/supabase';
+import { TooltipProvider } from 'betfinio_app/tooltip';
 import cx from 'clsx';
 import { Expand } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -98,69 +99,71 @@ const LinearTree = () => {
 
 	return (
 		<div>
-			<div className={'text-center text-xs font-semibold text-gray-500 italic px-5'}>
-				Linear and binary view are two ways of displaying the same structure. <br /> The only important for your matching bonus is binary tree. <br /> However,
-				linear tree helps you to better recognise active inviters in your structure.
-			</div>
-			<Legend />
-			<div className={' border border-gray-800 rounded-md mt-2 md:mt-3 lg:mt-4 h-[80vh] relative'} ref={boxRef}>
-				<div className={cx('absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl bg-primaryLighter w-[100px] h-[50px]')}>
-					<div className={'w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer'} onClick={zoomPlus}>
-						+
-					</div>
-					<div className={'w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer'} onClick={zoomMinus}>
-						-
-					</div>
+			<TooltipProvider>
+				<div className={'text-center text-xs font-semibold text-gray-500 italic px-5'}>
+					Linear and binary view are two ways of displaying the same structure. <br /> The only important for your matching bonus is binary tree. <br />{' '}
+					However, linear tree helps you to better recognise active inviters in your structure.
 				</div>
-				<div
-					onClick={() => handle.enter()}
-					className={
-						'absolute top-2 right-2 border cursor-pointer border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px] '
-					}
-				>
-					<Expand className={'w-6 h-6'} />
+				<Legend />
+				<div className={' border border-gray-800 rounded-md mt-2 md:mt-3 lg:mt-4 h-[80vh] relative'} ref={boxRef}>
+					<div className={cx('absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl bg-primaryLighter w-[100px] h-[50px]')}>
+						<div className={'w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer'} onClick={zoomPlus}>
+							+
+						</div>
+						<div className={'w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer'} onClick={zoomMinus}>
+							-
+						</div>
+					</div>
+					<div
+						onClick={() => handle.enter()}
+						className={
+							'absolute top-2 right-2 border cursor-pointer border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px] '
+						}
+					>
+						<Expand className={'w-6 h-6'} />
+					</div>
+					<FullScreen handle={handle}>
+						{handle.active && (
+							<>
+								<div className={cx('absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl w-[100px] h-[50px] z-10')}>
+									<div className={'w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer'} onClick={zoomPlus}>
+										+
+									</div>
+									<div className={'w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer'} onClick={zoomMinus}>
+										-
+									</div>
+								</div>
+								<Tree
+									data={data}
+									onUpdate={handleUpdate}
+									pathFunc={'step'}
+									nodeSize={getNodeSize()}
+									zoomable={true}
+									collapsible={true}
+									translate={translate}
+									zoom={zoom}
+									pathClassFunc={() => '!stroke-purple-box stroke-2'}
+									renderCustomNodeElement={renderElement}
+									orientation={'horizontal'}
+								/>
+							</>
+						)}
+					</FullScreen>
+					<Tree
+						data={data}
+						onUpdate={handleUpdate}
+						pathFunc={'step'}
+						nodeSize={getNodeSize()}
+						zoomable={true}
+						collapsible={true}
+						translate={translate}
+						zoom={zoom}
+						pathClassFunc={() => '!stroke-purple-box stroke-2'}
+						renderCustomNodeElement={renderElement}
+						orientation={'horizontal'}
+					/>
 				</div>
-				<FullScreen handle={handle}>
-					{handle.active && (
-						<>
-							<div className={cx('absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl w-[100px] h-[50px] z-10')}>
-								<div className={'w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer'} onClick={zoomPlus}>
-									+
-								</div>
-								<div className={'w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer'} onClick={zoomMinus}>
-									-
-								</div>
-							</div>
-							<Tree
-								data={data}
-								onUpdate={handleUpdate}
-								pathFunc={'step'}
-								nodeSize={getNodeSize()}
-								zoomable={true}
-								collapsible={true}
-								translate={translate}
-								zoom={zoom}
-								pathClassFunc={() => '!stroke-purple-box stroke-2'}
-								renderCustomNodeElement={renderElement}
-								orientation={'horizontal'}
-							/>
-						</>
-					)}
-				</FullScreen>
-				<Tree
-					data={data}
-					onUpdate={handleUpdate}
-					pathFunc={'step'}
-					nodeSize={getNodeSize()}
-					zoomable={true}
-					collapsible={true}
-					translate={translate}
-					zoom={zoom}
-					pathClassFunc={() => '!stroke-purple-box stroke-2'}
-					renderCustomNodeElement={renderElement}
-					orientation={'horizontal'}
-				/>
-			</div>
+			</TooltipProvider>
 		</div>
 	);
 };

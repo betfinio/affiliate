@@ -1,18 +1,20 @@
 import MemberInput from '@/src/components/MemberInput.tsx';
-import { useMultimint } from '@/src/lib/query';
+import { useMultimint } from '@/src/lib/query/mutations.ts';
 import { ZeroAddress } from '@betfinio/abi';
-import { createColumnHelper } from '@tanstack/react-table';
+import { type ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { DataTable } from 'betfinio_app/DataTable';
 import { Button } from 'betfinio_app/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from 'betfinio_app/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'betfinio_app/dropdown-menu';
 import { Input } from 'betfinio_app/input';
+import { getAcademyUrl } from 'betfinio_app/lib';
 import { ScrollArea } from 'betfinio_app/scroll-area';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'betfinio_app/tooltip';
+import { toast } from 'betfinio_app/use-toast';
 import cx from 'clsx';
-import { CircleAlert, Loader, MoreHorizontal, Trash } from 'lucide-react';
-import { type FC, useEffect, useState } from 'react';
-import { type Address, isAddress } from 'viem';
+import { CircleAlert, Link2Icon, Loader, Trash, X } from 'lucide-react';
+import { type FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { type Address, isAddress, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
 interface NewMemberProps {
@@ -23,9 +25,10 @@ interface NewMemberProps {
 const columnHelper = createColumnHelper<NewMemberProps>();
 
 const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMemberProps[] }> = ({ open, onClose, initialMembers = [] }) => {
+	const { t } = useTranslation('affiliate', { keyPrefix: 'generate' });
 	const { address: me } = useAccount();
-	const [members, setMembers] = useState<NewMemberProps[]>(initialMembers);
 	const { mutate: multimint, isPending } = useMultimint();
+	const [members, setMembers] = useState<NewMemberProps[]>(initialMembers);
 
 	const handleMint = async () => {
 		multimint({ members: members.map((e) => e.address || ZeroAddress), parents: members.map((e) => e.parent || me || ('' as Address)) });
@@ -49,9 +52,9 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 		setMembers(newMembers);
 	};
 
-	const columns = [
+	const columns: ColumnDef<NewMemberProps, never>[] = [
 		columnHelper.accessor('address', {
-			header: 'Address',
+			header: t('modal.address'),
 			meta: {
 				className: 'lg:p-2 py-1',
 			},
@@ -80,7 +83,7 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 								<TooltipTrigger asChild>
 									<CircleAlert className={cx(!isValid ? 'absolute top-2 right-2 w-6 h-6 text-red-roulette' : 'hidden')} />
 								</TooltipTrigger>
-								<TooltipContent>Invalid address</TooltipContent>
+								<TooltipContent>{t('modal.invalidAddress')}</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>
 					</div>
@@ -88,7 +91,7 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 			},
 		}),
 		columnHelper.accessor('parent', {
-			header: 'Parent',
+			header: t('modal.parent'),
 			meta: {
 				className: 'w-[150px] md:w-[200px] lg:p-2 py-1',
 			},
@@ -104,25 +107,64 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 			},
 		}),
 	];
+
+	const [linkButtonDisabled, setLinkButtonDisabled] = useState(false);
+
+	const invitingParent = useMemo(() => {
+		setLinkButtonDisabled(false);
+		let parent = members[0]?.parent;
+		for (const member of members) {
+			if (member.parent !== parent) {
+				parent = zeroAddress;
+				setLinkButtonDisabled(true);
+			}
+		}
+
+		return parent;
+	}, [members]);
+
+	const handleAcademyLink = async () => {
+		if (!me || !invitingParent) return;
+		const code = me + (invitingParent || me);
+		console.log(code);
+		await navigator.clipboard.writeText(`${getAcademyUrl('/new')}/?code=${code}`);
+		toast({
+			title: t('modal.copied'),
+			description: t('modal.copiedDescription'),
+			variant: 'default',
+		});
+	};
+
 	return (
 		<Dialog open={open} onOpenChange={() => onClose()}>
 			<DialogContent className={'affiliate text-white p-4'}>
+				<div onClick={onClose} className={'absolute right-4 top-4 cursor-pointer hover:text-red-roulette duration-300 z-10'}>
+					<X className="h-5 w-5" />
+				</div>
 				<ScrollArea className={'max-h-[90vh] lg:min-w-[800px]'}>
 					<DialogHeader>
-						<DialogTitle className={'text-xl'}>Mint new passes</DialogTitle>
-						<DialogDescription className={'text-sm text-gray-400'}>
-							Please enter the address of the new member(s) you would like to mint a pass for.
-						</DialogDescription>
+						<DialogTitle className={'text-xl'}>{t('modal.title')}</DialogTitle>
+						<DialogDescription className={'text-sm text-gray-400'}>{t('modal.subtitle')}</DialogDescription>
 					</DialogHeader>
-					{/*// @ts-ignore*/}
 					<DataTable columns={columns} data={members} />
 					<div className={'flex flex-row items-center justify-between mt-2'}>
 						<Button onClick={handleAdd} variant={'outline'}>
-							Add more
+							{t('modal.more')}
 						</Button>
-						<Button onClick={handleMint} disabled={members.length === 0} className={'w-[100px]'}>
-							{isPending ? <Loader className={'animate-spin'} /> : <>Mint Pass{members.length > 1 && 'es'}</>}
-						</Button>
+						<div className={'flex flex-row items-center gap-2 mt-2'}>
+							<Button
+								variant={'outline'}
+								disabled={linkButtonDisabled}
+								onClick={handleAcademyLink}
+								className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}
+							>
+								<Link2Icon className={'w-3 h-3'} />
+								{t('academy_link')}
+							</Button>
+							<Button onClick={handleMint} disabled={members.length === 0} className={'w-[100px]'}>
+								{isPending ? <Loader className={'animate-spin'} /> : t('modal.mint', { count: members.length })}
+							</Button>
+						</div>
 					</div>
 				</ScrollArea>
 			</DialogContent>

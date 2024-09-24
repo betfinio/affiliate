@@ -3,6 +3,7 @@ import type { Table } from '@tanstack/react-table';
 import { Button } from 'betfinio_app/button';
 import { Input } from 'betfinio_app/input';
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { DataTableFacetedFilter } from './FacetedFilter';
 
 interface DataTableToolbarProps<TData> {
@@ -11,7 +12,7 @@ interface DataTableToolbarProps<TData> {
 
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
 	const isFiltered = table.getState().columnFilters.length > 0;
-
+	const { t } = useTranslation('affiliate', { keyPrefix: 'generate' });
 	return (
 		<div className="flex items-center justify-between">
 			<div className="flex flex-1 items-center gap-2 flex-wrap">
@@ -26,7 +27,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 				)}
 				<div className={'w-full  lg:w-auto flex-1 flex justify-end '}>
 					<Input
-						placeholder="Filter members..."
+						placeholder={t('filter')}
 						value={(table.getColumn('member')?.getFilterValue() as string) ?? ''}
 						onChange={(event) => table.getColumn('member')?.setFilterValue(event.target.value)}
 						className="h-8 w-[250px] border-gray-800"

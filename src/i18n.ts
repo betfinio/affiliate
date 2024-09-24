@@ -1,38 +1,38 @@
-import * as i18 from 'i18next';
 import type { i18n } from 'i18next';
+import * as i18 from 'i18next';
 import ICU from 'i18next-icu';
 import { initReactI18next } from 'react-i18next';
-import enJSON from './translations/en.json';
-import ruJSON from './translations/ru.json';
 
-// @ts-ignore
-import enShared from 'betfinio_app/locales/en';
-// @ts-ignore
-import ruShared from 'betfinio_app/locales/ru';
+import czAffiliate from './translations/cz/affiliate.json';
+import enAffiliate from './translations/en/affiliate.json';
+import ruAffiliate from './translations/ru/affiliate.json';
 
-const resources = {
+import { sharedLang } from 'betfinio_app/locales/index';
+
+export const resources = {
 	en: {
-		translation: {
-			affiliate: enJSON,
-			shared: enShared,
-		},
+		affiliate: enAffiliate,
+		shared: sharedLang.en,
 	},
 	ru: {
-		translation: {
-			affiliate: ruJSON,
-			shared: ruShared,
-		},
+		affiliate: ruAffiliate,
+		shared: sharedLang.ru,
 	},
-};
+	cz: {
+		affiliate: czAffiliate,
+		shared: sharedLang.cz,
+	},
+} as const;
 
 const instance: i18n = i18.createInstance();
 instance
 	.use(initReactI18next)
 	.use(ICU)
 	.init({
-		resources: resources,
+		resources,
 		lng: 'en', // default language
 		fallbackLng: 'en',
+		defaultNS: 'affiliate',
 		interpolation: { escapeValue: false },
 		react: { useSuspense: true },
 	});

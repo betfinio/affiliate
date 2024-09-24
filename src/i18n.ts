@@ -30,7 +30,8 @@ instance
 	.use(ICU)
 	.init({
 		resources,
-		lng: 'ru', // default language
+		lng: 'en', // default language
+		fallbackLng: 'en',
 		defaultNS: 'affiliate',
 		interpolation: { escapeValue: false },
 		react: { useSuspense: true },

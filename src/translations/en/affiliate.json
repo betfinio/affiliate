@@ -1,0 +1,187 @@
+{
+	"login": "Please connect the wallet",
+	"not-member": "You are not a member. Please ask someone to invite you or enter the referral code:",
+	"cards": {
+		"referer": "Your inviter",
+		"networkSize": "Your binary tree size",
+		"networkVolume": "Your network volume",
+		"children_total": "{total} total",
+		"children_direct": "{direct} direct",
+		"networkIncome": "Your total network earnings",
+		"referrerTooltip": {
+			"title": "Referrer",
+			"content": "Is a wallet address of a user that directly invited you to the BetFin",
+			"content2": "You are a part of this user's binary tree therefore referrer's other affiliates may fall also to your binary tree!"
+		},
+		"networkTooltip": {
+			"content": "White number displays the total number of addresses in your binary tree.",
+			"content2": "The yellow number is the number of addresses directly invited by you.",
+			"content3": "All your directly invited and their downlines are a part of your binary tree."
+		},
+		"volumeTooltip": {
+			"content": "Total network volume consists of all the following ever made in unlimited depth of your binary tree:",
+			"content2": "100% of all conservative and dynamic stakes",
+			"content3": "1% of all bets"
+		},
+		"earningTooltip": {
+			"content": "Total network income consists of all the affiliate rewards you claimed in the history of your account."
+		}
+	},
+	"earnings": {
+		"title": "Affiliate earnings overview",
+		"overview": "Earnings overview",
+		"betting": "Betting",
+		"staking": "Staking",
+		"matching": "Matching",
+		"claim": "Claim",
+		"claimDirect": "Direct earnings",
+		"claimMatching": "Matching earnings",
+		"claimed": "Already claimed {claimed} BET",
+		"limit": "Limit for daily claim: {limit}",
+		"table": {
+			"source": "Earnings source",
+			"direct": "Direct",
+			"bonus": "bonus",
+			"depth": "Matching",
+			"income": "Income",
+			"staking": "Staking",
+			"matching": "Matching",
+			"bets": "Bets"
+		}
+	},
+	"generate": {
+		"title": "Generate invitation to a specific wallet:",
+		"generate": "Generate",
+		"create": "Create link",
+		"academy_link": "Academy link",
+		"position": {
+			"auto": "Auto position",
+			"manual": "Choose position"
+		},
+		"you": "You",
+		"left": "Left",
+		"right": "Right",
+		"newMember": "Address of new user:",
+		"placeholder": "New member address: 0x...",
+		"upload": "Upload invitation CSV",
+		"newParent": "Parent of new user in Binary tree:",
+		"selectParent": "Select parent",
+		"filter": "Filter members...",
+		"noMembers": "No members found",
+		"loading": "Loading...",
+		"modal": {
+			"title": "Mint new passes",
+			"subtitle": "Please enter the address of the new member(s) you would like to mint a pass for.",
+			"more": "Add more",
+			"invalidAddress": "Invalid address",
+			"address": "Address",
+			"parent": "Parent",
+			"mint": "{count, plural, one {Mint pass} other {Mint passes}}",
+			"copied": "Copied to clipboard",
+			"copiedDescription": "The invitation link has been copied to your clipboard"
+		}
+	},
+	"conditions": {
+		"title": "Affiliate conditions overview",
+		"direct": "Direct affiliate",
+		"binary": "Binary matching",
+		"conditions": "Conditions",
+		"bonus": "Bonus",
+		"limit": "Limitations",
+		"noLimit": "No limit",
+		"stake": "Stake for",
+		"directStake": " direct stake",
+		"directBet": " direct bet",
+		"invite": "Invite {count} users",
+		"inviteExplain": "Both of your invitees should stake for at least {amount} BET each",
+		"weakLeg": "weak leg",
+		"subtitle": "* {stakes}% stakes + {bets}% bets",
+		"or": "or",
+		"day": "day",
+		"explain": "Sum of conservative + dynamic staking"
+	},
+	"view": {
+		"tabs": {
+			"binaryTree": "Binary Tree",
+			"linearTree": "Linear Tree",
+			"linearTable": "Linear Table"
+		},
+		"table": {
+			"title": "Table",
+			"memberData": "Member's data",
+			"activity": "Member's activity",
+			"network": "Member's network",
+			"description": "Active networkers in your structure",
+			"member": "Member",
+			"level": "Binar LVL",
+			"staking": "Staking",
+			"betting": "Betting",
+			"direct": "Direct(total)",
+			"stakingVolume": "Staking volume",
+			"bettingVolume": "Betting volume",
+			"totalVolume": "Total volume",
+			"side": "Side",
+			"left": "Left",
+			"right": "Right",
+			"affiliates": "Affiliates",
+			"invitesVars": "{invites} ({direct} direct)",
+			"affiliatedStaking": "Affiliated staking",
+			"affiliatedBetting": "Affiliated betting",
+			"revenue": "Revenue",
+			"display": "Display profile",
+			"show": "Show structure"
+		},
+		"tree": {
+			"title": "Genealogy tree"
+		}
+	},
+	"volume": {
+		"unmatched": "Unmatched",
+		"matched": "Matched",
+		"left": "Left",
+		"right": "Right",
+		"volume": "volume",
+		"strong": "Strong leg",
+		"weak": "Weak leg",
+		"total": "Total",
+		"represent": "Represents {count}% of total volume",
+		"to": "to",
+		"earn": "& earn",
+		"bring": "Bring"
+	},
+	"toast": {
+		"claimMatching": {
+			"failed": "Failed to claim matching bonus",
+			"pending": {
+				"title": "Claiming matching bonus",
+				"description": "Transaction submitted"
+			},
+			"success": {
+				"title": "Matching bonus claimed",
+				"description": "Transaction confirmed"
+			}
+		},
+		"multimint": {
+			"failed": "Failed to mint passes",
+			"pending": {
+				"title": "Minting passes",
+				"description": "Transaction submitted"
+			},
+			"success": {
+				"title": "Passes were minter",
+				"description": "Transaction confirmed"
+			}
+		},
+		"claimDirect": {
+			"failed": "Failed to claim direct bonus",
+			"pending": {
+				"title": "Claiming direct bonus",
+				"description": "Transaction submitted"
+			},
+			"success": {
+				"title": "Direct bonus claimed",
+				"description": "Transaction confirmed"
+			}
+		}
+	}
+}

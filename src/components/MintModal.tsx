@@ -1,18 +1,17 @@
 import MemberInput from '@/src/components/MemberInput.tsx';
 import { useMultimint } from '@/src/lib/query';
 import { ZeroAddress } from '@betfinio/abi';
-import { createColumnHelper } from '@tanstack/react-table';
+import { type ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { DataTable } from 'betfinio_app/DataTable';
 import { Button } from 'betfinio_app/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from 'betfinio_app/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'betfinio_app/dropdown-menu';
 import { Input } from 'betfinio_app/input';
 import { getAcademyUrl } from 'betfinio_app/lib';
 import { ScrollArea } from 'betfinio_app/scroll-area';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'betfinio_app/tooltip';
 import { toast } from 'betfinio_app/use-toast';
 import cx from 'clsx';
-import { CircleAlert, Link2Icon, Loader, MoreHorizontal, Trash, X } from 'lucide-react';
+import { CircleAlert, Link2Icon, Loader, Trash, X } from 'lucide-react';
 import { type FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type Address, isAddress, zeroAddress } from 'viem';
@@ -26,11 +25,12 @@ interface NewMemberProps {
 const columnHelper = createColumnHelper<NewMemberProps>();
 
 const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMemberProps[] }> = ({ open, onClose, initialMembers = [] }) => {
-	const { t } = useTranslation('', { keyPrefix: 'affiliate.generate' });
-
+	const { t } = useTranslation('affiliate', { keyPrefix: 'generate' });
+	const { t: tShared } = useTranslation('shared', { keyPrefix: 'member' });
 	const { address: me } = useAccount();
-	const [members, setMembers] = useState<NewMemberProps[]>(initialMembers);
 	const { mutate: multimint, isPending } = useMultimint();
+
+	const [members, setMembers] = useState<NewMemberProps[]>(initialMembers);
 
 	const handleMint = async () => {
 		multimint({ members: members.map((e) => e.address || ZeroAddress), parents: members.map((e) => e.parent || me || ('' as Address)) });
@@ -54,9 +54,9 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 		setMembers(newMembers);
 	};
 
-	const columns = [
+	const columns: ColumnDef<NewMemberProps, never>[] = [
 		columnHelper.accessor('address', {
-			header: 'Address',
+			header: t('modal.address'),
 			meta: {
 				className: 'lg:p-2 py-1',
 			},
@@ -85,7 +85,7 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 								<TooltipTrigger asChild>
 									<CircleAlert className={cx(!isValid ? 'absolute top-2 right-2 w-6 h-6 text-red-roulette' : 'hidden')} />
 								</TooltipTrigger>
-								<TooltipContent>Invalid address</TooltipContent>
+								<TooltipContent>{t('modal.invalidAddress')}</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>
 					</div>
@@ -93,7 +93,7 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 			},
 		}),
 		columnHelper.accessor('parent', {
-			header: 'Parent',
+			header: t('modal.parent'),
 			meta: {
 				className: 'w-[150px] md:w-[200px] lg:p-2 py-1',
 			},
@@ -126,12 +126,13 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 	}, [members]);
 
 	const handleAcademyLink = async () => {
+		if (!me || !invitingParent) return;
 		const code = me + (invitingParent || me);
 		console.log(code);
 		await navigator.clipboard.writeText(`${getAcademyUrl('/new')}/?code=${code}`);
 		toast({
-			title: 'Link copied',
-			description: 'The invitation link has been copied to your clipboard',
+			title: t('modal.copied'),
+			description: t('modal.copiedDescription'),
 			variant: 'default',
 		});
 	};
@@ -144,16 +145,13 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 				</div>
 				<ScrollArea className={'max-h-[90vh] lg:min-w-[800px]'}>
 					<DialogHeader>
-						<DialogTitle className={'text-xl'}>Mint new passes</DialogTitle>
-						<DialogDescription className={'text-sm text-gray-400'}>
-							Please enter the address of the new member(s) you would like to mint a pass for.
-						</DialogDescription>
+						<DialogTitle className={'text-xl'}>{t('modal.title')}</DialogTitle>
+						<DialogDescription className={'text-sm text-gray-400'}>{t('modal.subtitle')}</DialogDescription>
 					</DialogHeader>
-					{/*// @ts-ignore*/}
 					<DataTable columns={columns} data={members} />
 					<div className={'flex flex-row items-center justify-between mt-2'}>
 						<Button onClick={handleAdd} variant={'outline'}>
-							Add more
+							{t('modal.more')}
 						</Button>
 						<div className={'flex flex-row items-center gap-2 mt-2'}>
 							<Button
@@ -166,7 +164,7 @@ const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMe
 								{t('academy_link')}
 							</Button>
 							<Button onClick={handleMint} disabled={members.length === 0} className={'w-[100px]'}>
-								{isPending ? <Loader className={'animate-spin'} /> : <>Mint Pass{members.length > 1 && 'es'}</>}
+								{isPending ? <Loader className={'animate-spin'} /> : t('modal.mint', { count: members.length })}
 							</Button>
 						</div>
 					</div>

@@ -154,7 +154,7 @@ interface MintParams {
 
 export const useMultimint = () => {
 	const config = useConfig();
-	const { t } = useTranslation('', { keyPrefix: 'shared.errors' });
+	const { t } = useTranslation('shared', { keyPrefix: 'errors' });
 	const { toast } = useToast();
 	return useMutation<WriteContractReturnType, WriteContractErrorType, MintParams>({
 		mutationKey: ['affiliate', 'multimint'],
@@ -204,7 +204,7 @@ export const useMultimint = () => {
 export const useClaimDirect = () => {
 	const config = useConfig();
 	const queryClient = useQueryClient();
-	const { t } = useTranslation('', { keyPrefix: 'shared.errors' });
+	const { t } = useTranslation('shared', { keyPrefix: 'errors' });
 	const { toast } = useToast();
 	return useMutation<WriteContractReturnType, WriteContractErrorType>({
 		mutationKey: ['affiliate', 'claim', 'direct'],
@@ -254,7 +254,7 @@ export const useClaimMatching = () => {
 	const config = useConfig();
 	const queryClient = useQueryClient();
 	const { address = ZeroAddress } = useAccount();
-	const { t } = useTranslation('', { keyPrefix: 'shared.errors' });
+	const { t } = useTranslation('shared', { keyPrefix: 'errors' });
 	const { toast } = useToast();
 	return useMutation<WriteContractReturnType, WriteContractErrorType>({
 		mutationKey: ['affiliate', 'claim', 'matching'],

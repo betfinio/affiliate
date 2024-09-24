@@ -20,17 +20,15 @@ function MiddleNode({
 	node,
 	horizontal = false,
 	onLevelSelect,
-	showLevelSelect,
 	handleCollapseNode,
 	isExpanded,
 }: {
 	data: Address;
 	node: CustomNodeElementProps;
 	horizontal?: boolean;
-	onLevelSelect: (value: TreeOptionValue, address: Address) => void;
-	showLevelSelect: boolean;
-	handleCollapseNode: (address: Address) => void;
-	isExpanded: boolean;
+	onLevelSelect?: (value: TreeOptionValue, address: Address) => void;
+	handleCollapseNode?: (address: Address) => void;
+	isExpanded?: boolean;
 }) {
 	const query = useTreeMember(data);
 	const { data: username } = useUsername(data);
@@ -203,7 +201,7 @@ function MiddleNode({
 											isExpanded
 												? (e) => {
 														e.stopPropagation();
-														handleCollapseNode(data);
+														handleCollapseNode?.(data);
 													}
 												: () => {}
 										}
@@ -214,7 +212,7 @@ function MiddleNode({
 											hidden: horizontal,
 										})}
 									>
-										{!isExpanded ? <TreeLevelsMenu address={data} onLevelSelect={onLevelSelect} /> : '-'}
+										{!isExpanded && onLevelSelect ? <TreeLevelsMenu address={data} onLevelSelect={onLevelSelect} /> : '-'}
 									</div>
 								) : (
 									<div

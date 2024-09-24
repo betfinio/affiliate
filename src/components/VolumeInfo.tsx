@@ -5,6 +5,7 @@ import { BetValue } from 'betfinio_app/BetValue';
 import cx from 'clsx';
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 const VolumeInfo: FC = () => {
@@ -12,6 +13,7 @@ const VolumeInfo: FC = () => {
 	const RightCard = withClick(UnmatchedRightVolume, MatchedRightVolume);
 	const { address = ZeroAddress } = useAccount();
 	const { data: member } = useMember(address);
+	const { t } = useTranslation('affiliate', { keyPrefix: 'volume' });
 	if (!member) return null;
 	const left = valueToNumber(member.volume.left + member.bets.left / 100n);
 	const right = valueToNumber(member.volume.right + member.bets.right / 100n);
@@ -24,9 +26,10 @@ const VolumeInfo: FC = () => {
 				<RightCard />
 			</div>
 			<div className={'text-center col-span-2 text-lg mb-6  flex flex-row items-center justify-center gap-1'}>
-				Bring
+				{t('bring')}
 				<BetValue value={Math.abs(right - left)} className={'text-yellow-400 font-semibold'} withIcon={true} />
-				to <span className={'text-red-roulette'}>weak leg</span>& earn
+				{t('to')} <span className={'text-red-roulette'}>{t('weak')}</span>
+				{t('earn')}
 				<BetValue value={(Math.abs(right - left) / 100) * 8} className={'text-yellow-400 font-semibold'} withIcon={true} />
 			</div>
 		</div>
@@ -35,6 +38,7 @@ const VolumeInfo: FC = () => {
 
 const UnmatchedLeftVolume: FC = () => {
 	const { address = ZeroAddress } = useAccount();
+	const { t } = useTranslation('affiliate', { keyPrefix: 'volume' });
 	const { data: member, isFetched: isMemberFetched } = useMember(address);
 	if (!member) return null;
 	const left = member.volume.left + member.bets.left / 100n - member.matched.left;
@@ -45,15 +49,15 @@ const UnmatchedLeftVolume: FC = () => {
 				<ArrowLeftIcon className={'hidden lg:block w-16 h-16 text-yellow-400 col-span-1 border-2 border-yellow-400 rounded-full p-2'} />
 				<div className={'col-span-2 text-sm lg:text-xl whitespace-nowrap'}>
 					<div>
-						Unmatched <b className={'text-yellow-400'}>Left</b> volume
+						{t('unmatched')} <b className={'text-yellow-400'}>{t('left')}</b> {t('volume')}
 					</div>
 					<div className={cx('text-xl font-semibold', { 'blur-sm animate-pulse': !isMemberFetched })}>
 						<BetValue value={valueToNumber(isMemberFetched ? left : 12345n * 10n ** 18n)} withIcon />
 					</div>
 					{left > right ? (
-						<div className={cx('text-green-400 font-semibold mt-1 text-sm lg:text-base', { 'blur-sm animate-pulse': !isMemberFetched })}>Strong leg</div>
+						<div className={cx('text-green-400 font-semibold mt-1 text-sm lg:text-base', { 'blur-sm animate-pulse': !isMemberFetched })}>{t('strong')}</div>
 					) : (
-						<div className={cx('text-red-roulette font-semibold mt-1 text-sm lg:text-base', { 'blur-sm animate-pulse': !isMemberFetched })}>Weak leg</div>
+						<div className={cx('text-red-roulette font-semibold mt-1 text-sm lg:text-base', { 'blur-sm animate-pulse': !isMemberFetched })}>{t('weak')}</div>
 					)}
 				</div>
 			</div>
@@ -61,6 +65,7 @@ const UnmatchedLeftVolume: FC = () => {
 	);
 };
 const UnmatchedRightVolume: FC = () => {
+	const { t } = useTranslation('affiliate', { keyPrefix: 'volume' });
 	const { address = ZeroAddress } = useAccount();
 	const { data: member, isFetched: isMemberFetched } = useMember(address);
 	if (!member) return null;
@@ -71,15 +76,15 @@ const UnmatchedRightVolume: FC = () => {
 			<div className={'grid grid-cols-3 items-center gap-4'}>
 				<div className={'col-span-2 text-sm lg:text-xl'}>
 					<div className={'whitespace-nowrap'}>
-						Unmatched <b className={'text-yellow-400'}>Right</b> volume
+						{t('unmatched')} <b className={'text-yellow-400'}>{t('right')} </b> {t('volume')}
 					</div>
 					<div className={cx('text-xl font-semibold', { 'animate-pulse blur-sm': !isMemberFetched })}>
 						<BetValue value={valueToNumber(isMemberFetched ? right : 12345n * 10n ** 18n)} withIcon />
 					</div>
 					{right > left ? (
-						<div className={cx('text-green-400 font-semibold mt-1 text-sm lg:text-base', { 'blur-sm animate-pulse': !isMemberFetched })}>Strong leg</div>
+						<div className={cx('text-green-400 font-semibold mt-1 text-sm lg:text-base', { 'blur-sm animate-pulse': !isMemberFetched })}>{t('strong')}</div>
 					) : (
-						<div className={cx('text-red-roulette font-semibold mt-1 text-sm lg:text-base', { 'blur-sm animate-pulse': !isMemberFetched })}>Weak leg</div>
+						<div className={cx('text-red-roulette font-semibold mt-1 text-sm lg:text-base', { 'blur-sm animate-pulse': !isMemberFetched })}>{t('weak')}</div>
 					)}
 				</div>
 				<div className={'hidden lg:flex flex-row justify-end'}>
@@ -92,6 +97,7 @@ const UnmatchedRightVolume: FC = () => {
 const MatchedLeftVolume: FC = () => {
 	const { address = ZeroAddress } = useAccount();
 	const { data: member } = useMember(address);
+	const { t } = useTranslation('affiliate', { keyPrefix: 'volume' });
 	if (!member) return null;
 	const left = member.volume.left;
 	const leftPer = (valueToNumber(member.volume.left) / valueToNumber(member.volume.left + member.volume.right)) * 100 || 0;
@@ -101,12 +107,14 @@ const MatchedLeftVolume: FC = () => {
 				<ArrowLeftIcon className={'w-16 h-16 text-primary col-span-1 bg-yellow-400 border-2 border-yellow-400 rounded-full p-2'} />
 				<div className={'col-span-2 text-sm lg:text-xl'}>
 					<div>
-						Total <b className={'text-yellow-400'}>Left</b> volume
+						{t('total')} <b className={'text-yellow-400'}>{t('left')}</b> {t('volume')}
 					</div>
 					<div className={'text-sm lg:text-base'}>
 						<BetValue value={valueToNumber(left)} withIcon />
 					</div>
-					<div className={'hidden w-full lg:flex text-sm flex-row justify-start text-gray-400 gap-1'}>Represents {leftPer.toFixed(2)}% of total volume</div>
+					<div className={'hidden w-full lg:flex text-sm flex-row justify-start text-gray-400 gap-1'}>
+						{t('represent', { count: Number(leftPer.toFixed(2)) })}
+					</div>
 				</div>
 			</div>
 		</div>
@@ -115,6 +123,7 @@ const MatchedLeftVolume: FC = () => {
 const MatchedRightVolume: FC = () => {
 	const { address = ZeroAddress } = useAccount();
 	const { data: member } = useMember(address);
+	const { t } = useTranslation('affiliate', { keyPrefix: 'volume' });
 	if (!member) return null;
 	const right = member.volume.right;
 	const rightPer = (valueToNumber(member.volume.right) / valueToNumber(member.volume.left + member.volume.right)) * 100 || 0;
@@ -123,13 +132,13 @@ const MatchedRightVolume: FC = () => {
 			<div className={'grid grid-cols-3 items-center gap-4 w-full'}>
 				<div className={'col-span-2 text-sm lg:text-xl'}>
 					<div className={'whitespace-nowrap'}>
-						Total <b className={'text-yellow-400'}>Right</b> volume
+						{t('total')} <b className={'text-yellow-400'}>{t('right')}</b> {t('volume')}
 					</div>
 					<div className={'text-sm lg:text-base'}>
 						<BetValue value={valueToNumber(right)} withIcon />
 					</div>
 					<div className={'hidden w-full lg:flex text-sm flex-row justify-start text-gray-400 gap-1 whitespace-nowrap'}>
-						Represents {rightPer.toFixed(2)}% of total volume
+						{t('represent', { count: Number(rightPer.toFixed(2)) })}
 					</div>
 				</div>
 				<div className={'flex flex-row justify-end'}>

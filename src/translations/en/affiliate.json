@@ -7,7 +7,25 @@
 		"networkVolume": "Your network volume",
 		"children_total": "{total} total",
 		"children_direct": "{direct} direct",
-		"networkIncome": "Your total network earnings"
+		"networkIncome": "Your total network earnings",
+		"referrerTooltip": {
+			"title": "Referrer",
+			"content": "Is a wallet address of a user that directly invited you to the BetFin",
+			"content2": "You are a part of this user's binary tree therefore referrer's other affiliates may fall also to your binary tree!"
+		},
+		"networkTooltip": {
+			"content": "White number displays the total number of addresses in your binary tree.",
+			"content2": "The yellow number is the number of addresses directly invited by you.",
+			"content3": "All your directly invited and their downlines are a part of your binary tree."
+		},
+		"volumeTooltip": {
+			"content": "Total network volume consists of all the following ever made in unlimited depth of your binary tree:",
+			"content2": "100% of all conservative and dynamic stakes",
+			"content3": "1% of all bets"
+		},
+		"earningTooltip": {
+			"content": "Total network income consists of all the affiliate rewards you claimed in the history of your account."
+		}
 	},
 	"earnings": {
 		"title": "Affiliate earnings overview",
@@ -40,6 +58,9 @@
 			"auto": "Auto position",
 			"manual": "Choose position"
 		},
+		"you": "You",
+		"left": "Left",
+		"right": "Right",
 		"newMember": "Address of new user:",
 		"placeholder": "New member address: 0x...",
 		"upload": "Upload invitation CSV",
@@ -47,7 +68,18 @@
 		"selectParent": "Select parent",
 		"filter": "Filter members...",
 		"noMembers": "No members found",
-		"loading": "Loading..."
+		"loading": "Loading...",
+		"modal": {
+			"title": "Mint new passes",
+			"subtitle": "Please enter the address of the new member(s) you would like to mint a pass for.",
+			"more": "Add more",
+			"invalidAddress": "Invalid address",
+			"address": "Address",
+			"parent": "Parent",
+			"mint": "{count, plural, one {Mint pass} other {Mint passes}}",
+			"copied": "Copied to clipboard",
+			"copiedDescription": "The invitation link has been copied to your clipboard"
+		}
 	},
 	"conditions": {
 		"title": "Affiliate conditions overview",
@@ -70,16 +102,24 @@
 	},
 	"view": {
 		"tabs": {
-			"binary": "Binary Structure",
-			"linear": "Linear Structure"
+			"binaryTree": "Binary Tree",
+			"linearTree": "Linear Tree",
+			"linearTable": "Linear Table"
 		},
 		"table": {
 			"title": "Table",
+			"memberData": "Member's data",
+			"activity": "Member's activity",
+			"network": "Member's network",
 			"description": "Active networkers in your structure",
 			"member": "Member",
 			"level": "Binar LVL",
 			"staking": "Staking",
 			"betting": "Betting",
+			"direct": "Direct(total)",
+			"stakingVolume": "Staking volume",
+			"bettingVolume": "Betting volume",
+			"totalVolume": "Total volume",
 			"side": "Side",
 			"left": "Left",
 			"right": "Right",
@@ -87,10 +127,26 @@
 			"invitesVars": "{invites} ({direct} direct)",
 			"affiliatedStaking": "Affiliated staking",
 			"affiliatedBetting": "Affiliated betting",
-			"revenue": "Revenue"
+			"revenue": "Revenue",
+			"display": "Display profile",
+			"show": "Show structure"
 		},
 		"tree": {
 			"title": "Genealogy tree"
 		}
+	},
+	"volume": {
+		"unmatched": "Unmatched",
+		"matched": "Matched",
+		"left": "Left",
+		"right": "Right",
+		"volume": "volume",
+		"strong": "Strong leg",
+		"weak": "Weak leg",
+		"total": "Total",
+		"represent": "Represents {count}% of total volume",
+		"to": "to",
+		"earn": "& earn",
+		"bring": "Bring"
 	}
 }

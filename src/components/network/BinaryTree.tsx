@@ -135,29 +135,11 @@ const BinaryTree: React.FC = () => {
 
 		if (zoom > 0.7) {
 			if (addr !== address)
-				return (
-					<MiddleNode
-						onLevelSelect={handleLevelSelect}
-						showLevelSelect={false}
-						isExpanded={!!members[addr]}
-						data={addr}
-						node={node}
-						handleCollapseNode={handleCollapseNode}
-					/>
-				);
+				return <MiddleNode onLevelSelect={handleLevelSelect} isExpanded={!!members[addr]} data={addr} node={node} handleCollapseNode={handleCollapseNode} />;
 			return <BigNode isExpanded={!!members[addr]} data={addr} node={node} handleCollapseNode={handleCollapseNode} onLevelSelect={handleLevelSelect} />;
 		}
 		if (zoom > 0.5) {
-			return (
-				<MiddleNode
-					data={addr}
-					node={node}
-					isExpanded={!!members[addr]}
-					showLevelSelect={addr === address}
-					onLevelSelect={handleLevelSelect}
-					handleCollapseNode={handleCollapseNode}
-				/>
-			);
+			return <MiddleNode data={addr} node={node} isExpanded={!!members[addr]} onLevelSelect={handleLevelSelect} handleCollapseNode={handleCollapseNode} />;
 		}
 		if (zoom > 0.2) {
 			return (

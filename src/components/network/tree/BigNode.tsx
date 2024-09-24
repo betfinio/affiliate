@@ -1,7 +1,6 @@
 import MintModal from '@/src/components/MintModal.tsx';
 import { useTreeMember } from '@/src/lib/query';
 import { ZeroAddress, truncateEthAddress, valueToNumber } from '@betfinio/abi';
-import { useQueryClient } from '@tanstack/react-query';
 import { BetValue } from 'betfinio_app/BetValue';
 import { useUsername } from 'betfinio_app/lib/query/username';
 import cx from 'clsx';
@@ -9,11 +8,25 @@ import { ArrowLeftIcon, ArrowRightIcon, UserPlus } from 'lucide-react';
 import { type MouseEvent, useState } from 'react';
 import type { CustomNodeElementProps } from 'react-d3-tree';
 import type { Address } from 'viem';
+import { TreeLevelsMenu, type TreeOptionValue } from './TreeLevelsMenu';
 
-function BigNode({ data, node, horizontal = false }: { data: Address; node: CustomNodeElementProps; horizontal?: boolean }) {
+function BigNode({
+	data,
+	node,
+	horizontal = false,
+	onLevelSelect,
+	isExpanded,
+	handleCollapseNode,
+}: {
+	data: Address;
+	node: CustomNodeElementProps;
+	horizontal?: boolean;
+	onLevelSelect?: (value: TreeOptionValue, address: Address) => void;
+	isExpanded?: boolean;
+	handleCollapseNode?: (address: Address) => void;
+}) {
 	const { data: username } = useUsername(data);
 	const query = useTreeMember(data);
-	const queryClient = useQueryClient();
 	const [inviteModal, setInviteModal] = useState<boolean>(false);
 
 	if (query.isFetching || query.isRefetching || !query.data)
@@ -74,14 +87,21 @@ function BigNode({ data, node, horizontal = false }: { data: Address; node: Cust
 					</div>
 					{hasChildren ? (
 						<div
-							onClick={handleExpand}
+							onClick={
+								isExpanded
+									? (e) => {
+											e.stopPropagation();
+											handleCollapseNode?.(data);
+										}
+									: () => {}
+							}
 							className={cx('w-6 h-6 border-2 text-lg flex justify-center items-center border-purple-box bg-purple-box text-white rounded-full', {
 								'bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
 								'bg-red-roulette border-red-roulette': query.data.isInviting && !query.data.isMatching,
 								hidden: horizontal,
 							})}
 						>
-							+
+							{!isExpanded && onLevelSelect ? <TreeLevelsMenu address={data} onLevelSelect={onLevelSelect} /> : '-'}
 						</div>
 					) : (
 						<div
@@ -102,7 +122,7 @@ function BigNode({ data, node, horizontal = false }: { data: Address; node: Cust
 						className={cx('w-6 h-6 border-2 text-lg flex justify-center items-center border-purple-box bg-purple-box text-white rounded-full', {
 							'!bg-yellow-400 border-yellow-400 !text-black': query.data.isMatching,
 							'!bg-red-roulette border-red-roulette': query.data.isInviting && !query.data.isMatching,
-							hidden: !horizontal,
+							hidden: !horizontal || query.data.count === 0,
 						})}
 					>
 						+

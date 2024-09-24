@@ -1,6 +1,6 @@
 import { useMemberSide, usePossibleAddresses, usePossibleUsernames } from '@/src/lib/query';
 import type { MemberWithUsername } from '@/src/lib/types.ts';
-import { ZeroAddress, truncateEthAddress } from '@betfinio/abi';
+import { truncateEthAddress } from '@betfinio/abi';
 import { Badge } from 'betfinio_app/badge';
 import { Button } from 'betfinio_app/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandLoading, CommandSeparator } from 'betfinio_app/command';
@@ -8,6 +8,7 @@ import { Drawer, DrawerContent, DrawerTrigger } from 'betfinio_app/drawer';
 import { Popover, PopoverContent, PopoverTrigger } from 'betfinio_app/popover';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { type FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from 'usehooks-ts';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
@@ -56,21 +57,22 @@ export default MemberInput;
 
 const MemberInfo: FC<{ member: Address | null }> = ({ member }) => {
 	const { address } = useAccount();
+	const { t } = useTranslation('affiliate', { keyPrefix: 'generate' });
 	const { data: side } = useMemberSide(address, member || undefined);
 	return (
 		<>
-			{member ? truncateEthAddress(member) : 'Select parent'}
+			{member ? truncateEthAddress(member) : t('selectParent')}
 			{side === 'right' && (
 				<Badge className={'flex gap-1 bg-yellow-400 text-black'}>
-					Right <ArrowRight className={'w-3 h-3'} />
+					{t('right')} <ArrowRight className={'w-3 h-3'} />
 				</Badge>
 			)}
 			{side === 'left' && (
 				<Badge className={'flex gap-1 bg-yellow-400 text-black'}>
-					Left <ArrowLeft className={'w-3 h-3'} />
+					{t('left')} <ArrowLeft className={'w-3 h-3'} />
 				</Badge>
 			)}
-			{address?.toLowerCase() === member?.toLowerCase() && <Badge className={'text-black bg-yellow-400'}>You</Badge>}
+			{address?.toLowerCase() === member?.toLowerCase() && <Badge className={'text-black bg-yellow-400'}>{t('you')}</Badge>}
 		</>
 	);
 };
@@ -82,6 +84,7 @@ function StatusList({
 	setOpen: (open: boolean) => void;
 	onSelect: (address: Address) => void;
 }) {
+	const { t } = useTranslation('affiliate', { keyPrefix: 'generate' });
 	const [value, setValue] = useState('');
 	const { data: possibleByUsername = [], isFetching: uFetching } = usePossibleUsernames(value);
 	const { data: possibleByAddress = [], isFetching: aFetching } = usePossibleAddresses(value);
@@ -96,9 +99,9 @@ function StatusList({
 
 	return (
 		<Command onValueChange={handleSelect}>
-			<CommandInput placeholder="Filter members..." onValueChange={handleChange} className={'lg:min-w-[500px]'} />
+			<CommandInput placeholder={t('filter')} onValueChange={handleChange} className={'lg:min-w-[500px]'} />
 			<CommandList>
-				{isFetching ? <CommandLoading>Loading...</CommandLoading> : <CommandEmpty>No members found.</CommandEmpty>}
+				{isFetching ? <CommandLoading>{t('loading')}</CommandLoading> : <CommandEmpty>{t('noMembers')}</CommandEmpty>}
 				{possibleByUsername.length > 0 && (
 					<CommandGroup heading={'By username'}>
 						{possibleByUsername.map((member) => (

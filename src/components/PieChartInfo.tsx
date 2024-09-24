@@ -4,9 +4,11 @@ import { type MayHaveLabel, ResponsivePie } from '@nivo/pie';
 import type { PieCustomLayerProps } from '@nivo/pie/dist/types/types';
 import { BetValue } from 'betfinio_app/BetValue';
 import { type FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 const PieChartInfo: FC = () => {
+	const { t } = useTranslation('affiliate', { keyPrefix: 'earnings' });
 	const { address = ZeroAddress } = useAccount();
 	const { data: balance } = useEarningBalances(address);
 	const zero = balance.staking.total + balance.bets.total + balance.matching.total === 0n;
@@ -14,28 +16,28 @@ const PieChartInfo: FC = () => {
 	const data = useMemo(() => {
 		return [
 			{
-				color: '#292546',
+				color: '#dd375f',
 				id: 'betting',
-				label: 'Betting',
+				label: t('betting'),
 				value: zero ? 30 : valueToNumber(balance.bets.total),
 			},
 			{
-				color: '#facc15',
+				color: '#4ade80',
 				id: 'staking',
-				label: 'Staking',
+				label: t('staking'),
 				value: zero ? 30 : valueToNumber(balance.staking.total),
 			},
 			{
-				color: '#dd375f',
+				color: '#facc15',
 				id: 'matching',
-				label: 'Matching',
+				label: t('matching'),
 				value: zero ? 30 : valueToNumber(balance.matching.total),
 			},
 		].filter((e) => !!e);
 	}, [balance]);
 	return (
 		<div className={'flex w-full h-[430px] p-4 flex-col items-center justify-center'}>
-			<div>Earnings overview</div>
+			<div>{t('overview')}</div>
 			<ResponsivePie
 				data={data}
 				innerRadius={0.6}

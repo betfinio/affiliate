@@ -3,26 +3,32 @@ import { useTreeMember } from '@/src/lib/query';
 import { getSide } from '@/src/lib/utils.ts';
 import { ZeroAddress, truncateEthAddress, valueToNumber } from '@betfinio/abi';
 import { Blackjack } from '@betfinio/ui/dist/icons';
-import { logger } from '@rsbuild/core';
 import { BetValue } from 'betfinio_app/BetValue';
 import { useOpenProfile } from 'betfinio_app/lib/query/shared';
 import { useCustomUsername, useUsername } from 'betfinio_app/lib/query/username';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'betfinio_app/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from 'betfinio_app/tooltip';
 import cx from 'clsx';
 import { ArrowLeft, ArrowRight, Layers3, UserPlus, UsersIcon } from 'lucide-react';
 import { type MouseEvent, useMemo, useState } from 'react';
 import type { CustomNodeElementProps } from 'react-d3-tree';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
+import { TreeLevelsMenu, type TreeOptionValue } from './TreeLevelsMenu';
 
 function MiddleNode({
 	data,
 	node,
 	horizontal = false,
+	onLevelSelect,
+	handleCollapseNode,
+	isExpanded,
 }: {
 	data: Address;
 	node: CustomNodeElementProps;
 	horizontal?: boolean;
+	onLevelSelect?: (value: TreeOptionValue, address: Address) => void;
+	handleCollapseNode?: (address: Address) => void;
+	isExpanded?: boolean;
 }) {
 	const query = useTreeMember(data);
 	const { data: username } = useUsername(data);
@@ -44,11 +50,9 @@ function MiddleNode({
 	}, [query.data, member]);
 
 	const handleInvite = (e: MouseEvent, parent: Address) => {
-		console.log('invite', parent, inviteModal);
 		e.stopPropagation();
 		setParent(() => parent);
 		setInviteModal(() => true);
-		console.log('set');
 	};
 
 	if (query.isFetching || query.isRefetching || !query.data)
@@ -89,19 +93,17 @@ function MiddleNode({
 
 	const renderBetting = () => {
 		return (
-			<TooltipProvider>
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<div className={'w-full flex justify-center'}>
-							<Blackjack className={'w-1/2 stroke-0'} />
-						</div>
-					</TooltipTrigger>
-					<TooltipContent>
-						<p className={'font-semibold'}>User bets volume:</p>
-						<p className={'text-yellow-400'}>{`${valueToNumber(query.data.bets).toLocaleString()} BET`}</p>
-					</TooltipContent>
-				</Tooltip>
-			</TooltipProvider>
+			<Tooltip>
+				<TooltipTrigger>
+					<div className={'w-full flex justify-center'}>
+						<Blackjack className={'w-1/2 stroke-0'} />
+					</div>
+				</TooltipTrigger>
+				<TooltipContent className={''}>
+					<div className={'font-semibold text-xs text-gray-400'}>User bets volume:</div>
+					<div className={'text-yellow-400'}>{`${valueToNumber(query.data.bets).toLocaleString()} BET`}</div>
+				</TooltipContent>
+			</Tooltip>
 		);
 	};
 	const renderLeft = () => {
@@ -112,19 +114,17 @@ function MiddleNode({
 	};
 	const renderStaking = () => {
 		return (
-			<TooltipProvider>
-				<Tooltip>
-					<TooltipTrigger>
-						<div className={'w-full flex justify-center'}>
-							<Layers3 className={'w-2/3'} />
-						</div>
-					</TooltipTrigger>
-					<TooltipContent>
-						<p className={'font-semibold'}>User staking volume:</p>
-						<p className={'text-yellow-400'}>{`${valueToNumber(query.data.volume).toLocaleString()} BET`}</p>
-					</TooltipContent>
-				</Tooltip>
-			</TooltipProvider>
+			<Tooltip>
+				<TooltipTrigger>
+					<div className={'w-full flex justify-center'}>
+						<Layers3 className={'w-2/3'} />
+					</div>
+				</TooltipTrigger>
+				<TooltipContent>
+					<div className={'font-semibold text-xs text-gray-400'}>User staking volume:</div>
+					<div className={'text-yellow-400'}>{`${valueToNumber(query.data.volume).toLocaleString()} BET`}</div>
+				</TooltipContent>
+			</Tooltip>
 		);
 	};
 
@@ -144,7 +144,8 @@ function MiddleNode({
 				)}
 			</foreignObject>
 		);
-	const volume = query.data.volumeLeft + query.data.volumeRight + query.data.betsLeft / 100n + query.data.betsRight / 100n;
+	const volume =
+		query.data.volumeLeft + query.data.volumeRight + query.data.betsLeft / 100n + query.data.betsRight / 100n + query.data.volume + query.data.bets / 100n;
 	return (
 		<>
 			<foreignObject width={300} height={110} x={-135} y={-45} className={''}>
@@ -196,7 +197,14 @@ function MiddleNode({
 							<div className={cx('flex justify-center')}>
 								{hasChildren ? (
 									<div
-										onClick={handleExpand}
+										onClick={
+											isExpanded
+												? (e) => {
+														e.stopPropagation();
+														handleCollapseNode?.(data);
+													}
+												: () => {}
+										}
 										className={cx('w-6 h-6 rounded-full border-2 border-purple-box bg-purple-box flex flex-row items-center justify-center text-xl', {
 											'!bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
 											'!bg-red-roulette border-red-roulette': query.data.isInviting,
@@ -204,7 +212,7 @@ function MiddleNode({
 											hidden: horizontal,
 										})}
 									>
-										+
+										{!isExpanded && onLevelSelect ? <TreeLevelsMenu address={data} onLevelSelect={onLevelSelect} /> : '-'}
 									</div>
 								) : (
 									<div

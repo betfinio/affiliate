@@ -62,7 +62,6 @@ export function DataTable<TData, TValue>({ columns, data, onRowClick }: DataTabl
 	});
 
 	const handleClick = (e: MouseEvent, row: TData) => {
-		console.log();
 		if ((e.target as HTMLElement).role !== 'menuitem') {
 			onRowClick?.(row);
 		}

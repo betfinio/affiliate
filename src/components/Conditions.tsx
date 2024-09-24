@@ -7,6 +7,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'betfin
 import cx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Lock, LockOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 function Conditions() {
@@ -16,18 +17,18 @@ function Conditions() {
 	const stakedInviting: boolean = member ? member.volume.member >= conditions[0] : false;
 	const stakedMatching: boolean = member ? member.volume.member >= conditions[1] : false;
 	const stakedInvitees: boolean = member ? member.is.matching : false;
-
+	const { t } = useTranslation('affiliate', { keyPrefix: 'conditions' });
 	return (
 		<div>
-			<p className={'text-center text-[18px] font-semibold'}>Affiliate conditions overview</p>
+			<div className={'text-center text-lg font-semibold'}>{t('title')}</div>
 			<TooltipProvider>
 				<Tabs className="mt-5" defaultValue="tab1">
 					<TabsList className={'flex text-sm gap-2'}>
 						<TabsTrigger value="tab1" className={'flex flex-roe items-center gap-1'}>
-							<Lock width={16} /> Direct affiliate
+							<Lock width={16} /> {t('direct')}
 						</TabsTrigger>
 						<TabsTrigger className={'flex flex-roe items-center gap-1'} value="tab2">
-							<LockOpen width={16} /> Binary matching
+							<LockOpen width={16} /> {t('binary')}
 						</TabsTrigger>
 					</TabsList>
 
@@ -42,32 +43,32 @@ function Conditions() {
 									<div className={'grid grid-cols-2'}>
 										<div className={'flex items-center gap-2'}>
 											<Letter className={'text-yellow-400'} />
-											<span>Conditions</span>
+											<span>{t('conditions')}</span>
 										</div>
 
 										<div className={' flex items-center gap-2 text-sm whitespace-nowrap'}>
 											<Check className={cx('w-6 h-6 bg-secondaryLight p-1 rounded-md text-secondaryLight', stakedInviting && '!text-green-500')} />
-											Stake for <BetValue className={'text-sm'} value={valueToNumber(conditions[0])} withIcon />
+											{t('stake')} <BetValue className={'text-sm'} value={valueToNumber(conditions[0])} withIcon />
 										</div>
 									</div>
 
 									<div className={'grid grid-cols-2'}>
 										<div className={'flex items-center gap-2'}>
 											<Bonus className={'text-yellow-400'} />
-											<span>Bonus</span>
+											<span>{t('bonus')}</span>
 										</div>
 										<div className={'flex flex-col text-sm text-[#FFC800] '}>
-											<span>7% direct stake</span>
-											<span>0.5% direct bet</span>
+											<span>7% {t('directStake')}</span>
+											<span>0.5% {t('directBet')}</span>
 										</div>
 									</div>
 
 									<div className={'grid grid-cols-2'}>
 										<div className={'flex items-center gap-2'}>
 											<Warning className={'text-yellow-400'} />
-											<span>Limitations</span>
+											<span>{t('limit')}</span>
 										</div>
-										<div className={'font-semibold text-left text-sm'}>No limit!</div>
+										<div className={'font-semibold text-left text-sm'}>{t('noLimit')}</div>
 									</div>
 								</motion.div>
 							</TabsContent>
@@ -79,18 +80,18 @@ function Conditions() {
 										<div className={'grid grid-cols-2'}>
 											<div className={'flex items-center gap-2'}>
 												<Letter className={'text-yellow-400'} />
-												<span>Conditions</span>
+												<span>{t('conditions')}</span>
 											</div>
 
 											<div className={'flex flex-col gap-1 text-base'}>
 												<div className={'flex flex-row items-center gap-1'}>
 													<Check className={cx('w-6 h-6 bg-secondaryLight p-1 rounded-md text-secondaryLight', stakedMatching && '!text-green-500')} />
-													Stake for <BetValue value={valueToNumber(conditions[1])} withIcon />
+													{t('stake')} <BetValue value={valueToNumber(conditions[1])} withIcon />
 												</div>
 												<div className={'flex flex-row items-center gap-1 mt-2'}>
 													<Check className={cx('w-6 h-6 bg-secondaryLight p-1 rounded-md text-secondaryLight', stakedInvitees && '!text-green-500')} />
 													<div className={'flex gap-2 items-center'}>
-														Invite 2 users
+														{t('invite', { count: 2 })}
 														<TooltipTrigger>
 															<span
 																className={
@@ -104,9 +105,9 @@ function Conditions() {
 												</div>
 											</div>
 										</div>
-										<TooltipContent className={cx('text-white border-2 border-[#FFC800] bg-transparent')}>
-											<div className={'px-8 py-5 text-xs bg-black bg-opacity-75'}>
-												<p className={'font-bold'}>Both of your invitees should stake for at least {valueToNumber(conditions[2])} BET each</p>
+										<TooltipContent className={cx('text-white')}>
+											<div className={'px-8 py-5 text-xs'}>
+												<div className={'font-bold'}>{t('inviteExplain', { amount: valueToNumber(conditions[2]) })}</div>
 											</div>
 										</TooltipContent>
 									</Tooltip>
@@ -114,32 +115,32 @@ function Conditions() {
 										<div className={'grid grid-cols-2'}>
 											<div className={'flex items-center gap-2'}>
 												<Bonus className={'text-yellow-400'} />
-												<span>Bonus</span>
+												<span>{t('bonus')}</span>
 											</div>
 											<div className={'flex flex-col text-sm items-start'}>
-												<span className={'text-[#FFC800]'}>8% weak leg volume*</span>
-												<span className={'text-gray-500 text-xs whitespace-nowrap'}>* 100% stakes + 1% bets</span>
+												<span className={'text-[#FFC800]'}>8% {t('weakLeg')}*</span>
+												<span className={'text-gray-500 text-xs whitespace-nowrap'}>{t('subtitle', { stakes: 100, bets: 1 })}</span>
 											</div>
 										</div>
 
 										<div className={'grid grid-cols-2'}>
 											<div className={'flex items-center gap-2'}>
 												<Warning className={'text-yellow-400'} />
-												<span>Limitations</span>
+												<span>{t('limit')}</span>
 											</div>
 											<div className={'font-semibold text-sm flex gap-1 whitespace-nowrap'}>
-												12k$ <span className={'text-gray-500'}>or</span>
+												12k$ <span className={'text-gray-500'}>{t('or')}</span>
 												<TooltipTrigger>
 													<div className={'flex gap-1 items-start'}>
 														10% <Staking className={'w-4 -translate-y-1 text-yellow-400 cursor-pointer'} />
 													</div>
 												</TooltipTrigger>
-												/ day
+												/ {t('day')}
 											</div>
 										</div>
 										<TooltipContent className={cx('z-50 border-2 border-[#FFC800] bg-transparent text-white')}>
 											<div className={'px-8 py-5 text-xs bg-black bg-opacity-75'}>
-												<p className={'font-bold italic'}>Sum of conservative + dynamic staking</p>
+												<p className={'font-bold italic'}>{t('explain')}</p>
 											</div>
 										</TooltipContent>
 									</Tooltip>

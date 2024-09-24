@@ -1,5 +1,5 @@
 import { useEarningBalances, useMember } from '@/src/lib/query';
-import { ZeroAddress, truncateEthAddress, valueToNumber } from '@betfinio/abi';
+import { truncateEthAddress, valueToNumber } from '@betfinio/abi';
 import CoinStack from '@betfinio/ui/dist/icons/CoinStack';
 import GoldenBars from '@betfinio/ui/dist/icons/GoldenBars';
 import Network from '@betfinio/ui/dist/icons/Network';
@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 const InfoCards: FC = () => {
-	const { t } = useTranslation('', { keyPrefix: 'affiliate.cards' });
+	const { t } = useTranslation('affiliate', { keyPrefix: 'cards' });
 	const { address } = useAccount();
 	const { data: member } = useMember(address);
 	const { data: balance } = useEarningBalances(address);
@@ -34,18 +34,18 @@ const InfoCards: FC = () => {
 						<h2 className={'text-xs text-gray-500'}>{t('referer')}</h2>
 						<span
 							className={
-								'absolute right-4 top-2 border-2 text-gray-500 border-gray-500 font-semibold text-xs w-[18px] h-[18px] flex items-center justify-center rounded-full'
+								'absolute right-4 top-2 border-2 text-gray-500 border-gray-500 font-semibold text-xs w-5 h-5 flex items-center justify-center rounded-full'
 							}
 						>
 							<TooltipTrigger>?</TooltipTrigger>
 						</span>
 					</motion.div>
-					<TooltipContent className={cx('border-2 rounded-md border-yellow-400 bg-primary text-white max-w-screen')}>
-						<div className={'px-8 py-5 text-xs max-w-[90vw] leading-5'}>
-							<p>
-								<b className={'font-semibold text-yellow-400'}>Referer</b> Is a wallet address of a user that directly invited you to the BetFin
-							</p>
-							<p>You are a part of this user's binary tree therefore referrer's other affiliates may fall also to your binary tree!</p>
+					<TooltipContent>
+						<div className={'p-4 text-xs max-w-[90vw] leading-5'}>
+							<div>
+								<b className={'font-semibold text-yellow-400'}>{t('referrerTooltip.title')}</b> {t('referrerTooltip.content')}
+							</div>
+							{t('referrerTooltip.content2')}
 						</div>
 					</TooltipContent>
 				</Tooltip>
@@ -72,17 +72,11 @@ const InfoCards: FC = () => {
 							<TooltipTrigger>?</TooltipTrigger>
 						</span>
 					</motion.div>
-					<TooltipContent className={cx('border-2 rounded-md border-yellow-400 bg-primary text-white max-w-screen')}>
-						<div className={'px-8 py-5 text-xs max-w-[90vw] leading-5 '}>
-							<p>
-								<b className={'font-semibold'}>White</b> number displays the total number of addresses in your <b className={'font-semibold'}>binary tree</b>.
-							</p>
-							<p>
-								The <b className={'font-semibold text-yellow-400'}>yellow</b> number is the number of addresses directly invited by you.
-							</p>
-							<p>
-								All your directly invited and their downlines are a part of your <b>binary tree</b>.
-							</p>
+					<TooltipContent>
+						<div className={'p-4 text-xs max-w-[90vw] leading-5 '}>
+							<p>{t('networkTooltip.content')}</p>
+							<p>{t('networkTooltip.content2')}</p>
+							<p>{t('networkTooltip.content3')}</p>
 						</div>
 					</TooltipContent>
 				</Tooltip>
@@ -101,17 +95,11 @@ const InfoCards: FC = () => {
 							<TooltipTrigger>?</TooltipTrigger>
 						</span>
 					</motion.div>
-					<TooltipContent className={cx('border-2 rounded-md border-yellow-400 bg-primary text-white max-w-screen')}>
-						<div className={'px-8 py-5 text-xs max-w-[90vw]'}>
-							<p>Total network volume consists of all the following ever made in unlimited depth of your binary tree:</p>
-							<ul className={'flex flex-col gap-2 list-disc mt-3'}>
-								<li>
-									<b>100%</b> of all conservative and dynamic stakes
-								</li>
-								<li>
-									<b>1%</b> of all bets
-								</li>
-							</ul>
+					<TooltipContent>
+						<div className={'p-4 text-xs max-w-[90vw]'}>
+							<p>{t('volumeTooltip.content')}</p>
+							<p>{t('volumeTooltip.content2')}</p>
+							<p>{t('volumeTooltip.content3')}</p>
 						</div>
 					</TooltipContent>
 				</Tooltip>
@@ -131,9 +119,9 @@ const InfoCards: FC = () => {
 							<TooltipTrigger>?</TooltipTrigger>
 						</span>
 					</motion.div>
-					<TooltipContent className={cx('border-2 rounded-md border-yellow-400 bg-primary text-white max-w-screen')}>
-						<div className={'px-8 py-5 text-xs max-w-[90vw]'}>
-							<p>Total network income consists of all the affiliate rewards you claimed in the history of your account.</p>
+					<TooltipContent>
+						<div className={'p-4 text-xs max-w-[90vw]'}>
+							<p>{t('earningTooltip.content')}</p>
 						</div>
 					</TooltipContent>
 				</Tooltip>

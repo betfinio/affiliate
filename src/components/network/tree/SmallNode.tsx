@@ -8,24 +8,21 @@ import { useAccount } from 'wagmi';
 
 function SmallNode({
 	data,
-	node,
 	handleCollapseNode,
 	isExpanded,
 	handleExpand,
 }: {
 	data: Address;
 	node: CustomNodeElementProps;
-
-	handleCollapseNode: (address: Address) => void;
-	isExpanded: boolean;
-	handleExpand: () => void;
+	handleCollapseNode?: (address: Address) => void;
+	isExpanded?: boolean;
+	handleExpand?: () => void;
 }) {
 	const query = useTreeMember(data);
 	const { address = ZeroAddress } = useAccount();
 	const handleNodeExpand = (e: MouseEvent) => {
 		e.stopPropagation();
-
-		isExpanded ? handleCollapseNode(data) : handleExpand();
+		isExpanded ? handleCollapseNode?.(data) : handleExpand?.();
 	};
 	if (data === ZeroAddress || !query.data || address === ZeroAddress) return null;
 	return (

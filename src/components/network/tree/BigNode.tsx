@@ -21,9 +21,9 @@ function BigNode({
 	data: Address;
 	node: CustomNodeElementProps;
 	horizontal?: boolean;
-	onLevelSelect: (value: TreeOptionValue, address: Address) => void;
-	isExpanded: boolean;
-	handleCollapseNode: (address: Address) => void;
+	onLevelSelect?: (value: TreeOptionValue, address: Address) => void;
+	isExpanded?: boolean;
+	handleCollapseNode?: (address: Address) => void;
 }) {
 	const { data: username } = useUsername(data);
 	const query = useTreeMember(data);
@@ -91,7 +91,7 @@ function BigNode({
 								isExpanded
 									? (e) => {
 											e.stopPropagation();
-											handleCollapseNode(data);
+											handleCollapseNode?.(data);
 										}
 									: () => {}
 							}
@@ -101,7 +101,7 @@ function BigNode({
 								hidden: horizontal,
 							})}
 						>
-							{!isExpanded ? <TreeLevelsMenu address={data} onLevelSelect={onLevelSelect} /> : '-'}
+							{!isExpanded && onLevelSelect ? <TreeLevelsMenu address={data} onLevelSelect={onLevelSelect} /> : '-'}
 						</div>
 					) : (
 						<div

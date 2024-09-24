@@ -14,7 +14,7 @@ import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 
 const GenerateInvitation: FC = () => {
-	const { t } = useTranslation('', { keyPrefix: 'affiliate.generate' });
+	const { t } = useTranslation('affiliate', { keyPrefix: 'generate' });
 	const { address: account } = useAccount();
 	const { data: member } = useMember(account);
 	const [address, setAddress] = useState('');
@@ -80,18 +80,18 @@ const GenerateInvitation: FC = () => {
 					</div>
 					<Tabs defaultValue={'auto'}>
 						<TabsList>
-							<TabsTrigger value={'auto'}>Auto position</TabsTrigger>
-							<TabsTrigger value={'manual'}>Manual position</TabsTrigger>
+							<TabsTrigger value={'auto'}>{t('position.auto')}</TabsTrigger>
+							<TabsTrigger value={'manual'}>{t('position.manual')}</TabsTrigger>
 						</TabsList>
 						<TabsContent value={'manual'} className={'flex flex-col gap-2 mt-1'}>
-							<div className={'text-xs'}>Address of new user:</div>
+							<div className={'text-xs'}>{t('newMember')}</div>
 							<input
 								value={address}
 								onChange={(e) => setAddress(e.target.value)}
-								placeholder={'New member address: 0x...'}
+								placeholder={t('placeholder')}
 								className={'px-2 md:px-4 py-2 border bg-primary h-[40px] rounded-lg border-gray-400 flex justify-center items-center col-span-5 xl:col-span-3'}
 							/>
-							<div className={'text-xs'}>Parent of new user in Binary tree:</div>
+							<div className={'text-xs'}>{t('newParent')}</div>
 							<MemberInput value={parent} onChange={setParent} />
 							<div className={'flex flex-row items-center justify-end gap-2 w-full'}>
 								<Button onClick={handleGenerate} className={'px-4 py-3 flex justify-center items-center w-1/2'}>
@@ -108,11 +108,11 @@ const GenerateInvitation: FC = () => {
 							</div>
 						</TabsContent>
 						<TabsContent value={'auto'} className={'flex gap-2 flex-col mt-0'}>
-							<div className={'text-xs'}>Address of new user:</div>
+							<div className={'text-xs'}>{t('newMember')}</div>
 							<input
 								value={address}
 								onChange={(e) => setAddress(e.target.value)}
-								placeholder={'New member address: 0x...'}
+								placeholder={t('placeholder')}
 								className={'px-2 md:px-4 py-2 border bg-primary h-[40px] rounded-lg border-gray-400 flex justify-center items-center w-full '}
 							/>
 							<div className={'flex flex-row items-center justify-end gap-2 w-full'}>
@@ -135,7 +135,7 @@ const GenerateInvitation: FC = () => {
 						onClick={handleUploadClick}
 						className={cx('text-xs mt-1 text-white rounded-lg h-[8px] bg-transparent px-0 flex flex-row gap-1 cursor-pointer')}
 					>
-						<span className={'text-yellow-400'}>+</span> Upload invitation CSV
+						<span className={'text-yellow-400'}>+</span> {t('upload')}
 					</Button>
 				</div>
 			</div>

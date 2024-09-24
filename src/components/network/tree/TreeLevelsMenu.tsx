@@ -1,6 +1,6 @@
 import type { DropdownMenuRadioGroupProps } from '@radix-ui/react-dropdown-menu';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from 'betfinio_app/dropdown-menu';
-import { useState } from 'react';
+import { type FC, useState } from 'react';
 import type { Address } from 'viem';
 
 export type TreeOptionValue = 'left' | 'right' | '1' | '5' | '10';
@@ -35,7 +35,7 @@ interface ITreeLevelsMenuProps {
 	onLevelSelect: (value: TreeOptionValue, address: Address) => void;
 	address: Address;
 }
-export const TreeLevelsMenu: React.FC<ITreeLevelsMenuProps> = ({ onLevelSelect, address }) => {
+export const TreeLevelsMenu: FC<ITreeLevelsMenuProps> = ({ onLevelSelect, address }) => {
 	const [position, setPosition] = useState<string>();
 	const handleSetPosition: DropdownMenuRadioGroupProps['onValueChange'] = (value) => {
 		setPosition(value);

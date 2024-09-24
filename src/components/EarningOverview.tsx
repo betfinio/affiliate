@@ -1,4 +1,5 @@
-import { useClaimDirect, useClaimMatching, useDailyLimit, useEarningBalances, usePendingMatchingBonus } from '@/src/lib/query';
+import { useDailyLimit, useEarningBalances, usePendingMatchingBonus } from '@/src/lib/query';
+import { useClaimDirect, useClaimMatching } from '@/src/lib/query/mutations.ts';
 import { ZeroAddress, valueToNumber } from '@betfinio/abi';
 import { Blackjack, DepthAffiliate, DirectAffiliate, MoneyUp } from '@betfinio/ui/dist/icons';
 import { BetValue } from 'betfinio_app/BetValue';

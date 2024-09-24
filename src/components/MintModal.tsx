@@ -1,5 +1,5 @@
 import MemberInput from '@/src/components/MemberInput.tsx';
-import { useMultimint } from '@/src/lib/query';
+import { useMultimint } from '@/src/lib/query/mutations.ts';
 import { ZeroAddress } from '@betfinio/abi';
 import { type ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { DataTable } from 'betfinio_app/DataTable';
@@ -26,10 +26,8 @@ const columnHelper = createColumnHelper<NewMemberProps>();
 
 const MintModal: FC<{ open: boolean; onClose: () => void; initialMembers?: NewMemberProps[] }> = ({ open, onClose, initialMembers = [] }) => {
 	const { t } = useTranslation('affiliate', { keyPrefix: 'generate' });
-	const { t: tShared } = useTranslation('shared', { keyPrefix: 'member' });
 	const { address: me } = useAccount();
 	const { mutate: multimint, isPending } = useMultimint();
-
 	const [members, setMembers] = useState<NewMemberProps[]>(initialMembers);
 
 	const handleMint = async () => {

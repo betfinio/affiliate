@@ -148,5 +148,40 @@
 		"to": "to",
 		"earn": "& earn",
 		"bring": "Bring"
+	},
+	"toast": {
+		"claimMatching": {
+			"failed": "Failed to claim matching bonus",
+			"pending": {
+				"title": "Claiming matching bonus",
+				"description": "Transaction submitted"
+			},
+			"success": {
+				"title": "Matching bonus claimed",
+				"description": "Transaction confirmed"
+			}
+		},
+		"multimint": {
+			"failed": "Failed to mint passes",
+			"pending": {
+				"title": "Minting passes",
+				"description": "Transaction submitted"
+			},
+			"success": {
+				"title": "Passes were minter",
+				"description": "Transaction confirmed"
+			}
+		},
+		"claimDirect": {
+			"failed": "Failed to claim direct bonus",
+			"pending": {
+				"title": "Claiming direct bonus",
+				"description": "Transaction submitted"
+			},
+			"success": {
+				"title": "Direct bonus claimed",
+				"description": "Transaction confirmed"
+			}
+		}
 	}
 }

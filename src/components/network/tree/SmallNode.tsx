@@ -6,18 +6,29 @@ import type { CustomNodeElementProps } from 'react-d3-tree';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 
-function SmallNode({ data, node }: { data: Address; node: CustomNodeElementProps }) {
+function SmallNode({
+	data,
+	handleCollapseNode,
+	isExpanded,
+	handleExpand,
+}: {
+	data: Address;
+	node: CustomNodeElementProps;
+	handleCollapseNode?: (address: Address) => void;
+	isExpanded?: boolean;
+	handleExpand?: () => void;
+}) {
 	const query = useTreeMember(data);
 	const { address = ZeroAddress } = useAccount();
-	const handleExpand = (e: MouseEvent) => {
+	const handleNodeExpand = (e: MouseEvent) => {
 		e.stopPropagation();
-		node.toggleNode();
+		isExpanded ? handleCollapseNode?.(data) : handleExpand?.();
 	};
 	if (data === ZeroAddress || !query.data || address === ZeroAddress) return null;
 	return (
 		<foreignObject width={'150px'} height={'150px'} x={-75} y={-75}>
 			<div
-				onClick={handleExpand}
+				onClick={handleNodeExpand}
 				className={cx('w-full h-full rounded-full bg-purple-box flex justify-center items-center p-4', {
 					'border-red-roulette bg-red-roulette': query.data?.isInviting,
 					'!border-yellow-400 !bg-yellow-400': query.data?.isMatching,

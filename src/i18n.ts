@@ -32,7 +32,6 @@ instance
 	.use(ICU)
 	.init({
 		resources,
-		lng: 'en', // default language
 		fallbackLng: 'en',
 		defaultNS: 'affiliate',
 		interpolation: { escapeValue: false },

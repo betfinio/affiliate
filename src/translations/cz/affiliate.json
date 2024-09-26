@@ -1,64 +1,187 @@
 {
-	"login": "Please connect the wallet",
-	"not-member": "You are not a member. Please ask someone to invite you or enter the referral code:",
+	"login": "Prosím připojte peněženku",
+	"not-member": "Nejsi členem. Požádej někoho o pozvánku nebo zadej referenční kód:",
 	"cards": {
-		"referer": "Your inviter",
-		"networkSize": "Your binary tree size",
-		"networkVolume": "Your network volume",
-		"children_total": "{total} total",
-		"children_direct": "{direct} direct",
-		"networkIncome": "Your total network earnings"
+		"referer": "Tvůj referent",
+		"networkSize": "Velikost tvého binárního stromu",
+		"networkVolume": "Objem tvé sítě",
+		"children_total": "{total} celkem",
+		"children_direct": "{direct} přímých",
+		"networkIncome": "Tvé celkové příjmy ze sítě",
+		"referrerTooltip": {
+			"title": "Referent",
+			"content": "Je to adresa peněženky uživatele, který tě přímo pozval do BetFinu",
+			"content2": "Jsi součástí binárního stromu tohoto uživatele, takže další jeho affiliate partneři mohou spadnout i do tvého binárního stromu!"
+		},
+		"networkTooltip": {
+			"content": "Bílý počet zobrazuje celkový počet adres v tvém binárním stromu.",
+			"content2": "Žlutý počet je počet adres, které jsi pozval přímo ty.",
+			"content3": "Všichni tebou přímo pozvaní a jejich downline jsou součástí tvého binárního stromu."
+		},
+		"volumeTooltip": {
+			"content": "Celkový objem sítě zahrnuje všechny následující provedené transakce v neomezené hloubce tvého binárního stromu:",
+			"content2": "100 % všech konzervativních a dynamických stakeů",
+			"content3": "1 % všech sázek"
+		},
+		"earningTooltip": {
+			"content": "Celkový příjem ze sítě se skládá ze všech affiliate odměn, které jsi získal v historii svého účtu."
+		}
 	},
 	"earnings": {
-		"title": "Affiliate earnings overview",
-		"claim": "Claim",
-		"claimDirect": "Direct earnings",
-		"claimMatching": "Matching earnings",
-		"claimed": "Already claimed {claimed} BET",
-		"limit": "Limit for daily claim: {limit}",
+		"title": "Přehled affiliate výdělků",
+		"overview": "Přehled výdělků",
+		"betting": "Sázení",
+		"staking": "Staking",
+		"matching": "Matching",
+		"claim": "Vybrat",
+		"claimDirect": "Přímé výdělky",
+		"claimMatching": "Matching výdělky",
+		"claimed": "Již vybráno {claimed} BET",
+		"limit": "Limit pro denní výběr: {limit}",
 		"table": {
-			"source": "Earnings source",
-			"direct": "Direct bonus",
-			"depth": "Matching bonus",
-			"income": "Income",
+			"source": "Zdroj výdělků",
+			"direct": "Přímý",
+			"bonus": "Bonus",
+			"depth": "Matching",
+			"income": "Příjem",
 			"staking": "Staking",
 			"matching": "Matching",
-			"bets": "Bets"
+			"bets": "Sázky"
 		}
 	},
 	"generate": {
-		"title": "Generate invitation to a specific wallet:",
-		"generate": "Generate",
-		"create": "Create link",
-		"academy_link": "Academy link",
+		"title": "Vygenerovat pozvánku na konkrétní peněženku:",
+		"generate": "Vygenerovat",
+		"create": "Vytvořit odkaz",
+		"academy_link": "Odkaz na Akademii",
 		"position": {
-			"auto": "Auto position",
-			"manual": "Choose position"
+			"auto": "Automatická pozice",
+			"manual": "Vyber pozici"
+		},
+		"you": "Ty",
+		"left": "Vlevo",
+		"right": "Vpravo",
+		"newMember": "Adresa nového uživatele:",
+		"placeholder": "Adresa nového člena: 0x...",
+		"upload": "Nahrát pozvánku ve formátu CSV",
+		"newParent": "Parent nového uživatele v binárním stromu:",
+		"selectParent": "Vyber parenta",
+		"filter": "Filtrovat členy...",
+		"noMembers": "Nenalezeni žádní členové",
+		"loading": "Načítání...",
+		"modal": {
+			"title": "Mintování nových passů",
+			"subtitle": "Prosím zadejte adresu nového člena/členů, pro které chcete mintovat pass.",
+			"more": "Přidat více",
+			"invalidAddress": "Neplatná adresa",
+			"address": "Adresa",
+			"parent": "Parent",
+			"mint": "{count, plural, one {Mintovat pass} other {Mintovat passy}}",
+			"copied": "Zkopírováno do schránky",
+			"copiedDescription": "Odkaz na pozvánku byl zkopírován do tvé schránky"
 		}
+	},
+	"conditions": {
+		"title": "Přehled affiliate podmínek",
+		"direct": "Přímý affiliate",
+		"binary": "Binární matching",
+		"conditions": "Podmínky",
+		"bonus": "Bonus",
+		"limit": "Omezení",
+		"noLimit": "Bez omezení",
+		"stake": "Zastakuj za",
+		"directStake": " přímý stake",
+		"directBet": " přímá sázka",
+		"invite": "Pozvi {count} uživatelů",
+		"inviteExplain": "Oba tví pozvaní uživatelé by měli stakovat alespoň {amount} BET každý",
+		"weakLeg": "slabé nohy",
+		"subtitle": "* {stakes}% stakeů + {bets}% sázek",
+		"or": "nebo",
+		"day": "den",
+		"explain": "Součet konzervativního + dynamického stakingu"
 	},
 	"view": {
 		"tabs": {
-			"binary": "Binary Structure",
-			"linear": "Linear Structure"
+			"binaryTree": "Binární strom",
+			"linearTree": "Lineární strom",
+			"linearTable": "Lineární tabulka"
 		},
 		"table": {
-			"title": "Table",
-			"description": "Active networkers in your structure",
-			"member": "Member",
-			"level": "Binar LVL",
+			"title": "Tabulka",
+			"memberData": "Data člena",
+			"activity": "Aktivita člena",
+			"network": "Síť člena",
+			"description": "Aktivní networkeři ve tvé struktuře",
+			"member": "Člen",
+			"level": "Binární úroveň",
 			"staking": "Staking",
-			"betting": "Betting",
-			"side": "Side",
-			"left": "Left",
-			"right": "Right",
-			"affiliates": "Affiliates",
-			"invitesVars": "{invites} ({direct} direct)",
-			"affiliatedStaking": "Affiliated staking",
-			"affiliatedBetting": "Affiliated betting",
-			"revenue": "Revenue"
+			"betting": "Sázení",
+			"direct": "Přímí (celkem)",
+			"stakingVolume": "Objem stakingu",
+			"bettingVolume": "Objem sázení",
+			"totalVolume": "Celkový objem",
+			"side": "Strana",
+			"left": "Vlevo",
+			"right": "Vpravo",
+			"affiliates": "Affiliati",
+			"invitesVars": "{invites} ({direct} přímých)",
+			"affiliatedStaking": "Affiliovaný staking",
+			"affiliatedBetting": "Affiliované sázení",
+			"revenue": "Příjem",
+			"display": "Zobrazit profil",
+			"show": "Zobrazit strukturu"
 		},
 		"tree": {
-			"title": "Genealogy tree"
+			"title": "Genealogický strom"
+		}
+	},
+	"volume": {
+		"unmatched": "Unmatched",
+		"matched": "Matched",
+		"left": "Vlevo",
+		"right": "Vpravo",
+		"volume": "Objem",
+		"strong": "silné nohy",
+		"weak": "slabé nohy",
+		"total": "Celkem",
+		"represent": "Reprezentuje {count}% celkového objemu",
+		"to": "do",
+		"earn": "& vydelej",
+		"bring": "Priveď"
+	},
+	"toast": {
+		"claimMatching": {
+			"failed": "Nepodařilo se vybrat matching bonus",
+			"pending": {
+				"title": "Výběr matching bonusu",
+				"description": "Transakce odeslána"
+			},
+			"success": {
+				"title": "Matching bonus vybrán",
+				"description": "Transakce potvrzena"
+			}
+		},
+		"multimint": {
+			"failed": "Nepodařilo se mintovat passy",
+			"pending": {
+				"title": "Mintování passů",
+				"description": "Transakce odeslána"
+			},
+			"success": {
+				"title": "Passy byly mintovány",
+				"description": "Transakce potvrzena"
+			}
+		},
+		"claimDirect": {
+			"failed": "Nepodařilo se vybrat přímý bonus",
+			"pending": {
+				"title": "Výběr přímého bonusu",
+				"description": "Transakce odeslána"
+			},
+			"success": {
+				"title": "Přímý bonus vybrán",
+				"description": "Transakce potvrzena"
+			}
 		}
 	}
 }

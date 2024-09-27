@@ -26,8 +26,8 @@ const Index = () => {
 			</div>
 			{address && (
 				<div className={'mt-6'}>
-					{/*<VolumeInfo />*/}
-					{/*<TablesWrapper />*/}
+					<VolumeInfo />
+					<TablesWrapper />
 					<ClaimTables />
 				</div>
 			)}

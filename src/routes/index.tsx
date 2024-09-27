@@ -5,7 +5,8 @@ import InfoCards from '@/src/components/InfoCards.tsx';
 import PieChartInfo from '@/src/components/PieChartInfo.tsx';
 import TablesWrapper from '@/src/components/TablesWrapper.tsx';
 import VolumeInfo from '@/src/components/VolumeInfo.tsx';
-import { Link, createFileRoute } from '@tanstack/react-router';
+import ClaimTables from '@/src/components/tables/ClaimTables.tsx';
+import { createFileRoute } from '@tanstack/react-router';
 import { useAccount } from 'wagmi';
 
 const Index = () => {
@@ -25,8 +26,9 @@ const Index = () => {
 			</div>
 			{address && (
 				<div className={'mt-6'}>
-					<VolumeInfo />
-					<TablesWrapper />
+					{/*<VolumeInfo />*/}
+					{/*<TablesWrapper />*/}
+					<ClaimTables />
 				</div>
 			)}
 		</div>

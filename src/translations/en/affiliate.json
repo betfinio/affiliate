@@ -183,5 +183,15 @@
 				"description": "Transaction confirmed"
 			}
 		}
+	},
+	"tables": {
+		"tabs": {
+			"direct": "Direct claims",
+			"matching": "Matching claims"
+		},
+		"member": "Member",
+		"timestamp": "Date",
+		"amount": "Amount",
+		"transaction": "Transaction"
 	}
 }

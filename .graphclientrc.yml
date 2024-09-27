@@ -1,0 +1,13 @@
+sources:
+  - name: fund
+    handler:
+      graphql:
+        endpoint: ${PUBLIC_FUND_GRAPH_URL}
+
+codegen:
+  scalars:
+    BigInt: bigint
+    Bytes: string
+
+documents:
+  - ./src/schema.graphql

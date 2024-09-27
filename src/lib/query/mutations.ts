@@ -104,7 +104,7 @@ export const useClaimDirect = () => {
 					id: id,
 					action: getTransactionLink(data),
 				});
-				await queryClient.invalidateQueries({ queryKey: ['affiliate'] });
+				await queryClient.invalidateQueries({ queryKey: ['affiliate', 'claims', 'direct'] });
 			}
 		},
 	});

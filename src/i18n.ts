@@ -1,5 +1,6 @@
 import type { i18n } from 'i18next';
 import * as i18 from 'i18next';
+import I18nextBrowserLanguageDetector from 'i18next-browser-languagedetector';
 import ICU from 'i18next-icu';
 import { initReactI18next } from 'react-i18next';
 
@@ -26,11 +27,11 @@ export const resources = {
 
 const instance: i18n = i18.createInstance();
 instance
+	.use(I18nextBrowserLanguageDetector)
 	.use(initReactI18next)
 	.use(ICU)
 	.init({
 		resources,
-		lng: 'en', // default language
 		fallbackLng: 'en',
 		defaultNS: 'affiliate',
 		interpolation: { escapeValue: false },

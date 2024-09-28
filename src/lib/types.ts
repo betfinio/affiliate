@@ -22,3 +22,10 @@ export interface TableMember {
 	direct_count: bigint;
 	binary_count: bigint;
 }
+
+export interface Claim {
+	member: Address;
+	amount: bigint;
+	transactionHash: Address;
+	timestamp: number;
+}

@@ -11,6 +11,7 @@ import {
 	findMembersByAddress,
 	findMembersByUsername,
 } from '@/src/lib/api';
+import { getDirectClaims, getMatchingClaims } from '@/src/lib/gql';
 import type { MemberWithUsername, TableMember } from '@/src/lib/types.ts';
 import { useQuery } from '@tanstack/react-query';
 import type { Balance, Member, TreeMember } from 'betfinio_app/lib/types';
@@ -134,5 +135,18 @@ export const useTreeMember = (address: Address) => {
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
 		staleTime: 10 * 60 * 1000, //10min
+	});
+};
+
+export const useDirectClaims = (address: Address) => {
+	return useQuery({
+		queryKey: ['affiliate', 'claims', 'direct', address],
+		queryFn: () => getDirectClaims(address),
+	});
+};
+export const useMatchingClaims = (address: Address) => {
+	return useQuery({
+		queryKey: ['affiliate', 'claims', 'matching', address],
+		queryFn: () => getMatchingClaims(address),
 	});
 };

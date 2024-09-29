@@ -4,6 +4,8 @@ import type { MemberWithUsername, TableMember } from '@/src/lib/types.ts';
 import { getLevel, getSide } from '@/src/lib/utils.ts';
 import { AffiliateContract, AffiliateFundContract, MultimintContract, PassContract, ZeroAddress, defaultMulticall } from '@betfinio/abi';
 import { multicall, readContract, writeContract } from '@wagmi/core';
+import { fetchStaked as fetchStakedConservative } from 'betfinio_app/lib/api/conservative';
+import { fetchStaked as fetchStakedDynamic } from 'betfinio_app/lib/api/dynamic';
 import { isMember } from 'betfinio_app/lib/api/pass';
 import { type Balance, type Member, type Options, type TreeMember, defaultTreeMember } from 'betfinio_app/lib/types';
 import type { Address } from 'viem';
@@ -230,19 +232,22 @@ export const fetchPendingMatching = async (address: Address | undefined, options
 	})) as bigint;
 	return (BigInt(doc.data.totalMatching) * 8n) / 100n - claimable;
 };
-export const fetchDailyLimit = async (address: Address | undefined, options: Options) => {
+export const fetchDailyLimit = async (address: Address | undefined, options: Options): Promise<bigint> => {
 	if (!options.config) {
 		throw new Error('Wagmi config is not defined');
 	}
 	if (!address) {
 		throw new Error('Address is not defined');
 	}
-	return (await readContract(options.config, {
-		abi: AffiliateContract.abi,
-		address: AFFILIATE,
-		functionName: 'getClaimableMatchingBonusDaily',
-		args: [address],
+	const stakedConservative = await fetchStakedConservative(options.config, address);
+	const stakedDynamic = await fetchStakedDynamic(options.config, address);
+	const maxClaim = (await readContract(options.config, {
+		abi: AffiliateFundContract.abi,
+		address: AFFILIATE_FUND,
+		functionName: 'MAX_CLAIM_DAILY',
 	})) as bigint;
+	const limit = (stakedConservative + stakedDynamic) / 10n;
+	return limit > maxClaim ? maxClaim : limit;
 };
 
 export const fetchInviteCondition = async (options: Options): Promise<bigint> => {

@@ -29,6 +29,7 @@ export default defineConfig({
 	plugins: [pluginReact()],
 	tools: {
 		rspack: {
+			ignoreWarnings: [/Critical dependency: the request of a dependency is an expression/],
 			output: {
 				uniqueName: 'betfinio_affiliate',
 			},
@@ -87,6 +88,10 @@ export default defineConfig({
 						wagmi: {
 							singleton: true,
 							requiredVersion: dependencies.wagmi,
+						},
+						'i18next-browser-languagedetector': {
+							singleton: true,
+							requiredVersion: dependencies['i18next-browser-languagedetector'],
 						},
 					},
 				}),

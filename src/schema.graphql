@@ -1,0 +1,15 @@
+query GetDirectClaims($address: Bytes){
+    directBonusClaims(where: {member: $address}, orderBy: blockTimestamp, orderDirection: desc) {
+        amount,
+        blockTimestamp,
+        transactionHash
+    }
+}
+
+query GetMatchingClaims($address: Bytes){
+    matchingBonusClaims(where: {member: $address}, orderBy: blockTimestamp, orderDirection: desc) {
+        amount,
+        blockTimestamp,
+        transactionHash
+    }
+}

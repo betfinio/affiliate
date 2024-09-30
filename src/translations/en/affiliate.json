@@ -103,6 +103,7 @@
 	"view": {
 		"tabs": {
 			"binaryTree": "Binary Tree",
+			"binaryTable": "SignUp list",
 			"linearTree": "Linear Tree",
 			"linearTable": "Linear Table"
 		},

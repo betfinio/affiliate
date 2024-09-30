@@ -442,3 +442,49 @@ export const claimMatching = async (address: Address, options: Options) => {
 		args: [address],
 	});
 };
+
+export const fetchBinaryMembers = async (address: Address, options: Options): Promise<TableMember[]> => {
+	if (!options.supabase) {
+		throw new Error('Supabase client is not defined');
+	}
+	try {
+		const supabase = options.supabase;
+		logger.start('fetching binary members', address);
+		const data = await supabase.rpc('get_binary_members', { parent: address.toLowerCase() });
+		console.log(data.data);
+		const members = await Promise.all(
+			data.data.map(async (inputMember: { member: Address; level: number }) => {
+				const { data: rawData } = await supabase
+					.from('table_members')
+					.select(
+						'member, inviter, staking::text, betting::text, betting_volume::text, direct_count::text, binary_count::text, staking_volume::text, username, id::text, inviter_id::text, activity, category',
+					)
+					.eq('member', inputMember.member.toLowerCase());
+				return (rawData || []).map((member) => {
+					const activity = [];
+					if (['staking', 'both'].includes(member.activity)) activity.push('staking');
+					if (['betting', 'both'].includes(member.activity)) activity.push('betting');
+					return {
+						betting: BigInt(member.betting),
+						staking: BigInt(member.staking),
+						staking_volume: BigInt(member.staking_volume),
+						betting_volume: BigInt(member.betting_volume),
+						member: member.member,
+						inviter: member.inviter,
+						id: BigInt(member.id),
+						direct_count: BigInt(member.direct_count),
+						binary_count: BigInt(member.binary_count),
+						category: member.category,
+						level: inputMember.level,
+						side: 'left',
+					} as TableMember;
+				});
+			}),
+		);
+		logger.success('fetched binary members', address);
+		return members.flat();
+	} catch (e) {
+		console.log(e);
+		return [];
+	}
+};

@@ -1,6 +1,7 @@
 import {
 	fetchAffiliateConditions,
 	fetchBalances,
+	fetchBinaryMembers,
 	fetchDailyLimit,
 	fetchInviteCondition,
 	fetchLinearMembers,
@@ -148,5 +149,13 @@ export const useMatchingClaims = (address: Address) => {
 	return useQuery({
 		queryKey: ['affiliate', 'claims', 'matching', address],
 		queryFn: () => getMatchingClaims(address),
+	});
+};
+
+export const useBinaryMembers = (address: Address) => {
+	const { client } = useSupabase();
+	return useQuery<TableMember[]>({
+		queryKey: ['affiliate', 'members', 'binary', address],
+		queryFn: () => fetchBinaryMembers(address, { supabase: client }),
 	});
 };

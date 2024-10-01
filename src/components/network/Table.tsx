@@ -16,14 +16,16 @@ import {
 import { DataTablePagination, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'betfinio_app/table';
 import cx from 'clsx';
 import { type MouseEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	onRowClick?: (row: TData) => void;
+	isLoading?: boolean;
 }
 
-export function DataTable<TData, TValue>({ columns, data, onRowClick }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, onRowClick, isLoading }: DataTableProps<TData, TValue>) {
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
 		activity: false,
 		category: false,
@@ -41,7 +43,7 @@ export function DataTable<TData, TValue>({ columns, data, onRowClick }: DataTabl
 		},
 	]);
 	const [sorting, setSorting] = useState<SortingState>([]);
-
+	const { t } = useTranslation('affiliate', { keyPrefix: 'tables' });
 	const table = useReactTable({
 		data,
 		columns,
@@ -99,7 +101,7 @@ export function DataTable<TData, TValue>({ columns, data, onRowClick }: DataTabl
 						) : (
 							<TableRow>
 								<TableCell colSpan={columns.length} className="h-24 text-center">
-									No results.
+									{isLoading ? t('loading') : t('noData')}
 								</TableCell>
 							</TableRow>
 						)}

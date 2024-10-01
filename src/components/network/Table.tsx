@@ -16,6 +16,7 @@ import {
 import { DataTablePagination, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'betfinio_app/table';
 import cx from 'clsx';
 import { type MouseEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -42,7 +43,7 @@ export function DataTable<TData, TValue>({ columns, data, onRowClick, isLoading 
 		},
 	]);
 	const [sorting, setSorting] = useState<SortingState>([]);
-
+	const { t } = useTranslation('affiliate', { keyPrefix: 'tables' });
 	const table = useReactTable({
 		data,
 		columns,
@@ -100,7 +101,7 @@ export function DataTable<TData, TValue>({ columns, data, onRowClick, isLoading 
 						) : (
 							<TableRow>
 								<TableCell colSpan={columns.length} className="h-24 text-center">
-									{isLoading ? 'Loading...' : 'No data'}
+									{isLoading ? t('loading') : t('noData')}
 								</TableCell>
 							</TableRow>
 						)}

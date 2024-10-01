@@ -96,7 +96,7 @@ const BinaryTable = () => {
 				className: 'hidden lg:table-cell ',
 			},
 			id: 'activity',
-			header: () => <div className={'w-full text-center border-r border-gray-800'}>{t('activity')}</div>,
+			header: () => <div className={'w-full text-center border-r border-gray-800'}>{t('memberActivity')}</div>,
 			columns: [
 				columnHelper.accessor('staking', {
 					header: ({ column }) => <DataTableColumnHeader column={column} title={t('staking')} />,
@@ -143,7 +143,7 @@ const BinaryTable = () => {
 			columns: [
 				columnHelper.accessor('activity', {
 					id: 'activity',
-					header: ({ column }) => <DataTableColumnHeader column={column} title="Activity" />,
+					header: ({ column }) => <DataTableColumnHeader column={column} title={t('activity')} />,
 					enableHiding: true,
 					cell: () => null,
 					filterFn: (row, id, value) => {
@@ -152,7 +152,7 @@ const BinaryTable = () => {
 				}),
 				columnHelper.accessor('category', {
 					id: 'category',
-					header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
+					header: ({ column }) => <DataTableColumnHeader column={column} title={t('category')} />,
 					enableHiding: true,
 					cell: ({ row }) => {
 						const category = categories.find((priority) => priority.value === row.getValue('category'));

@@ -193,6 +193,8 @@
 		"member": "Member",
 		"timestamp": "Date",
 		"amount": "Amount",
-		"transaction": "Transaction"
+		"transaction": "Transaction",
+		"loading": "Loading...",
+		"noData": "No data"
 	}
 }

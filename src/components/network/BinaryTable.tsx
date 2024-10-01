@@ -1,12 +1,12 @@
-import UsernameOrAddress from '@/src/components/UsernameOrAddress.tsx';
 import { DataTableColumnHeader } from '@/src/components/network/ColumnHeader.tsx';
-import { categories, columnHelper } from '@/src/components/network/columns.tsx';
+import { MemberAddress, categories, columnHelper, sides } from '@/src/components/network/columns.tsx';
 import { useBinaryMembers } from '@/src/lib/query';
 import type { TableMember } from '@/src/lib/types.ts';
 import { ZeroAddress } from '@betfinio/abi';
 import { BetValue } from 'betfinio_app/BetValue';
 import { useOpenProfile } from 'betfinio_app/lib/query/shared';
 import cx from 'clsx';
+import { ArrowLeftCircle, ArrowRightCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import { DataTable } from './Table';
@@ -41,13 +41,44 @@ const BinaryTable = () => {
 									'bg-[#292546]': row.original.category === 'inactive',
 								})}
 							/>
-							<UsernameOrAddress member={getValue()} onClick={() => {}} />
+							<MemberAddress member={getValue()} username={row.original.username || undefined} />
 						</div>
 					),
 					enableSorting: false,
 					enableHiding: false,
 				}),
-			].filter((e) => e !== null),
+				columnHelper.accessor('side', {
+					header: ({ column }) => (
+						<div className={'border-r border-gray-800'}>
+							<DataTableColumnHeader column={column} title={t('side')} />
+						</div>
+					),
+					cell: ({ row }) => {
+						const side = sides.find((status) => status.value === row.getValue('side'));
+						if (!side) {
+							return null;
+						}
+						const classNames = {
+							'text-green-400': row.original.category === 'active',
+							'text-red-roulette': row.original.category === 'inviting',
+							'text-yellow-400': row.original.category === 'matching',
+							'text-gray-400': row.original.category === 'inactive',
+						};
+						return (
+							<div className="flex items-center justify-center  border-gray-800 border-r">
+								{row.original.side === 'left' ? (
+									<ArrowLeftCircle className={cx('w-6 h-6', classNames)} />
+								) : (
+									<ArrowRightCircle className={cx('w-6 h-6', classNames)} />
+								)}
+							</div>
+						);
+					},
+					filterFn: (row, id, value) => {
+						return value.includes(row.getValue(id));
+					},
+				}),
+			],
 		}),
 		columnHelper.group({
 			meta: {

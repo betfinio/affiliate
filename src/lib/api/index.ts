@@ -456,28 +456,30 @@ export const fetchBinaryMembers = async (address: Address, options: Options): Pr
 		});
 		console.log(data);
 		logger.success('fetched binary members', address);
-		return (data.data || []).map((member) => {
-			const activity = [];
-			if (['staking', 'both'].includes(member.activity as string)) activity.push('staking');
-			if (['betting', 'both'].includes(member.activity as string)) activity.push('betting');
-			return {
-				betting: BigInt(member.betting),
-				staking: BigInt(member.staking),
-				staking_volume: BigInt(member.staking_volume),
-				betting_volume: BigInt(member.betting_volume),
-				member: member.member,
-				inviter: member.inviter,
-				id: BigInt(member.id),
-				direct_count: BigInt(member.direct_count),
-				binary_count: BigInt(member.binary_count),
-				inviter_id: BigInt(member.inviter_id || 0n),
-				activity: activity,
-				category: member.category,
-				level: getLevel(BigInt(member.id), BigInt(member.inviter_id || 0n)),
-				side: getSide(BigInt(member.id), BigInt(member.inviter_id || 0n)),
-				username: member.username,
-			} as TableMember;
-		});
+		return (data.data || [])
+			.map((member) => {
+				const activity = [];
+				if (['staking', 'both'].includes(member.activity as string)) activity.push('staking');
+				if (['betting', 'both'].includes(member.activity as string)) activity.push('betting');
+				return {
+					betting: BigInt(member.betting),
+					staking: BigInt(member.staking),
+					staking_volume: BigInt(member.staking_volume),
+					betting_volume: BigInt(member.betting_volume),
+					member: member.member,
+					inviter: member.inviter,
+					id: BigInt(member.id),
+					direct_count: BigInt(member.direct_count),
+					binary_count: BigInt(member.binary_count),
+					inviter_id: BigInt(member.inviter_id || 0n),
+					activity: activity,
+					category: member.category,
+					level: Number(member.level),
+					side: getSide(BigInt(member.id), BigInt(member.inviter_id || 0n)),
+					username: member.username,
+				} as TableMember;
+			})
+			.filter((m) => m.level > 1);
 	} catch (e) {
 		console.log(e);
 		return [];

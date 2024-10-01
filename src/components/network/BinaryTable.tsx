@@ -14,7 +14,7 @@ import { DataTable } from './Table';
 const BinaryTable = () => {
 	const { address = ZeroAddress } = useAccount();
 	const { t } = useTranslation('affiliate', { keyPrefix: 'view.table' });
-	const { data = [] } = useBinaryMembers(address);
+	const { data = [], isLoading, isFetching } = useBinaryMembers(address);
 	const { open } = useOpenProfile();
 
 	const handleRowClick = (row: TableMember) => {
@@ -46,6 +46,17 @@ const BinaryTable = () => {
 					),
 					enableSorting: false,
 					enableHiding: false,
+				}),
+				columnHelper.accessor('level', {
+					id: 'lvl',
+					header: ({ column }) => <DataTableColumnHeader column={column} title="LVL" />,
+					cell: (cell) => {
+						return (
+							<div className="flex items-center justify-center">
+								<div className={'border border-gray-500 rounded-full px-1 py-0.5 lg:min-w-[40px] flex justify-center'}>{cell.getValue() - 1}</div>
+							</div>
+						);
+					},
 				}),
 				columnHelper.accessor('side', {
 					header: ({ column }) => (
@@ -229,7 +240,7 @@ const BinaryTable = () => {
 
 	return (
 		<div className={'flex flex-col gap-2'}>
-			<DataTable columns={getColumns()} data={data} onRowClick={handleRowClick} />
+			<DataTable columns={getColumns()} data={data} isLoading={isLoading || isFetching} onRowClick={handleRowClick} />
 		</div>
 	);
 };

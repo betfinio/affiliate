@@ -1,44 +1,27 @@
-import UsernameOrAddress from '@/src/components/UsernameOrAddress.tsx';
 import { DataTableColumnHeader } from '@/src/components/network/ColumnHeader.tsx';
 import { MemberAddress, categories, columnHelper, sides } from '@/src/components/network/columns.tsx';
-import { useLinearMembers } from '@/src/lib/query';
+import { useBinaryMembers } from '@/src/lib/query';
 import type { TableMember } from '@/src/lib/types.ts';
 import { ZeroAddress } from '@betfinio/abi';
 import { BetValue } from 'betfinio_app/BetValue';
-import { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from 'betfinio_app/breadcrumb';
-import { Button } from 'betfinio_app/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'betfinio_app/dropdown-menu';
 import { useOpenProfile } from 'betfinio_app/lib/query/shared';
 import cx from 'clsx';
-import { ArrowLeftCircle, ArrowRightCircle, MoreHorizontal } from 'lucide-react';
-import { type FC, useEffect, useState } from 'react';
+import { ArrowLeftCircle, ArrowRightCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { DataTable } from './Table';
 
-const LinearTable = () => {
+const BinaryTable = () => {
 	const { address = ZeroAddress } = useAccount();
 	const { t } = useTranslation('affiliate', { keyPrefix: 'view.table' });
-	const [path, setPath] = useState<Address[]>([address]);
-	const { data = [] } = useLinearMembers(path[path.length - 1]);
+	const { data = [], isLoading, isFetching } = useBinaryMembers(address);
 	const { open } = useOpenProfile();
 
-	useEffect(() => {
-		setPath([address]);
-	}, [address]);
-
-	const handleOpenProfile = (member: Address) => {
-		open(member);
-	};
-	const handleExpandMember = (member: Address) => {
-		setPath((p) => [...p, member]);
-	};
 	const handleRowClick = (row: TableMember) => {
 		open(row.member);
 	};
 
-	const getColumns = (depth: number) => [
+	const getColumns = () => [
 		columnHelper.group({
 			id: 'memberInfo',
 			header: () => <div className={'w-full text-center border-r border-gray-800'}>{t('memberData')}</div>,
@@ -64,19 +47,17 @@ const LinearTable = () => {
 					enableSorting: false,
 					enableHiding: false,
 				}),
-				depth > 0
-					? columnHelper.accessor('level', {
-							id: 'lvl',
-							header: ({ column }) => <DataTableColumnHeader column={column} title="LVL" />,
-							cell: () => {
-								return (
-									<div className="flex items-center justify-center">
-										<div className={'border border-gray-500 rounded-full px-1 py-0.5 lg:min-w-[40px] flex justify-center'}>{depth + 1}</div>
-									</div>
-								);
-							},
-						})
-					: null,
+				columnHelper.accessor('level', {
+					id: 'lvl',
+					header: ({ column }) => <DataTableColumnHeader column={column} title="LVL" />,
+					cell: (cell) => {
+						return (
+							<div className="flex items-center justify-center">
+								<div className={'border border-gray-500 rounded-full px-1 py-0.5 lg:min-w-[40px] flex justify-center'}>{cell.getValue() - 1}</div>
+							</div>
+						);
+					},
+				}),
 				columnHelper.accessor('side', {
 					header: ({ column }) => (
 						<div className={'border-r border-gray-800'}>
@@ -108,14 +89,14 @@ const LinearTable = () => {
 						return value.includes(row.getValue(id));
 					},
 				}),
-			].filter((e) => e !== null),
+			],
 		}),
 		columnHelper.group({
 			meta: {
 				className: 'hidden lg:table-cell ',
 			},
 			id: 'activity',
-			header: () => <div className={'w-full text-center border-r border-gray-800'}>{t('activity')}</div>,
+			header: () => <div className={'w-full text-center border-r border-gray-800'}>{t('memberActivity')}</div>,
 			columns: [
 				columnHelper.accessor('staking', {
 					header: ({ column }) => <DataTableColumnHeader column={column} title={t('staking')} />,
@@ -162,7 +143,7 @@ const LinearTable = () => {
 			columns: [
 				columnHelper.accessor('activity', {
 					id: 'activity',
-					header: ({ column }) => <DataTableColumnHeader column={column} title="Activity" />,
+					header: ({ column }) => <DataTableColumnHeader column={column} title={t('activity')} />,
 					enableHiding: true,
 					cell: () => null,
 					filterFn: (row, id, value) => {
@@ -171,7 +152,7 @@ const LinearTable = () => {
 				}),
 				columnHelper.accessor('category', {
 					id: 'category',
-					header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
+					header: ({ column }) => <DataTableColumnHeader column={column} title={t('category')} />,
 					enableHiding: true,
 					cell: ({ row }) => {
 						const category = categories.find((priority) => priority.value === row.getValue('category'));
@@ -257,86 +238,11 @@ const LinearTable = () => {
 		}),
 	];
 
-	const columnsWithActions = [
-		...getColumns(path.length - 1),
-		columnHelper.display({
-			id: 'action',
-			meta: {
-				className: 'w-10',
-			},
-			cell: ({ row }) => {
-				return (
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" className="h-8 w-8 p-0">
-								<span className="sr-only">Open menu</span>
-								<MoreHorizontal className="h-4 w-4" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuItem onClick={() => handleOpenProfile(row.original.member)}>{t('display')}</DropdownMenuItem>
-							{row.original.direct_count > 0 && <DropdownMenuItem onClick={() => handleExpandMember(row.original.member)}>{t('show')}</DropdownMenuItem>}
-						</DropdownMenuContent>
-					</DropdownMenu>
-				);
-			},
-		}),
-	];
 	return (
 		<div className={'flex flex-col gap-2'}>
-			{path.length > 1 && (
-				<div className={'border border-gray-600 rounded-lg'}>
-					<Path path={path} onChange={setPath} />
-				</div>
-			)}
-			<DataTable columns={columnsWithActions} data={data} onRowClick={handleRowClick} />
+			<DataTable columns={getColumns()} data={data} isLoading={isLoading || isFetching} onRowClick={handleRowClick} />
 		</div>
 	);
 };
 
-export default LinearTable;
-
-export const Path: FC<{ path: Address[]; onChange: (path: Address[]) => void }> = ({ path, onChange }) => {
-	return (
-		<Breadcrumb>
-			<BreadcrumbList className={'p-2'}>
-				<UsernameOrAddress member={path[0]} onClick={() => onChange([path[0]])} />
-				{path.length > 3 && (
-					<>
-						<BreadcrumbSeparator />
-						<BreadcrumbItem>
-							<DropdownMenu>
-								<DropdownMenuTrigger className="flex items-center gap-1">
-									<BreadcrumbEllipsis className="h-4 w-4" />
-									<span className="sr-only">Toggle menu</span>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent align="start">
-									{path
-										.slice(1, path.length - 1)
-										.reverse()
-										.map((member, index) => (
-											<DropdownMenuItem key={index} className={'affiliate'}>
-												<UsernameOrAddress member={member} onClick={() => onChange(path.slice(0, path.length - 1 - index))} />
-											</DropdownMenuItem>
-										))}
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</BreadcrumbItem>
-					</>
-				)}
-				{path.length === 3 && (
-					<>
-						<BreadcrumbSeparator />
-						<UsernameOrAddress member={path[1]} onClick={() => onChange(path.slice(0, 2))} />
-					</>
-				)}
-				{path.length > 1 && (
-					<>
-						<BreadcrumbSeparator />
-						<UsernameOrAddress member={path[path.length - 1]} onClick={() => {}} />
-					</>
-				)}
-			</BreadcrumbList>
-		</Breadcrumb>
-	);
-};
+export default BinaryTable;

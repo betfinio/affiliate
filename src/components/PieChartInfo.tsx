@@ -93,9 +93,9 @@ const CenteredMetric: FC<PieCustomLayerProps<MayHaveLabel>> = ({ dataWithArc, ce
 		total += datum.value;
 	}
 	return (
-		<foreignObject x={centerX - 50} y={centerY - 25} width={100} height={50}>
-			<div className={'w-full h-full flex items-center justify-center'}>
-				<BetValue value={total} withIcon />
+		<foreignObject x={centerX - 60} y={centerY - 25} width={120} height={50}>
+			<div className={'w-full h-full flex items-center justify-center text-[26px]'}>
+				<BetValue value={total} withIcon iconClassName={'w-[20px] h-[20px]'} />
 			</div>
 		</foreignObject>
 	);
@@ -104,8 +104,8 @@ const CenteredMetric: FC<PieCustomLayerProps<MayHaveLabel>> = ({ dataWithArc, ce
 const ZeroMetrics: FC<PieCustomLayerProps<MayHaveLabel>> = ({ centerX, centerY }) => {
 	return (
 		<foreignObject x={centerX - 50} y={centerY - 25} width={100} height={50}>
-			<div className={'w-full h-full flex items-center justify-center'}>
-				<BetValue value={0} withIcon />
+			<div className={'w-full h-full flex items-center justify-center text-[26px]'}>
+				<BetValue value={0} withIcon iconClassName={'w-[20px] h-[20px]'} />
 			</div>
 		</foreignObject>
 	);

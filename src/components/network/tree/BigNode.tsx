@@ -97,9 +97,9 @@ function BigNode({
 									: () => {}
 							}
 							className={cx('w-6 h-6 border-2 text-lg flex justify-center items-center border-purple-box bg-purple-box text-white rounded-full', {
-								'bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
+								'bg-yellow-400 border-yellow-400 !text-black': query.data.isMatching,
 								'bg-red-roulette border-red-roulette': query.data.isInviting && !query.data.isMatching,
-								'!bg-green-500 !border-green-500': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
+								'!bg-green-500 !text-black !border-green-500': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
 								hidden: horizontal,
 							})}
 						>

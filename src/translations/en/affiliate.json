@@ -132,7 +132,21 @@
 			"show": "Show structure"
 		},
 		"tree": {
-			"title": "Genealogy tree"
+			"legend": {
+				"left": "Left",
+				"right": "Right",
+				"staking": "Staking",
+				"betting": "Betting",
+				"direct": "Direct",
+				"binary": "Binary",
+				"directActive": "Direct Active",
+				"binaryActive": "Binary Active",
+				"active": "Active",
+				"activeTooltip": "Active, not eligible to invite"
+			},
+			"title": "Genealogy tree",
+			"linear": "Linear",
+			"binary": "Binary"
 		}
 	},
 	"volume": {

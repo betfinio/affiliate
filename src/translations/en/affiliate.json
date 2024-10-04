@@ -135,7 +135,26 @@
 			"show": "Show structure"
 		},
 		"tree": {
-			"title": "Genealogy tree"
+			"legend": {
+				"left": "Left",
+				"right": "Right",
+				"staking": "Staking",
+				"betting": "Betting",
+				"direct": "Direct",
+				"binary": "Binary",
+				"directActive": "Direct Active",
+				"binaryActive": "Binary Active",
+				"active": "Active",
+				"activeTooltip": "Active, not eligible to invite"
+			},
+			"description": {
+				"overview": "Linear and binary view are two ways of displaying the same structure.",
+				"matching": "The only important for your matching bonus is binary tree.",
+				"tree": "However, linear tree helps you to better recognise active inviters in your structure."
+			},
+			"title": "Genealogy tree",
+			"linear": "Linear",
+			"binary": "Binary"
 		}
 	},
 	"volume": {

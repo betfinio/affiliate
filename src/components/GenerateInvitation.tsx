@@ -93,18 +93,24 @@ const GenerateInvitation: FC = () => {
 							/>
 							<div className={'text-xs'}>{t('newParent')}</div>
 							<MemberInput value={parent} onChange={setParent} />
-							<div className={'flex flex-row items-center justify-end gap-2 w-full'}>
-								<Button onClick={handleGenerate} className={'px-4 py-3 flex justify-center items-center w-1/2'}>
+							<div className={'flex flex-col sm:flex-row items-center justify-end gap-2 w-full'}>
+								<Button onClick={handleGenerate} className={'px-4 py-3 flex justify-center items-center w-full sm:w-1/2'}>
 									{t('generate')}
 								</Button>
-								<Button variant={'outline'} onClick={handleLink} className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}>
-									<Link2Icon className={'w-3 h-3'} />
-									{t('create')}
-								</Button>
-								<Button variant={'outline'} onClick={handleAcademyLink} className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}>
-									<Link2Icon className={'w-3 h-3'} />
-									{t('academy_link')}
-								</Button>
+								<div className={'flex items-center gap-2 w-full'}>
+									<Button variant={'outline'} onClick={handleLink} className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}>
+										<Link2Icon className={'w-3 h-3'} />
+										{t('create')}
+									</Button>
+									<Button
+										variant={'outline'}
+										onClick={handleAcademyLink}
+										className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}
+									>
+										<Link2Icon className={'w-3 h-3'} />
+										{t('academy_link')}
+									</Button>
+								</div>
 							</div>
 						</TabsContent>
 						<TabsContent value={'auto'} className={'flex gap-2 flex-col mt-0'}>
@@ -115,18 +121,24 @@ const GenerateInvitation: FC = () => {
 								placeholder={t('placeholder')}
 								className={'px-2 md:px-4 py-2 border bg-primary h-[40px] rounded-lg border-gray-400 flex justify-center items-center w-full '}
 							/>
-							<div className={'flex flex-row items-center justify-end gap-2 w-full'}>
-								<Button onClick={handleGenerate} className={'px-4 py-3 flex justify-center items-center w-1/2'}>
+							<div className={'flex flex-col sm:flex-row items-center justify-end gap-2 w-full'}>
+								<Button onClick={handleGenerate} className={'px-4 py-3 flex justify-center items-center w-full sm:w-1/2'}>
 									{t('generate')}
 								</Button>
-								<Button variant={'outline'} onClick={handleLink} className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}>
-									<Link2Icon className={'w-3 h-3'} />
-									{t('create')}
-								</Button>
-								<Button variant={'outline'} onClick={handleAcademyLink} className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}>
-									<Link2Icon className={'w-3 h-3'} />
-									{t('academy_link')}
-								</Button>
+								<div className={'flex items-center gap-2 w-full'}>
+									<Button variant={'outline'} onClick={handleLink} className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}>
+										<Link2Icon className={'w-3 h-3'} />
+										{t('create')}
+									</Button>
+									<Button
+										variant={'outline'}
+										onClick={handleAcademyLink}
+										className={'flex-grow px-4 gap-2 flex justify-center items-center whitespace-nowrap '}
+									>
+										<Link2Icon className={'w-3 h-3'} />
+										{t('academy_link')}
+									</Button>
+								</div>
 							</div>
 						</TabsContent>
 					</Tabs>

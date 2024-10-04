@@ -53,6 +53,7 @@ function BigNode({
 					className={cx('border-2 border-purple-box flex flex-col w-[270px] h-[270px] items-center justify-between  bg-primaryLight p-4 rounded-xl', {
 						'border-red-roulette': query.data?.isInviting,
 						'!border-yellow-400': query.data?.isMatching,
+						'!border-green-500': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
 					})}
 				>
 					<div className={'flex flex-col items-center'}>
@@ -96,8 +97,9 @@ function BigNode({
 									: () => {}
 							}
 							className={cx('w-6 h-6 border-2 text-lg flex justify-center items-center border-purple-box bg-purple-box text-white rounded-full', {
-								'bg-yellow-400 border-yellow-400 text-black': query.data.isMatching,
+								'bg-yellow-400 border-yellow-400 !text-black': query.data.isMatching,
 								'bg-red-roulette border-red-roulette': query.data.isInviting && !query.data.isMatching,
+								'!bg-green-500 !text-black !border-green-500': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
 								hidden: horizontal,
 							})}
 						>
@@ -109,6 +111,7 @@ function BigNode({
 							className={cx('w-6 h-6 border-2 p-0.5  text-lg flex justify-center items-center border-purple-box bg-purple-box text-white rounded-full', {
 								'bg-red-roulette border-red-roulette': query.data.isInviting && !query.data.isMatching,
 								'bg-yellow-400 border-yellow-400 !text-black': query.data.isMatching,
+								'!bg-green-500 !border-green-500': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
 								hidden: horizontal,
 							})}
 						>
@@ -122,6 +125,7 @@ function BigNode({
 						className={cx('w-6 h-6 border-2 text-lg flex justify-center items-center border-purple-box bg-purple-box text-white rounded-full', {
 							'!bg-yellow-400 border-yellow-400 !text-black': query.data.isMatching,
 							'!bg-red-roulette border-red-roulette': query.data.isInviting && !query.data.isMatching,
+							'!bg-green-500 !border-green-500': (query.data.volume > 0n || query.data.bets > 0n) && !query.data.isInviting,
 							hidden: !horizontal || query.data.count === 0,
 						})}
 					>

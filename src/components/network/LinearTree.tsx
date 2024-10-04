@@ -3,18 +3,21 @@ import DotNode from '@/src/components/network/tree/DotNode.tsx';
 import MiddleNode from '@/src/components/network/tree/MiddleNode.tsx';
 import SmallNode from '@/src/components/network/tree/SmallNode.tsx';
 import { ZeroAddress } from '@betfinio/abi';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'betfinio_app/accordion';
 import { useSupabase } from 'betfinio_app/supabase';
 import { TooltipProvider } from 'betfinio_app/tooltip';
 import cx from 'clsx';
-import { Expand } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Expand, LocateFixed, Shrink } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Tree, { type CustomNodeElementProps, type Point, type RawNodeDatum, type TreeNodeDatum } from 'react-d3-tree';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
+import { useTranslation } from 'react-i18next';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import Legend from './Legend';
 
 const LinearTree = () => {
+	const { t } = useTranslation('affiliate', { keyPrefix: 'view.tree' });
 	const handle = useFullScreenHandle();
 	const [members, setMembers] = useState<Record<Address, Address[] | undefined>>({});
 	const { address: me = ZeroAddress } = useAccount();
@@ -30,9 +33,13 @@ const LinearTree = () => {
 
 	const boxRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
-		setTranslate({ x: (boxRef.current?.clientWidth || 0) / 2, y: 500 });
+		centerTranslate();
 		if (window.innerWidth < 800) setZoom(0.8);
 	}, [boxRef]);
+
+	const centerTranslate = useCallback(() => {
+		setTranslate({ x: (boxRef.current?.clientWidth || 0) / 2, y: 500 });
+	}, [boxRef.current]);
 
 	const transform = (member: Address, m: Address[] | undefined): RawNodeDatum => {
 		if (address === ZeroAddress) return { name: 'Loading...' };
@@ -71,7 +78,7 @@ const LinearTree = () => {
 		return <DotNode data={addr} node={node} />;
 	};
 
-	let t: NodeJS.Timeout | undefined = undefined;
+	let timeout: NodeJS.Timeout | undefined = undefined;
 
 	const handleUpdate = (data: {
 		node: TreeNodeDatum | null;
@@ -82,12 +89,13 @@ const LinearTree = () => {
 			if (members[data.node.name as Address] === undefined) expand(data.node.name).then(undefined);
 		}
 		if (data.translate.x === translate.x && data.translate.y === translate.y && data.zoom === zoom) return;
-		clearTimeout(t);
-		t = setTimeout(() => {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => {
 			setTranslate(data.translate);
 			setZoom(data.zoom);
 		}, 500);
 	};
+	const [isFullScreen, setIsFullScreen] = useState(false);
 
 	const zoomPlus = () => {
 		setZoom(zoom + 0.1);
@@ -100,11 +108,22 @@ const LinearTree = () => {
 	return (
 		<div>
 			<TooltipProvider>
-				<div className={'text-center text-xs font-semibold text-gray-500 italic px-5'}>
-					Linear and binary view are two ways of displaying the same structure. <br /> The only important for your matching bonus is binary tree. <br />{' '}
-					However, linear tree helps you to better recognise active inviters in your structure.
-				</div>
-				<Legend />
+				<Accordion type="single" collapsible>
+					<AccordionItem value="item-1">
+						<AccordionTrigger>Tree Legend</AccordionTrigger>
+						<AccordionContent>
+							<div>
+								<div className={'text-center text-xs font-semibold text-gray-500 italic px-5 flex flex-col'}>
+									<span>{t('description.overview')}</span>
+									<span>{t('description.matching')}</span>
+									<span>{t('description.tree')}</span>
+								</div>
+								<Legend />
+							</div>
+						</AccordionContent>
+					</AccordionItem>
+				</Accordion>
+
 				<div className={' border border-gray-800 rounded-md mt-2 md:mt-3 lg:mt-4 h-[80vh] relative'} ref={boxRef}>
 					<div className={cx('absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl bg-primaryLighter w-[100px] h-[50px]')}>
 						<div className={'w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer'} onClick={zoomPlus}>
@@ -114,16 +133,22 @@ const LinearTree = () => {
 							-
 						</div>
 					</div>
-					<div
-						onClick={() => handle.enter()}
-						className={
-							'absolute top-2 right-2 border cursor-pointer border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px] '
-						}
-					>
-						<Expand className={'w-6 h-6'} />
+					<div className={'absolute top-2 right-2 flex items-center gap-2'}>
+						<div
+							onClick={() => centerTranslate()}
+							className="border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px]"
+						>
+							<LocateFixed className={'w-6 h-6'} />
+						</div>
+						<div
+							onClick={() => setIsFullScreen(true)}
+							className="border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px]"
+						>
+							<Expand className={'w-6 h-6'} />
+						</div>
 					</div>
-					<FullScreen handle={handle}>
-						{handle.active && (
+					<div className={cx('fixed  z-50 inset-0 bg-primaryLighter', { hidden: !isFullScreen })}>
+						{
 							<>
 								<div className={cx('absolute top-2 left-2 border border-gray-800 flex flex-row flex-nowrap rounded-xl w-[100px] h-[50px] z-10')}>
 									<div className={'w-[50px] h-[50px] text-xl flex border-r border-gray-800 items-center justify-center cursor-pointer'} onClick={zoomPlus}>
@@ -131,6 +156,21 @@ const LinearTree = () => {
 									</div>
 									<div className={'w-[50px] h-[45px] text-xl flex items-center justify-center cursor-pointer'} onClick={zoomMinus}>
 										-
+									</div>
+
+									<div className={'fixed top-2 right-2 flex items-center gap-2'}>
+										<div
+											onClick={() => centerTranslate()}
+											className="border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px]"
+										>
+											<LocateFixed className={'w-6 h-6'} />
+										</div>
+										<div
+											onClick={() => setIsFullScreen(false)}
+											className="border cursor-pointer bg-primaryLighter border-gray-800 flex flex-row items-center justify-center flex-nowrap rounded-xl w-[50px] h-[50px]"
+										>
+											<Shrink className={'w-6 h-6'} />
+										</div>
 									</div>
 								</div>
 								<Tree
@@ -147,8 +187,8 @@ const LinearTree = () => {
 									orientation={'horizontal'}
 								/>
 							</>
-						)}
-					</FullScreen>
+						}
+					</div>
 					<Tree
 						data={data}
 						onUpdate={handleUpdate}

@@ -11,11 +11,13 @@ import { Expand, LocateFixed, Shrink } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Tree, { type CustomNodeElementProps, type Point, type RawNodeDatum, type TreeNodeDatum } from 'react-d3-tree';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
+import { useTranslation } from 'react-i18next';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import Legend from './Legend';
 
 const LinearTree = () => {
+	const { t } = useTranslation('affiliate', { keyPrefix: 'view.tree' });
 	const handle = useFullScreenHandle();
 	const [members, setMembers] = useState<Record<Address, Address[] | undefined>>({});
 	const { address: me = ZeroAddress } = useAccount();
@@ -76,7 +78,7 @@ const LinearTree = () => {
 		return <DotNode data={addr} node={node} />;
 	};
 
-	let t: NodeJS.Timeout | undefined = undefined;
+	let timeout: NodeJS.Timeout | undefined = undefined;
 
 	const handleUpdate = (data: {
 		node: TreeNodeDatum | null;
@@ -87,8 +89,8 @@ const LinearTree = () => {
 			if (members[data.node.name as Address] === undefined) expand(data.node.name).then(undefined);
 		}
 		if (data.translate.x === translate.x && data.translate.y === translate.y && data.zoom === zoom) return;
-		clearTimeout(t);
-		t = setTimeout(() => {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => {
 			setTranslate(data.translate);
 			setZoom(data.zoom);
 		}, 500);
@@ -111,9 +113,10 @@ const LinearTree = () => {
 						<AccordionTrigger>Tree Legend</AccordionTrigger>
 						<AccordionContent>
 							<div>
-								<div className={'text-center text-xs font-semibold text-gray-500 italic px-5'}>
-									Linear and binary view are two ways of displaying the same structure. <br /> The only important for your matching bonus is binary tree. <br />{' '}
-									However, linear tree helps you to better recognise active inviters in your structure.
+								<div className={'text-center text-xs font-semibold text-gray-500 italic px-5 flex flex-col'}>
+									<span>{t('description.overview')}</span>
+									<span>{t('description.matching')}</span>
+									<span>{t('description.tree')}</span>
 								</div>
 								<Legend />
 							</div>

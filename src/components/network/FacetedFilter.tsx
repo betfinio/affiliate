@@ -2,12 +2,12 @@ import type { Column } from '@tanstack/react-table';
 import { Badge } from 'betfinio_app/badge';
 import { Button } from 'betfinio_app/button';
 import { Command, CommandGroup, CommandItem, CommandList } from 'betfinio_app/command';
-import { PopoverContent, PopoverTrigger } from 'betfinio_app/popover';
-import { Popover } from 'betfinio_app/popover';
+import { Popover, PopoverContent, PopoverTrigger } from 'betfinio_app/popover';
 import { Separator } from 'betfinio_app/separator';
 import cx from 'clsx';
 import { CheckIcon, CirclePlus } from 'lucide-react';
 import type { ComponentType } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface DataTableFacetedFilterProps<TData, TValue> {
 	column?: Column<TData, TValue>;
@@ -22,7 +22,7 @@ interface DataTableFacetedFilterProps<TData, TValue> {
 export function DataTableFacetedFilter<TData, TValue>({ column, title, options }: DataTableFacetedFilterProps<TData, TValue>) {
 	const facets = column?.getFacetedUniqueValues();
 	const selectedValues = new Set(column?.getFilterValue() as string[]);
-
+	const { t } = useTranslation('affiliate', { keyPrefix: 'tables.filter' });
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
@@ -46,7 +46,8 @@ export function DataTableFacetedFilter<TData, TValue>({ column, title, options }
 										.map((option) => (
 											<Badge variant="secondary" key={option.value} className="rounded-sm px-1 font-normal flex flex-row items-center gap-1">
 												{option.icon && <option.icon className={'w-3 h-3'} />}
-												{option.label}
+												{/*@ts-ignore*/}
+												{t(option.label)}
 											</Badge>
 										))
 								)}
@@ -83,7 +84,8 @@ export function DataTableFacetedFilter<TData, TValue>({ column, title, options }
 											{isSelected && <CheckIcon className={cx('h-4 w-4')} />}
 										</div>
 										{option.icon && <option.icon className={cx('mr-2 h-4 w-4', isSelected && 'text-white')} />}
-										<span className={cx(isSelected && 'text-white')}>{option.label}</span>
+										{/*@ts-ignore*/}
+										<span className={cx(isSelected && 'text-white')}>{t(option.label)}</span>
 										{facets?.get(option.value) && (
 											<span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">{facets.get(option.value)}</span>
 										)}

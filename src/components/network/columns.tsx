@@ -14,24 +14,24 @@ import { useAccount } from 'wagmi';
 export const sides = [
 	{
 		value: 'left',
-		label: 'Left',
+		label: 'left',
 		icon: ArrowLeft,
 	},
 	{
 		value: 'right',
-		label: 'Right',
+		label: 'right',
 		icon: ArrowRight,
 	},
 ];
 
 export const activities = [
 	{
-		label: 'Betting',
+		label: 'betting',
 		value: 'betting',
 		icon: Blackjack,
 	},
 	{
-		label: 'Staking',
+		label: 'staking',
 		value: 'staking',
 		icon: Layers3,
 	},
@@ -39,22 +39,22 @@ export const activities = [
 export const categories = [
 	{
 		value: 'inviting',
-		label: 'Direct affiliate active',
+		label: 'direct',
 		icon: Blackjack,
 	},
 	{
 		value: 'matching',
-		label: 'Binary matching active',
+		label: 'matching',
 		icon: Layers3,
 	},
 	{
 		value: 'active',
-		label: 'Active member',
+		label: 'active',
 		icon: Dices,
 	},
 	{
 		value: 'inactive',
-		label: 'Inactive member',
+		label: 'inactive',
 		icon: Annoyed,
 	},
 ];

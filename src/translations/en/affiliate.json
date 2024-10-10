@@ -136,6 +136,7 @@
 		},
 		"tree": {
 			"legend": {
+				"title": "Tree legend",
 				"left": "Left",
 				"right": "Right",
 				"staking": "Staking",
@@ -154,7 +155,13 @@
 			},
 			"title": "Genealogy tree",
 			"linear": "Linear",
-			"binary": "Binary"
+			"binary": "Binary",
+			"node": {
+				"volume": "Total volume in",
+				"left": "Left",
+				"right": "Right",
+				"users": "users"
+			}
 		}
 	},
 	"volume": {
@@ -210,6 +217,21 @@
 		"tabs": {
 			"direct": "Direct claims",
 			"matching": "Matching claims"
+		},
+		"filter": {
+			"filter": "Filter members...",
+			"side": "Side",
+			"category": "Category",
+			"activity": "Activity",
+			"left": "Left",
+			"right": "Right",
+			"betting": "Betting",
+			"staking": "Staking",
+			"direct": "Direct affiliate active",
+			"matching": "Binary matching active",
+			"active": "Active member",
+			"reset": "Reset",
+			"inactive": "Inactive member"
 		},
 		"member": "Member",
 		"timestamp": "Date",

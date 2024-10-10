@@ -263,14 +263,28 @@ export const fetchInviteCondition = async (options: Options): Promise<bigint> =>
 	})) as bigint;
 };
 
-export const findMembersByUsername = async (username: string, options: Options): Promise<MemberWithUsername[]> => {
+export const findMembersByUsername = async (username: string, user: Address, options: Options): Promise<MemberWithUsername[]> => {
 	if (!options.supabase) {
 		throw new Error('Supabase client is not defined');
 	}
 	const { data, error } = await options.supabase.from('metadata').select('member, username').ilike('username', `%${username.toLowerCase()}%`);
-	logger.error(error);
-	if (!data) return [];
-	return data as MemberWithUsername[];
+	const custom = await options.supabase
+		.from('custom_username')
+		.select('user, username')
+		.eq('member', user.toLowerCase())
+		.ilike('username', `%${username.toLowerCase()}%`);
+	const members = [];
+	if (data) {
+		members.push(...data);
+	} else {
+		logger.error(error);
+	}
+	if (custom.data) {
+		members.push(...custom.data.map((e) => ({ member: e.user, username: e.username })));
+	} else {
+		logger.error(custom.error);
+	}
+	return [...new Set(members)] as MemberWithUsername[];
 };
 
 export const findMembersByAddress = async (username: string, options: Options): Promise<MemberWithUsername[]> => {

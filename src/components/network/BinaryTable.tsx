@@ -220,13 +220,13 @@ const BinaryTable = () => {
 						return value.includes(row.getValue(id));
 					},
 				}),
-				columnHelper.accessor('betting_volume', {
+				columnHelper.accessor('total_volume', {
 					id: 'total_volume',
 					header: ({ column }) => <DataTableColumnHeader column={column} title={t('totalVolume')} />,
 					cell: ({ row }) => {
 						return (
 							<div className="flex items-center justify-center">
-								<BetValue value={row.original.betting_volume / 100n + row.original.staking_volume} withIcon />
+								<BetValue value={row.original.total_volume} withIcon />
 							</div>
 						);
 					},

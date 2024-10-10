@@ -12,16 +12,16 @@ interface DataTableToolbarProps<TData> {
 
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
 	const isFiltered = table.getState().columnFilters.length > 0;
-	const { t } = useTranslation('affiliate', { keyPrefix: 'generate' });
+	const { t } = useTranslation('affiliate', { keyPrefix: 'tables.filter' });
 	return (
 		<div className="flex items-center justify-between">
 			<div className="flex flex-1 items-center gap-2 flex-wrap">
-				{table.getColumn('side') && <DataTableFacetedFilter column={table.getColumn('side')} title="Side" options={sides} />}
-				{table.getColumn('category') && <DataTableFacetedFilter column={table.getColumn('category')} title="Category" options={categories} />}
-				{table.getColumn('activity') && <DataTableFacetedFilter column={table.getColumn('activity')} title="Activity" options={activities} />}
+				{table.getColumn('side') && <DataTableFacetedFilter column={table.getColumn('side')} title={t('side')} options={sides} />}
+				{table.getColumn('category') && <DataTableFacetedFilter column={table.getColumn('category')} title={t('category')} options={categories} />}
+				{table.getColumn('activity') && <DataTableFacetedFilter column={table.getColumn('activity')} title={t('activity')} options={activities} />}
 				{isFiltered && (
 					<Button variant="ghost" onClick={() => table.resetColumnFilters()} className="h-8 px-2 lg:px-3">
-						Reset
+						{t('reset')}
 						<X className="ml-2 h-4 w-4" />
 					</Button>
 				)}

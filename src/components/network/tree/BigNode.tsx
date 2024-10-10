@@ -7,6 +7,7 @@ import cx from 'clsx';
 import { ArrowLeftIcon, ArrowRightIcon, UserPlus } from 'lucide-react';
 import { type MouseEvent, useState } from 'react';
 import type { CustomNodeElementProps } from 'react-d3-tree';
+import { useTranslation } from 'react-i18next';
 import type { Address } from 'viem';
 import { TreeLevelsMenu, type TreeOptionValue } from './TreeLevelsMenu';
 
@@ -28,6 +29,8 @@ function BigNode({
 	const { data: username } = useUsername(data);
 	const query = useTreeMember(data);
 	const [inviteModal, setInviteModal] = useState<boolean>(false);
+
+	const { t } = useTranslation('affiliate', { keyPrefix: 'view.tree.node' });
 
 	if (query.isFetching || query.isRefetching || !query.data)
 		return (
@@ -71,18 +74,22 @@ function BigNode({
 									<BetValue withIcon value={valueToNumber(query.data.volumeLeft + query.data.betsLeft / 100n)} />
 								</div>
 								<div className={'text-gray-400 flex flex-row gap-3 items-center border border-gray-400 px-2 rounded-md'}>
-									<ArrowLeftIcon className={'w-4 h-4'} /> Left
+									<ArrowLeftIcon className={'w-4 h-4'} /> {t('left')}
 								</div>
-								<div className={'text-xs'}>{Number(query.data.countLeft)} users</div>
+								<div className={'text-xs'}>
+									{Number(query.data.countLeft)} {t('users')}
+								</div>
 							</div>
 							<div className={'flex flex-col items-center gap-2'}>
 								<div className={'font-medium'}>
 									<BetValue withIcon value={valueToNumber(query.data.volumeRight + query.data.betsRight / 100n)} />
 								</div>
 								<div className={'text-gray-400 flex flex-row gap-3 items-center border border-gray-400 px-2 rounded-md'}>
-									<ArrowRightIcon className={'w-4 h-4'} /> Right
+									<ArrowRightIcon className={'w-4 h-4'} /> {t('right')}
 								</div>
-								<div className={'text-xs'}>{Number(query.data.countRight)} users</div>
+								<div className={'text-xs'}>
+									{Number(query.data.countRight)} {t('users')}
+								</div>
 							</div>
 						</div>
 					</div>

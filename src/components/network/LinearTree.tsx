@@ -10,7 +10,7 @@ import cx from 'clsx';
 import { Expand, LocateFixed, Shrink } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Tree, { type CustomNodeElementProps, type Point, type RawNodeDatum, type TreeNodeDatum } from 'react-d3-tree';
-import { FullScreen, useFullScreenHandle } from 'react-full-screen';
+import { useFullScreenHandle } from 'react-full-screen';
 import { useTranslation } from 'react-i18next';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
@@ -110,7 +110,7 @@ const LinearTree = () => {
 			<TooltipProvider>
 				<Accordion type="single" collapsible>
 					<AccordionItem value="item-1">
-						<AccordionTrigger>Tree Legend</AccordionTrigger>
+						<AccordionTrigger>{t('legend.title')}</AccordionTrigger>
 						<AccordionContent>
 							<div>
 								<div className={'text-center text-xs font-semibold text-gray-500 italic px-5 flex flex-col'}>

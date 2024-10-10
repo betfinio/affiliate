@@ -18,6 +18,7 @@ export interface TableMember {
 	staking: bigint;
 	staking_volume: bigint;
 	betting_volume: bigint;
+	total_volume: bigint;
 	username: string | null;
 	direct_count: bigint;
 	binary_count: bigint;

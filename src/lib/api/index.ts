@@ -471,6 +471,7 @@ export const fetchBinaryMembers = async (address: Address, options: Options): Pr
 					id: BigInt(member.id),
 					direct_count: BigInt(member.direct_count),
 					binary_count: BigInt(member.binary_count),
+					total_volume: BigInt(member.betting_volume) / 100n + BigInt(member.staking_volume),
 					inviter_id: BigInt(member.inviter_id || 0n),
 					activity: activity,
 					category: member.category,

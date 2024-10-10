@@ -1,3 +1,4 @@
+import type { IFilterKeys } from '@/src/i18next';
 import type { Column } from '@tanstack/react-table';
 import { Badge } from 'betfinio_app/badge';
 import { Button } from 'betfinio_app/button';
@@ -46,8 +47,7 @@ export function DataTableFacetedFilter<TData, TValue>({ column, title, options }
 										.map((option) => (
 											<Badge variant="secondary" key={option.value} className="rounded-sm px-1 font-normal flex flex-row items-center gap-1">
 												{option.icon && <option.icon className={'w-3 h-3'} />}
-												{/*@ts-ignore*/}
-												{t(option.label)}
+												{t(option.label as keyof IFilterKeys)}
 											</Badge>
 										))
 								)}
@@ -84,8 +84,7 @@ export function DataTableFacetedFilter<TData, TValue>({ column, title, options }
 											{isSelected && <CheckIcon className={cx('h-4 w-4')} />}
 										</div>
 										{option.icon && <option.icon className={cx('mr-2 h-4 w-4', isSelected && 'text-white')} />}
-										{/*@ts-ignore*/}
-										<span className={cx(isSelected && 'text-white')}>{t(option.label)}</span>
+										<span className={cx(isSelected && 'text-white')}>{t(option.label as keyof IFilterKeys)}</span>
 										{facets?.get(option.value) && (
 											<span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">{facets.get(option.value)}</span>
 										)}

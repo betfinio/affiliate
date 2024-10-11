@@ -154,14 +154,23 @@
 				"matching": "The only important for your matching bonus is binary tree.",
 				"tree": "However, linear tree helps you to better recognise active inviters in your structure."
 			},
-			"title": "Genealogický strom",
-			"linear": "Lineární",
-			"binary": "Binární",
+			"title": "Genealogical Tree",
+			"linear": "Linear",
+			"binary": "Binary",
+			"expand": {
+				"left": "Expand left",
+				"right": "Expand right",
+				"1": "Expand  1",
+				"5": "Expand  5",
+				"10": "Expand  10",
+				"weak": "Expand weak leg",
+				"strong": "Expand strong leg"
+			},
 			"node": {
-				"volume": "Celkový objem v",
-				"left": "Vlevo",
-				"right": "Vpravo",
-				"users": "uživatelů"
+				"volume": "Total volume in",
+				"left": "Left",
+				"right": "Right",
+				"users": "users"
 			}
 		}
 	},

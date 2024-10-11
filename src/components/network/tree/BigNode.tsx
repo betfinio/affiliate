@@ -66,7 +66,7 @@ function BigNode({
 					</div>
 					<div className={'flex flex-col items-center w-full gap-2'}>
 						<div className={'w-full text-center'}>
-							Total volume in <span className={'text-yellow-400'}>BET</span>
+							{t('volume')} <span className={'text-yellow-400'}>BET</span>
 						</div>
 						<div className={'w-full flex flex-row items-center justify-between'}>
 							<div className={'flex flex-col items-center gap-2'}>

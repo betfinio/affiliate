@@ -6,7 +6,8 @@ import { Button } from 'betfinio_app/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandLoading, CommandSeparator } from 'betfinio_app/command';
 import { Drawer, DrawerContent, DrawerTrigger } from 'betfinio_app/drawer';
 import { Popover, PopoverContent, PopoverTrigger } from 'betfinio_app/popover';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'betfinio_app/tooltip';
+import { ArrowLeft, ArrowRight, CircleHelp } from 'lucide-react';
 import { type FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from 'usehooks-ts';
@@ -122,10 +123,10 @@ function StatusList({
 	);
 }
 
-const MemberItem: FC<MemberWithUsername & { onSelect: (value: string) => void }> = ({ member, username, onSelect }) => {
+const MemberItem: FC<MemberWithUsername & { onSelect: (value: string) => void }> = ({ member, username, isCustom, onSelect }) => {
 	const { address } = useAccount();
 	const { data: side } = useMemberSide(address, member);
-	const isDesktop = useMediaQuery('(min-width: 768px)');
+	const { t } = useTranslation('affiliate', { keyPrefix: 'generate' });
 
 	return (
 		<CommandItem
@@ -135,7 +136,24 @@ const MemberItem: FC<MemberWithUsername & { onSelect: (value: string) => void }>
 			className={'text-white flex flex-row items-center justify-between'}
 		>
 			<div className={'flex flex-row items-center gap-2'}>
-				{isDesktop ? member : truncateEthAddress(member)} {username && <Badge variant={'destructive'}>{username}</Badge>}
+				<TooltipProvider>
+					<Tooltip>
+						<TooltipTrigger>{truncateEthAddress(member)}</TooltipTrigger>
+						<TooltipContent>{member}</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
+				<TooltipProvider>
+					<Tooltip>
+						<TooltipTrigger>
+							{username && (
+								<Badge variant={'default'} className={'flex gap-1'}>
+									{username} {isCustom && <CircleHelp className={'w-3 h-3'} />}
+								</Badge>
+							)}
+						</TooltipTrigger>
+						<TooltipContent>{t('custom')}</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
 			</div>
 			{side === 'right' && (
 				<Badge className={'flex gap-1 text-black bg-yellow-400'}>

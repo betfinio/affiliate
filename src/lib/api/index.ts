@@ -267,20 +267,23 @@ export const findMembersByUsername = async (username: string, user: Address, opt
 	if (!options.supabase) {
 		throw new Error('Supabase client is not defined');
 	}
-	const { data, error } = await options.supabase.from('metadata').select('member, username').ilike('username', `%${username.toLowerCase()}%`);
+	const real = await options.supabase.from('metadata').select('member, username').ilike('username', `%${username.toLowerCase()}%`);
 	const custom = await options.supabase
 		.from('custom_username')
 		.select('user, username')
 		.eq('member', user.toLowerCase())
 		.ilike('username', `%${username.toLowerCase()}%`);
-	const members = [];
-	if (data) {
-		members.push(...data);
+	const members: MemberWithUsername[] = [];
+	if (real.data) {
+		members.push(...real.data);
 	} else {
-		logger.error(error);
+		logger.error(real.error);
 	}
 	if (custom.data) {
-		members.push(...custom.data.map((e) => ({ member: e.user, username: e.username })));
+		custom.data
+			.map((e) => ({ member: e.user, username: e.username, isCustom: true }) as MemberWithUsername)
+			.filter((e) => members.find((m) => m.member === e.member) === undefined)
+			.map((e) => members.push(e));
 	} else {
 		logger.error(custom.error);
 	}

@@ -3,6 +3,7 @@ import type { Address } from 'viem';
 export interface MemberWithUsername {
 	member: Address;
 	username?: string;
+	isCustom?: boolean;
 }
 
 export interface TableMember {

@@ -3,6 +3,7 @@ import DotNode from '@/src/components/network/tree/DotNode';
 import MiddleNode from '@/src/components/network/tree/MiddleNode';
 import SmallNode from '@/src/components/network/tree/SmallNode';
 import logger from '@/src/config/logger';
+import { fetchTreeMember } from '@/src/lib/api';
 import { ZeroAddress } from '@betfinio/abi';
 import { useQueryClient } from '@tanstack/react-query';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'betfinio_app/accordion';
@@ -117,6 +118,49 @@ const BinaryTree: React.FC = () => {
 		}
 	};
 
+	const expandByVolume = async (member: Address, type: 'strong' | 'weak'): Promise<void> => {
+		if (!client) return;
+		const children = await getLevelChildren(member);
+		if (!children) return;
+		const { left, right } = children;
+		const childrenData: Address[] = [];
+		if (left.data) childrenData.push(left.data.member as Address);
+		if (right.data) childrenData.push(right.data.member as Address);
+		else if (left.data !== null) {
+			childrenData.push(ZeroAddress as Address);
+		}
+		setMembers((mem) => ({
+			...mem,
+			[member.toLowerCase()]: childrenData,
+			...Object.fromEntries(childrenData.map((key) => [key, undefined])),
+		}));
+		const memberData = await fetchTreeMember(member as Address, { supabase: client });
+
+		const leftVolume = memberData.volumeLeft;
+		const rightVolume = memberData.volumeRight;
+		if (leftVolume === 0n && rightVolume === 0n) return;
+
+		if (type === 'strong') {
+			if (leftVolume > rightVolume) {
+				if (left.data?.member) expandByVolume(left.data?.member as Address, type);
+			} else if (rightVolume > leftVolume) {
+				if (right.data?.member) expandByVolume(right.data?.member as Address, type);
+			} else {
+				if (left.data?.member) expandByVolume(left.data?.member as Address, type);
+				if (right.data?.member) expandByVolume(right.data?.member as Address, type);
+			}
+		} else {
+			if (leftVolume > rightVolume) {
+				if (right.data?.member) expandByVolume(right.data?.member as Address, type);
+			} else if (rightVolume > leftVolume) {
+				if (left.data?.member) expandByVolume(left.data?.member as Address, type);
+			} else {
+				if (left.data?.member) expandByVolume(left.data?.member as Address, type);
+				if (right.data?.member) expandByVolume(right.data?.member as Address, type);
+			}
+		}
+	};
+
 	const handleCollapseNode = (address: Address) => {
 		logger.log('expand', address, 'address');
 		const next = { ...members };
@@ -135,6 +179,12 @@ const BinaryTree: React.FC = () => {
 			case '5':
 			case '10':
 				expand(address, +value);
+				return;
+			case 'strong':
+				expandByVolume(address, 'strong');
+				return;
+			case 'weak':
+				expandByVolume(address, 'weak');
 				return;
 		}
 	};

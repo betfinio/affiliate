@@ -41,21 +41,25 @@ export const categories = [
 		value: 'inviting',
 		label: 'direct',
 		icon: Blackjack,
+		color: 'bg-red-500',
 	},
 	{
 		value: 'matching',
 		label: 'matching',
 		icon: Layers3,
+		color: 'bg-yellow-500',
 	},
 	{
 		value: 'active',
 		label: 'active',
 		icon: Dices,
+		color: 'bg-green-500',
 	},
 	{
 		value: 'inactive',
 		label: 'inactive',
 		icon: Annoyed,
+		color: 'bg-secondaryLight',
 	},
 ];
 

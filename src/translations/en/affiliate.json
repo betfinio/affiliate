@@ -58,6 +58,7 @@
 			"auto": "Auto position",
 			"manual": "Choose position"
 		},
+		"custom": "Custom username",
 		"you": "You",
 		"left": "Left",
 		"right": "Right",
@@ -136,7 +137,7 @@
 		},
 		"tree": {
 			"legend": {
-				"title": "Tree legend",
+				"title": "Legend",
 				"left": "Left",
 				"right": "Right",
 				"staking": "Staking",
@@ -153,9 +154,18 @@
 				"matching": "The only important for your matching bonus is binary tree.",
 				"tree": "However, linear tree helps you to better recognise active inviters in your structure."
 			},
-			"title": "Genealogy tree",
+			"title": "Genealogical Tree",
 			"linear": "Linear",
 			"binary": "Binary",
+			"expand": {
+				"left": "Expand left",
+				"right": "Expand right",
+				"1": "Expand  1",
+				"5": "Expand  5",
+				"10": "Expand  10",
+				"weak": "Expand weak leg",
+				"strong": "Expand strong leg"
+			},
 			"node": {
 				"volume": "Total volume in",
 				"left": "Left",
@@ -219,7 +229,7 @@
 			"matching": "Matching claims"
 		},
 		"filter": {
-			"filter": "Filter members...",
+			"filter": "Filter members",
 			"side": "Side",
 			"category": "Category",
 			"activity": "Activity",
@@ -227,11 +237,11 @@
 			"right": "Right",
 			"betting": "Betting",
 			"staking": "Staking",
-			"direct": "Direct affiliate active",
-			"matching": "Binary matching active",
+			"direct": "Direct affiliate",
+			"matching": "Binary affiliate",
 			"active": "Active member",
-			"reset": "Reset",
-			"inactive": "Inactive member"
+			"inactive": "Inactive member",
+			"reset": "Reset"
 		},
 		"member": "Member",
 		"timestamp": "Date",

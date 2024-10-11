@@ -16,6 +16,7 @@ interface DataTableFacetedFilterProps<TData, TValue> {
 	options: {
 		label: string;
 		value: string;
+		color?: string;
 		icon?: ComponentType<{ className?: string }>;
 	}[];
 }
@@ -46,6 +47,7 @@ export function DataTableFacetedFilter<TData, TValue>({ column, title, options }
 										.filter((option) => selectedValues.has(option.value))
 										.map((option) => (
 											<Badge variant="secondary" key={option.value} className="rounded-sm px-1 font-normal flex flex-row items-center gap-1">
+												{option.color && <div className={cx(option.color, 'w-3 h-3 rounded-full')} />}
 												{option.icon && <option.icon className={'w-3 h-3'} />}
 												{t(option.label as keyof IFilterKeys)}
 											</Badge>

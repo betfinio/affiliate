@@ -58,6 +58,7 @@
 			"auto": "Automatická pozice",
 			"manual": "Vyber pozici"
 		},
+		"custom": "Vlastni username",
 		"you": "Ty",
 		"left": "Vlevo",
 		"right": "Vpravo",
@@ -104,7 +105,8 @@
 		"tabs": {
 			"binaryTree": "Binární strom",
 			"linearTree": "Lineární strom",
-			"linearTable": "Lineární tabulka"
+			"linearTable": "Lineární tabulka",
+			"binaryTable": "SignUp list"
 		},
 		"table": {
 			"title": "Tabulka",

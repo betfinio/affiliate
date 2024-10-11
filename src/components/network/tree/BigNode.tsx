@@ -1,3 +1,4 @@
+import DuckImage from '@/src/assets/duck.png';
 import MintModal from '@/src/components/MintModal.tsx';
 import { useTreeMember } from '@/src/lib/query';
 import { ZeroAddress, truncateEthAddress, valueToNumber } from '@betfinio/abi';
@@ -10,7 +11,6 @@ import type { CustomNodeElementProps } from 'react-d3-tree';
 import { useTranslation } from 'react-i18next';
 import type { Address } from 'viem';
 import { TreeLevelsMenu, type TreeOptionValue } from './TreeLevelsMenu';
-
 function BigNode({
 	data,
 	node,
@@ -60,13 +60,13 @@ function BigNode({
 					})}
 				>
 					<div className={'flex flex-col items-center'}>
-						<img src="/favicon.svg" alt="logo" className={'w-20 h-20 rounded-full'} />
+						<img src={DuckImage} alt="logo" className={'w-20 h-20 rounded-full object-contain'} />
 						<div className={'text-yellow-400 font-medium text-xl'}>{username || truncateEthAddress(query.data.member || ZeroAddress)}</div>
 						<span className={'text-[10px] font-thin text-gray-400'}>{query.data.member}</span>
 					</div>
 					<div className={'flex flex-col items-center w-full gap-2'}>
 						<div className={'w-full text-center'}>
-							Total volume in <span className={'text-yellow-400'}>BET</span>
+							{t('volume')} <span className={'text-yellow-400'}>BET</span>
 						</div>
 						<div className={'w-full flex flex-row items-center justify-between'}>
 							<div className={'flex flex-col items-center gap-2'}>

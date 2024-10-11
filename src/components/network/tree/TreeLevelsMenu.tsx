@@ -1,33 +1,34 @@
 import type { DropdownMenuRadioGroupProps } from '@radix-ui/react-dropdown-menu';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from 'betfinio_app/dropdown-menu';
 import { type FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Address } from 'viem';
 
-export type TreeOptionValue = 'left' | 'right' | '1' | '5' | '10';
+export type TreeOptionValue = 'left' | 'right' | '1' | '5' | '10' | 'strong' | 'weak';
 interface ITreeOption {
 	value: TreeOptionValue;
-	label: string;
 }
 const treeOptions: ITreeOption[] = [
 	{
+		value: 'strong',
+	},
+	{
+		value: 'weak',
+	},
+	{
 		value: 'left',
-		label: 'Expand Left',
 	},
 	{
 		value: 'right',
-		label: 'Expand Right',
 	},
 	{
 		value: '1',
-		label: 'Expand 1',
 	},
 	{
 		value: '5',
-		label: 'Expand 5',
 	},
 	{
 		value: '10',
-		label: 'Expand 10',
 	},
 ];
 
@@ -41,6 +42,7 @@ export const TreeLevelsMenu: FC<ITreeLevelsMenuProps> = ({ onLevelSelect, addres
 		setPosition(value);
 		onLevelSelect(value as TreeOptionValue, address);
 	};
+	const { t } = useTranslation('affiliate', { keyPrefix: 'view.tree.expand' });
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger className={'w-full h-full flex items-center justify-center'}>+</DropdownMenuTrigger>
@@ -48,7 +50,7 @@ export const TreeLevelsMenu: FC<ITreeLevelsMenuProps> = ({ onLevelSelect, addres
 				<DropdownMenuRadioGroup onClick={(e) => e.stopPropagation()} value={position} onValueChange={handleSetPosition}>
 					{treeOptions.map((option) => (
 						<DropdownMenuRadioItem key={option.value} value={option.value}>
-							{option.label}
+							{t(option.value)}
 						</DropdownMenuRadioItem>
 					))}
 				</DropdownMenuRadioGroup>

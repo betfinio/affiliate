@@ -137,6 +137,7 @@
 		},
 		"tree": {
 			"legend": {
+				"title": "Legend",
 				"left": "Left",
 				"right": "Right",
 				"staking": "Staking",
@@ -153,9 +154,15 @@
 				"matching": "The only important for your matching bonus is binary tree.",
 				"tree": "However, linear tree helps you to better recognise active inviters in your structure."
 			},
-			"title": "Genealogy tree",
-			"linear": "Linear",
-			"binary": "Binary"
+			"title": "Genealogický strom",
+			"linear": "Lineární",
+			"binary": "Binární",
+			"node": {
+				"volume": "Celkový objem v",
+				"left": "Vlevo",
+				"right": "Vpravo",
+				"users": "uživatelů"
+			}
 		}
 	},
 	"volume": {
@@ -211,6 +218,21 @@
 		"tabs": {
 			"direct": "Direct claims",
 			"matching": "Matching claims"
+		},
+		"filter": {
+			"filter": "Filter members",
+			"side": "Side",
+			"category": "Category",
+			"activity": "Activity",
+			"left": "Left",
+			"right": "Right",
+			"betting": "Betting",
+			"staking": "Staking",
+			"direct": "Direct affiliate",
+			"matching": "Binary affiliate",
+			"active": "Active member",
+			"inactive": "Inactive member",
+			"reset": "Reset"
 		},
 		"member": "Member",
 		"timestamp": "Date",

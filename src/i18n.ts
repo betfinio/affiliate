@@ -25,7 +25,7 @@ export const resources = {
 		shared: sharedLang.cz,
 	},
 	cs: {
-		games: czAffiliate,
+		affiliate: czAffiliate,
 		shared: sharedLang.cz,
 	},
 } as const;

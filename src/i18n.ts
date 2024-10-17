@@ -1,6 +1,5 @@
 import type { i18n } from 'i18next';
 import * as i18 from 'i18next';
-import I18nextBrowserLanguageDetector from 'i18next-browser-languagedetector';
 import ICU from 'i18next-icu';
 import { initReactI18next } from 'react-i18next';
 
@@ -9,6 +8,8 @@ import enAffiliate from './translations/en/affiliate.json';
 import ruAffiliate from './translations/ru/affiliate.json';
 
 import { sharedLang } from 'betfinio_app/locales/index';
+
+export const defaultLocale = 'en';
 
 export const resources = {
 	en: {
@@ -23,11 +24,14 @@ export const resources = {
 		affiliate: czAffiliate,
 		shared: sharedLang.cz,
 	},
+	cs: {
+		games: czAffiliate,
+		shared: sharedLang.cz,
+	},
 } as const;
 
 const instance: i18n = i18.createInstance();
 instance
-	.use(I18nextBrowserLanguageDetector)
 	.use(initReactI18next)
 	.use(ICU)
 	.init({
@@ -38,4 +42,17 @@ instance
 		react: { useSuspense: true },
 	});
 
+const changeLanguage = async (locale: string | null) => {
+	const lng = locale ?? defaultLocale;
+	await instance.changeLanguage(lng);
+	localStorage.setItem('i18nextLng', lng);
+};
+
+if (!localStorage.getItem('i18nextLng')) {
+	const locale = navigator.language.split('-')[0];
+	console.log(locale, changeLanguage);
+	changeLanguage(locale);
+} else {
+	changeLanguage(localStorage.getItem('i18nextLng'));
+}
 export default instance;

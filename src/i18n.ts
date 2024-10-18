@@ -19,7 +19,7 @@ export const resources = {
 		affiliate: ruAffiliate,
 		shared: sharedLang.ru,
 	},
-	cz: {
+	cs: {
 		affiliate: czAffiliate,
 		shared: sharedLang.cz,
 	},
@@ -31,7 +31,12 @@ instance
 	.use(initReactI18next)
 	.use(ICU)
 	.init({
+		detection: {
+			order: ['localStorage', 'navigator'],
+			convertDetectedLanguage: (lng) => lng.split('-')[0],
+		},
 		resources,
+		supportedLngs: ['en', 'ru', 'cs'],
 		fallbackLng: 'en',
 		defaultNS: 'affiliate',
 		interpolation: { escapeValue: false },

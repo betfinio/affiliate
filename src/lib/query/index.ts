@@ -1,6 +1,7 @@
 import {
 	fetchAffiliateConditions,
 	fetchBalances,
+	fetchBinaryMembers,
 	fetchDailyLimit,
 	fetchInviteCondition,
 	fetchLinearMembers,
@@ -13,11 +14,12 @@ import {
 } from '@/src/lib/api';
 import { getDirectClaims, getMatchingClaims } from '@/src/lib/gql';
 import type { MemberWithUsername, TableMember } from '@/src/lib/types.ts';
+import { ZeroAddress } from '@betfinio/abi';
 import { useQuery } from '@tanstack/react-query';
 import type { Balance, Member, TreeMember } from 'betfinio_app/lib/types';
 import { useSupabase } from 'betfinio_app/supabase';
 import type { Address } from 'viem';
-import { useConfig } from 'wagmi';
+import { useAccount, useConfig } from 'wagmi';
 
 export const useMember = (address?: Address) => {
 	const config = useConfig();
@@ -86,10 +88,11 @@ export const useInviteCondition = () => {
 
 export const usePossibleUsernames = (value: string) => {
 	const { client } = useSupabase();
+	const { address = ZeroAddress } = useAccount();
 	return useQuery<MemberWithUsername[]>({
 		queryKey: ['affiliate', 'possibleUsernames', value],
-		queryFn: async () => findMembersByUsername(value, { supabase: client }),
-		enabled: value.length > 2,
+		queryFn: async () => findMembersByUsername(value, address, { supabase: client }),
+		enabled: value.length >= 1,
 	});
 };
 export const usePossibleAddresses = (value: string) => {
@@ -148,5 +151,13 @@ export const useMatchingClaims = (address: Address) => {
 	return useQuery({
 		queryKey: ['affiliate', 'claims', 'matching', address],
 		queryFn: () => getMatchingClaims(address),
+	});
+};
+
+export const useBinaryMembers = (address: Address) => {
+	const { client } = useSupabase();
+	return useQuery<TableMember[]>({
+		queryKey: ['affiliate', 'members', 'binary', address],
+		queryFn: () => fetchBinaryMembers(address, { supabase: client }),
 	});
 };

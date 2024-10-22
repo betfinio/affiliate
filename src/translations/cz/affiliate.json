@@ -58,6 +58,7 @@
 			"auto": "Automatická pozice",
 			"manual": "Vyber pozici"
 		},
+		"custom": "Vlastni username",
 		"you": "Ty",
 		"left": "Vlevo",
 		"right": "Vpravo",
@@ -104,12 +105,15 @@
 		"tabs": {
 			"binaryTree": "Binární strom",
 			"linearTree": "Lineární strom",
-			"linearTable": "Lineární tabulka"
+			"linearTable": "Lineární tabulka",
+			"binaryTable": "SignUp list"
 		},
 		"table": {
 			"title": "Tabulka",
 			"memberData": "Data člena",
 			"activity": "Aktivita člena",
+			"category": "Kategorie",
+			"memberActivity": "Member's activity",
 			"network": "Síť člena",
 			"description": "Aktivní networkeři ve tvé struktuře",
 			"member": "Člen",
@@ -132,7 +136,33 @@
 			"show": "Zobrazit strukturu"
 		},
 		"tree": {
-			"title": "Genealogický strom"
+			"legend": {
+				"title": "Legenda",
+				"left": "Vlevo",
+				"right": "Vpravo",
+				"staking": "Staking",
+				"betting": "Sázení",
+				"direct": "Přímý",
+				"binary": "Binární",
+				"directActive": "Přímý aktivní",
+				"binaryActive": "Binární aktivní",
+				"active": "Aktivní",
+				"activeTooltip": "Aktivní, není způsobilý k pozvání"
+			},
+			"description": {
+				"overview": "Lineární a binární pohled jsou dva způsoby zobrazení stejné struktury.",
+				"matching": "Pro tvůj matching bonus je důležitý pouze binární strom.",
+				"tree": "Lineární strom ti však pomůže lépe rozpoznat aktivní pozývatele ve tvé struktuře."
+			},
+			"title": "Genealogický strom",
+			"linear": "Lineární",
+			"binary": "Binární",
+			"node": {
+				"volume": "Celkový objem v",
+				"left": "Vlevo",
+				"right": "Vpravo",
+				"users": "uživatelů"
+			}
 		}
 	},
 	"volume": {
@@ -183,5 +213,34 @@
 				"description": "Transakce potvrzena"
 			}
 		}
+	},
+	"tables": {
+		"tabs": {
+			"direct": "Přímé nároky",
+			"matching": "Matching nároky"
+		},
+		"filter": {
+			"filter": "Filtrovat členy...",
+			"side": "Strana",
+			"category": "Kategorie",
+			"activity": "Aktivita",
+			"left": "Vlevo",
+			"right": "Vpravo",
+			"betting": "Sázení",
+			"staking": "Staking",
+			"direct": "Přímí affiliate",
+			"matching": "Binarní affiliate",
+			"active": "Aktivní člen",
+			"inactive": "Neaktivní člen",
+			"reset": "Smazat"
+		},
+		"member": "Člen",
+		"timestamp": "Datum",
+		"amount": "Částka",
+		"transaction": "Transakce",
+		"loading": "Načítání...",
+		"noData": "Žádná data",
+		"Activity": "Aktivita",
+		"Category": "Kategorie"
 	}
 }

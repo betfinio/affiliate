@@ -58,6 +58,7 @@
 			"auto": "Auto position",
 			"manual": "Choose position"
 		},
+		"custom": "Custom username",
 		"you": "You",
 		"left": "Left",
 		"right": "Right",
@@ -103,13 +104,16 @@
 	"view": {
 		"tabs": {
 			"binaryTree": "Binary Tree",
+			"binaryTable": "SignUp list",
 			"linearTree": "Linear Tree",
 			"linearTable": "Linear Table"
 		},
 		"table": {
 			"title": "Table",
 			"memberData": "Member's data",
-			"activity": "Member's activity",
+			"activity": "Activity",
+			"category": "Category",
+			"memberActivity": "Member's activity",
 			"network": "Member's network",
 			"description": "Active networkers in your structure",
 			"member": "Member",
@@ -132,7 +136,42 @@
 			"show": "Show structure"
 		},
 		"tree": {
-			"title": "Genealogy tree"
+			"legend": {
+				"title": "Legend",
+				"left": "Left",
+				"right": "Right",
+				"staking": "Staking",
+				"betting": "Betting",
+				"direct": "Direct",
+				"binary": "Binary",
+				"directActive": "Direct Active",
+				"binaryActive": "Binary Active",
+				"active": "Active",
+				"activeTooltip": "Active, not eligible to invite"
+			},
+			"description": {
+				"overview": "Linear and binary view are two ways of displaying the same structure.",
+				"matching": "The only important for your matching bonus is binary tree.",
+				"tree": "However, linear tree helps you to better recognise active inviters in your structure."
+			},
+			"title": "Genealogical Tree",
+			"linear": "Linear",
+			"binary": "Binary",
+			"expand": {
+				"left": "Expand left",
+				"right": "Expand right",
+				"1": "Expand  1",
+				"5": "Expand  5",
+				"10": "Expand  10",
+				"weak": "Expand weak leg",
+				"strong": "Expand strong leg"
+			},
+			"node": {
+				"volume": "Total volume in",
+				"left": "Left",
+				"right": "Right",
+				"users": "users"
+			}
 		}
 	},
 	"volume": {
@@ -189,9 +228,28 @@
 			"direct": "Direct claims",
 			"matching": "Matching claims"
 		},
+		"filter": {
+			"filter": "Filter members",
+			"side": "Side",
+			"category": "Category",
+			"activity": "Activity",
+			"left": "Left",
+			"right": "Right",
+			"betting": "Betting",
+			"staking": "Staking",
+			"direct": "Direct affiliate",
+			"matching": "Binary affiliate",
+			"active": "Active member",
+			"inactive": "Inactive member",
+			"reset": "Reset"
+		},
 		"member": "Member",
 		"timestamp": "Date",
 		"amount": "Amount",
-		"transaction": "Transaction"
+		"transaction": "Transaction",
+		"loading": "Loading...",
+		"noData": "No data",
+		"Activity": "Activity",
+		"Category": "Category"
 	}
 }

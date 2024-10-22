@@ -6,3 +6,5 @@ declare module 'i18next' {
 		resources: (typeof resources)['en'];
 	}
 }
+
+export type IFilterKeys = (typeof resources)['en']['affiliate']['tables']['filter'];

@@ -3,6 +3,7 @@ import { AFFILIATE, AFFILIATE_FUND, PASS } from '@/src/global.ts';
 import type { MemberWithUsername, TableMember } from '@/src/lib/types.ts';
 import { getLevel, getSide } from '@/src/lib/utils.ts';
 import { AffiliateContract, AffiliateFundContract, MultimintContract, PassContract, ZeroAddress, defaultMulticall } from '@betfinio/abi';
+import type { PostgrestSingleResponse } from '@supabase/supabase-js';
 import { multicall, readContract, writeContract } from '@wagmi/core';
 import { fetchStaked as fetchStakedConservative } from 'betfinio_app/lib/api/conservative';
 import { fetchStaked as fetchStakedDynamic } from 'betfinio_app/lib/api/dynamic';
@@ -262,14 +263,31 @@ export const fetchInviteCondition = async (options: Options): Promise<bigint> =>
 	})) as bigint;
 };
 
-export const findMembersByUsername = async (username: string, options: Options): Promise<MemberWithUsername[]> => {
+export const findMembersByUsername = async (username: string, user: Address, options: Options): Promise<MemberWithUsername[]> => {
 	if (!options.supabase) {
 		throw new Error('Supabase client is not defined');
 	}
-	const { data, error } = await options.supabase.from('metadata').select('member, username').ilike('username', `%${username.toLowerCase()}%`);
-	logger.error(error);
-	if (!data) return [];
-	return data as MemberWithUsername[];
+	const real = await options.supabase.from('metadata').select('member, username').ilike('username', `%${username.toLowerCase()}%`);
+	const custom = await options.supabase
+		.from('custom_username')
+		.select('user, username')
+		.eq('member', user.toLowerCase())
+		.ilike('username', `%${username.toLowerCase()}%`);
+	const members: MemberWithUsername[] = [];
+	if (real.data) {
+		members.push(...real.data);
+	} else {
+		logger.error(real.error);
+	}
+	if (custom.data) {
+		custom.data
+			.map((e) => ({ member: e.user, username: e.username, isCustom: true }) as MemberWithUsername)
+			.filter((e) => members.find((m) => m.member === e.member) === undefined)
+			.map((e) => members.push(e));
+	} else {
+		logger.error(custom.error);
+	}
+	return [...new Set(members)] as MemberWithUsername[];
 };
 
 export const findMembersByAddress = async (username: string, options: Options): Promise<MemberWithUsername[]> => {
@@ -441,4 +459,47 @@ export const claimMatching = async (address: Address, options: Options) => {
 		functionName: 'claimMatchingBonus',
 		args: [address],
 	});
+};
+
+export const fetchBinaryMembers = async (address: Address, options: Options): Promise<TableMember[]> => {
+	if (!options.supabase) {
+		throw new Error('Supabase client is not defined');
+	}
+	try {
+		const supabase = options.supabase;
+		logger.start('fetching binary members', address);
+		const data: PostgrestSingleResponse<{ [key: string]: string | number | bigint }[]> = await supabase.rpc('get_binary_members', {
+			parent: address.toLowerCase(),
+		});
+		console.log(data);
+		logger.success('fetched binary members', address);
+		return (data.data || [])
+			.map((member) => {
+				const activity = [];
+				if (['staking', 'both'].includes(member.activity as string)) activity.push('staking');
+				if (['betting', 'both'].includes(member.activity as string)) activity.push('betting');
+				return {
+					betting: BigInt(member.betting),
+					staking: BigInt(member.staking),
+					staking_volume: BigInt(member.staking_volume),
+					betting_volume: BigInt(member.betting_volume),
+					member: member.member,
+					inviter: member.inviter,
+					id: BigInt(member.id),
+					direct_count: BigInt(member.direct_count),
+					binary_count: BigInt(member.binary_count),
+					total_volume: BigInt(member.betting_volume) / 100n + BigInt(member.staking_volume),
+					inviter_id: BigInt(member.inviter_id || 0n),
+					activity: activity,
+					category: member.category,
+					level: Number(member.level),
+					side: getSide(BigInt(member.id), BigInt(member.inviter_id || 0n)),
+					username: member.username,
+				} as TableMember;
+			})
+			.filter((m) => m.level > 1);
+	} catch (e) {
+		console.log(e);
+		return [];
+	}
 };

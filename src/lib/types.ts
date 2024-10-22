@@ -3,6 +3,7 @@ import type { Address } from 'viem';
 export interface MemberWithUsername {
 	member: Address;
 	username?: string;
+	isCustom?: boolean;
 }
 
 export interface TableMember {
@@ -18,6 +19,7 @@ export interface TableMember {
 	staking: bigint;
 	staking_volume: bigint;
 	betting_volume: bigint;
+	total_volume: bigint;
 	username: string | null;
 	direct_count: bigint;
 	binary_count: bigint;

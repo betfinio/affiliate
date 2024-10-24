@@ -207,7 +207,7 @@
 				"description": "Transaction submitted"
 			},
 			"success": {
-				"title": "Passes were minter",
+				"title": "Passes were minted",
 				"description": "Transaction confirmed"
 			}
 		},
